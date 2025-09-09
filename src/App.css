@@ -1,0 +1,170 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* For WebKit-based browsers (Chrome, Safari, etc.) */
+input::-ms-reveal,
+input::-ms-clear,
+input::-webkit-credentials-auto-fill-button {
+  display: none !important;
+  appearance: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0px;
+  padding: 0px;
+}
+
+/* Optional: prevent autofill styles */
+input:-webkit-autofill {
+  box-shadow: 0 0 0 1000px white inset !important;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  background-color: #1C1C1C;
+}
+
+.menu-logo {
+  max-width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin: 15px 0px;
+}
+
+.menu-logo img {
+    width: 92%;
+    position: relative;
+    top: 7px;
+    left: 11px;
+}
+
+.lms-body {
+  padding: 15px;
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  /* background-color: #fff; */
+  margin: 15px;
+}
+
+.lms-body h2 {
+  margin-bottom: 15px;
+}
+
+.notfound-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f3f4f6;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  text-align: center;
+}
+
+.notfound-title {
+  font-size: 5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+.notfound-message {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.notfound-link {
+  padding: 10px 20px;
+  background-color: #2563eb;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.notfound-link:hover {
+  background-color: #1d4ed8;
+}
+
+.section-details {
+  position: relative;
+  display: block;
+  min-height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: justify;
+}
+
+.section-details img {
+  /* right: 0px;
+  top: 0px; */
+  max-width: 265px;
+  max-height: 350px;
+  float: right;
+  margin-left: 15px;
+  /* position: absolute; */
+
+}
+
+.section-details p {
+  margin-bottom: 15px;
+}
+
+/* .section-details-right-padding{
+  padding-right: 300px;
+} */
+.section-details::after {
+  content: ' ';
+  clear: both;
+  display: block;
+}
+
+.edit-section-btn {
+  position: absolute;
+  left: 0px;
+  border-radius: 5px;
+  bottom: 0px;
+}
+
+.span-btn {
+  padding: 6px;
+  cursor: pointer;
+  transition: .5 ease-in-out;
+  border-radius: 8px;
+}
+
+.span-btn:hover {
+  background-color: #2c2c2c;
+
+}
+
+.block-style .ant-upload {
+  display: block !important;
+}
+
+.video-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.video-inner-wrapper {
+  position: relative;
+}
+
+.video-inner-wrapper video {
+  width: 100%;
+  display: block;
+}
+.circle-box .ant-progress-text {
+  font-size: 28px !important;
+  font-weight: bold;
+}
+
