@@ -19,6 +19,15 @@ export const LOGOUT_API = async (body) => {
     }
 };
 
+export const GET_LAST_LOGIN = async (body) => {
+    try {
+        const response = await Axios.post('get-last-login/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 export const USER_INFO = async (body) => {
     try {
         const response = await Axios.post('user-info/', body);

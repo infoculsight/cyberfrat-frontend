@@ -127,7 +127,7 @@ export default function AddLearners() {
 
           <Row>
             <Col span={12}>
-              <h2 style={{color:"#FFC93F"}}><span style={{ cursor: "pointer" }}
+              <h2><span style={{ cursor: "pointer" }}
                 onClick={() => navigate("/learners")}><LeftOutlined /></span> Add Learner</h2>
             </Col>
           </Row>
@@ -145,7 +145,7 @@ export default function AddLearners() {
                 onFinish={onFinish}
                 validateTrigger="onSubmit"
               >
-                <h3 style={{color:"#FFC93F"}}>Basic Information</h3>
+                <h3 >Basic Information</h3>
 
                 <Form.Item label="Upload Your Photo here">
                   <Upload

@@ -3,7 +3,7 @@ import  { useEffect } from 'react';
 import { signinRedirectCallback, login} from './authService';
 import CulsightPageLoader from './Admin-panel/components/CulsightPageLoader';
 import { jwtDecode } from 'jwt-decode';
-import { GET_LAST_LOGIN } from './User-panel/apis/apis';
+import { GET_LAST_LOGIN } from './Admin-panel/apis/apis';
 
 export default function Callback() {
 

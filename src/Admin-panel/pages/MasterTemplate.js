@@ -114,36 +114,12 @@ const MasterTemplate = () => {
   }
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: "#FFD700",  // Gold
-          colorBgBase: "#000000",   // Black
-          colorText: "#FFD700",
-          colorBorder: "#FFD700",
-        },
-        components: {
-          Menu: {
-            itemBg: "#000000",
-            itemColor: "#FFD700",
-            itemHoverColor: "#e6c200",
-            itemSelectedBg: "#FFD700",
-            itemSelectedColor: "#000000",
-          },
-          Button: {
-            colorPrimary: "#FFD700",
-            colorPrimaryHover: "#e6c200",
-            colorPrimaryActive: "#bfa200",
-            colorTextLightSolid: "#000000",
-          },
-        },
-      }}
-    >
+    <>
       {master_loder ? (
         <>Loading...........</>
       ) : (
         <Layout style={{ minHeight: '100vh' }}>
-          <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: "#000000" }}>
+          <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: "#141414",}}>
             <div className='menu-logo'>
               <img alt="logo" src={Logo} />
             </div>
@@ -187,11 +163,7 @@ const MasterTemplate = () => {
             <Header
               style={{
                 padding: '0',
-                backgroundColor: '#000000',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingRight: '20px'
+                backgroundColor: '#141414',
               }}
             >
               <Button
@@ -202,21 +174,21 @@ const MasterTemplate = () => {
                   fontSize: '16px',
                   width: 64,
                   height: 64,
-                  color: '#FFD700',
+                  color:'#fff',
                 }}
               />
-              <span style={{ fontWeight: "bold", fontSize: "20px", color: "#FFD700" }}>
+              <span style={{ fontWeight: "bold", fontSize: "20px"}}>
                 Admin Panel
               </span>
               <UserDropdown user={user} />
             </Header>
-            <Content style={{ backgroundColor: "#111111", padding: "16px" }}>
+            <Content style={{ backgroundColor: "#2c2c2c" }}>
               <Outlet />
             </Content>
           </Layout>
         </Layout>
       )}
-    </ConfigProvider>
+  </>
   );
 };
 
