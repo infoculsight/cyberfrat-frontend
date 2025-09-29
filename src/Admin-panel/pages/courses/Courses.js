@@ -150,8 +150,6 @@ function Courses() {
         <h2>Courses
           <Button
             type="primary"
-            variant='solid'
-            color='green'
             size="large"
             onClick={() => Navigate("/add-courses")}
             style={{ marginLeft: "10px", float: "right" }}

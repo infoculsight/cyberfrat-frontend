@@ -85,8 +85,7 @@ function Packages() {
       <Card>
         <h2>Packages
         <Button
-              variant="solid"
-              color="green"
+             type="primary"
               size="large"
               onClick={() => Navigate("/add-packages")}
               style={{float:"right"}}

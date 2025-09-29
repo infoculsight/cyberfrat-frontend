@@ -11,7 +11,7 @@ import {
   UploadOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { App, Button, Layout, Menu } from 'antd';
+import { App, Button, Layout, Menu, ConfigProvider } from 'antd';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Logo from "../assests/CF-PPT-1.png";
 import { getUser, logout } from '../../authService';
@@ -20,7 +20,7 @@ import UserDropdown from '../components/UserDropdown';
 const { Header, Sider, Content } = Layout;
 
 const MasterTemplate = () => {
-  const  { modal } = App.useApp()
+  const { modal } = App.useApp()
   const [user, setUser] = useState(null);
   const [master_loder, set_master_loder] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
@@ -29,46 +29,40 @@ const MasterTemplate = () => {
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [openKeys, setOpenKeys] = useState([]);
 
-
-
   useEffect(() => {
-    
     getUser().then(usr => {
-      // console.log(usr)
       setUser(usr);
       set_master_loder(false)
     });
   }, []);
 
-
   useEffect(() => {
-      const pathToKey = {
-    '/': { selected: '1' },
-    '/learners': { selected: '3', open: '2' },
-    '/add-learner': { selected: '3', open: '2' },
-    '/edit-learner': { selected: '3', open: '2' },
-    '/learners-group': { selected: '12', open: '2' },
-    '/assign-learner': { selected: '12', open: '2' },
-    '/instructors': { selected: '4', open: '2' },
-    '/add-instructors': { selected: '4', open: '2' },
-    '/import-instructors': { selected: '4', open: '2' },
-    '/courses': { selected: '6', open: '5' },
-    '/add-courses': { selected: '6', open: '5' },
-    '/edit-course': { selected: '6', open: '5' },
-    '/course-learners': { selected: '6', open: '5' },
-    '/learner-report':{ selected:'6',open: '5'},
-    '/packages':{selected:'7',open:'5'},
-    '/add-packages':{selected:'7',open:'5'},
-    '/edit-package':{selected:'7',open:'5'},
-    '/media': { selected: '8' },
-    '/report': { selected: '9'},
-    '/download':{selected:'10'},
-    '/notification':{selected:'13'},
-    '/add-notification':{selected:'13',open:'13'},
-    '/edit-notification':{selected:'13',open:'13'},
-    '/deleted-courses':{selected:'14',open:'14'}
-
-  };
+    const pathToKey = {
+      '/': { selected: '1' },
+      '/learners': { selected: '3', open: '2' },
+      '/add-learner': { selected: '3', open: '2' },
+      '/edit-learner': { selected: '3', open: '2' },
+      '/learners-group': { selected: '12', open: '2' },
+      '/assign-learner': { selected: '12', open: '2' },
+      '/instructors': { selected: '4', open: '2' },
+      '/add-instructors': { selected: '4', open: '2' },
+      '/import-instructors': { selected: '4', open: '2' },
+      '/courses': { selected: '6', open: '5' },
+      '/add-courses': { selected: '6', open: '5' },
+      '/edit-course': { selected: '6', open: '5' },
+      '/course-learners': { selected: '6', open: '5' },
+      '/learner-report': { selected: '6', open: '5' },
+      '/packages': { selected: '7', open: '5' },
+      '/add-packages': { selected: '7', open: '5' },
+      '/edit-package': { selected: '7', open: '5' },
+      '/media': { selected: '8' },
+      '/report': { selected: '9' },
+      '/download': { selected: '10' },
+      '/notification': { selected: '13' },
+      '/add-notification': { selected: '13', open: '13' },
+      '/edit-notification': { selected: '13', open: '13' },
+      '/deleted-courses': { selected: '14', open: '5' }
+    };
     const path = location.pathname;
     const match = pathToKey[path];
     if (match) {
@@ -81,35 +75,33 @@ const MasterTemplate = () => {
     }
   }, [location.pathname]);
 
-  
   const handleMenuClick = ({ key }) => {
     const keyToPath = {
       '1': '/',
       '3': '/learners',
       '4': '/instructors',
       '6': '/courses',
-      '7':'/packages',
+      '7': '/packages',
       '8': '/media',
-      '9':'/report',
-      '10':'/download',
-      '12':'/learners-group',
-      '13':'/notification',
-      '14':'/deleted-courses'
-
+      '9': '/report',
+      '10': '/download',
+      '12': '/learners-group',
+      '13': '/notification',
+      '14': '/deleted-courses'
     };
 
     const route = keyToPath[key];
     if (route) {
       navigate(route);
     } else if (key === '50') {
-        modal.confirm({
-            title: "Are you sure you want to logout?",
-            okText: "Logout",
-            cancelText: "Cancel",
-            onOk: () => {
-              logout();
-            },
-          });
+      modal.confirm({
+        title: "Are you sure you want to logout?",
+        okText: "Logout",
+        cancelText: "Cancel",
+        onOk: () => {
+          logout();
+        },
+      });
     }
   };
 
@@ -122,29 +114,48 @@ const MasterTemplate = () => {
   }
 
   return (
-    <>
-      {master_loder ? <>
-        Loading...........
-      </> : <>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#FFD700",  // Gold
+          colorBgBase: "#000000",   // Black
+          colorText: "#FFD700",
+          colorBorder: "#FFD700",
+        },
+        components: {
+          Menu: {
+            itemBg: "#000000",
+            itemColor: "#FFD700",
+            itemHoverColor: "#e6c200",
+            itemSelectedBg: "#FFD700",
+            itemSelectedColor: "#000000",
+          },
+          Button: {
+            colorPrimary: "#FFD700",
+            colorPrimaryHover: "#e6c200",
+            colorPrimaryActive: "#bfa200",
+            colorTextLightSolid: "#000000",
+          },
+        },
+      }}
+    >
+      {master_loder ? (
+        <>Loading...........</>
+      ) : (
         <Layout style={{ minHeight: '100vh' }}>
-          <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: "#141414",}}>
+          <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: "#000000" }}>
             <div className='menu-logo'>
               <img alt="logo" src={Logo} />
             </div>
 
             <Menu
-              // theme="dark"
               mode="inline"
               selectedKeys={selectedKeys}
               openKeys={openKeys}
               onOpenChange={onOpenChange}
               onClick={handleMenuClick}
               items={[
-                {
-                  key: '1',
-                  icon: <DashboardOutlined />,
-                  label: 'Dashboard',
-                },
+                { key: '1', icon: <DashboardOutlined />, label: 'Dashboard' },
                 {
                   key: '2',
                   icon: <UserOutlined />,
@@ -152,7 +163,6 @@ const MasterTemplate = () => {
                   children: [
                     { key: '3', label: "Learners" },
                     { key: '12', label: "Learners Group" },
-                    // { key: '4', label: "Instructors" }
                   ]
                 },
                 {
@@ -163,39 +173,13 @@ const MasterTemplate = () => {
                     { key: '6', label: "Courses" },
                     { key: '14', label: "Deleted Courses" },
                     { key: '7', label: "Packages" },
-                   
                   ]
                 },
-                {
-                  key: '8',
-                  icon: <ProfileFilled />,
-                  label: 'Media',
-                },
-                  {
-                  key: '9',
-                  icon: <FileSearchOutlined />,
-                  label: 'Report',
-                },
-                {
-                  key: '13',
-                  icon: <NotificationOutlined />,
-                  label: 'Notifcation',
-                },
-                {
-                  key:"10",
-                  icon:<DownloadOutlined />,
-                  label:'Download',
-                },
-                // {
-                //   key: '11',
-                //   icon: <SettingFilled />,
-                //   label: 'Setting',
-                // },
-                {
-                  key: '50',
-                  icon: <UploadOutlined />,
-                  label: 'Logout',
-                },
+                { key: '8', icon: <ProfileFilled />, label: 'Media' },
+                { key: '9', icon: <FileSearchOutlined />, label: 'Report' },
+                { key: '13', icon: <NotificationOutlined />, label: 'Notification' },
+                { key: '10', icon: <DownloadOutlined />, label: 'Download' },
+                { key: '50', icon: <UploadOutlined />, label: 'Logout' },
               ]}
             />
           </Sider>
@@ -203,8 +187,13 @@ const MasterTemplate = () => {
             <Header
               style={{
                 padding: '0',
-                backgroundColor: '#141414'
-              }}>
+                backgroundColor: '#000000',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingRight: '20px'
+              }}
+            >
               <Button
                 type="text"
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -213,19 +202,21 @@ const MasterTemplate = () => {
                   fontSize: '16px',
                   width: 64,
                   height: 64,
-                  color: '#fff',
+                  color: '#FFD700',
                 }}
               />
-              <span style={{fontWeight:"bold", fontSize:"20px"}}>Admin Panel</span>
+              <span style={{ fontWeight: "bold", fontSize: "20px", color: "#FFD700" }}>
+                Admin Panel
+              </span>
               <UserDropdown user={user} />
             </Header>
-            <Content style={{ backgroundColor: "#2c2c2c" }}>
+            <Content style={{ backgroundColor: "#111111", padding: "16px" }}>
               <Outlet />
             </Content>
           </Layout>
         </Layout>
-      </>}
-    </>
+      )}
+    </ConfigProvider>
   );
 };
 

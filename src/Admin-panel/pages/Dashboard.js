@@ -94,18 +94,24 @@ function Dashboard() {
         {loader ? <>
           <CulsightPageLoader />
         </> : <>
-          <h2>Dashboard</h2>
+          <h2 style={{ color: "#FFC93F" }}>Dashboard</h2>
 
           <Row gutter={[10, 10]} style={{ marginBottom: "10px" }}>
             {/* Total Users */}
             <Col lg={8} md={12} sm={24} xs={24}>
               <Card>
-                <h3>
+                <h3 >
                   Total Users{" "}
                   <span style={{ float: "right" }}>
                     <Tag
-                      color="processing"
-                      style={{ fontSize: "24px", padding: "15px" }}
+                      color="gold"
+                      style={{
+                        fontSize: "24px",
+                        padding: "15px",
+                        backgroundColor: "#FFD700", // Gold background
+                        color: "#000000",           // Text black
+                        border: "1px solid #FFD700" // optional gold border
+                      }}
                     >
                       {user_info?.total_users ?? 0}
                     </Tag>
@@ -122,8 +128,14 @@ function Dashboard() {
                   Total Active Users{" "}
                   <span style={{ float: "right" }}>
                     <Tag
-                      color="success"
-                      style={{ fontSize: "24px", padding: "15px" }}
+                      color="gold"
+                      style={{
+                        fontSize: "24px",
+                        padding: "15px",
+                        backgroundColor: "#FFD700", // Gold background
+                        color: "#000000",           // Text black
+                        border: "1px solid #FFD700" // optional gold border
+                      }}
                     >
                       {user_info?.active_users ?? 0}
                     </Tag>
@@ -140,8 +152,14 @@ function Dashboard() {
                   Total Inactive Users{" "}
                   <span style={{ float: "right" }}>
                     <Tag
-                      color="processing"
-                      style={{ fontSize: "24px", padding: "15px" }}
+                      color="gold"
+                      style={{
+                        fontSize: "24px",
+                        padding: "15px",
+                        backgroundColor: "#FFD700", // Gold background
+                        color: "#000000",           // Text black
+                        border: "1px solid #FFD700" // optional gold border
+                      }}
                     >
                       {user_info?.inactive_users ?? 0}
                     </Tag>
@@ -153,8 +171,12 @@ function Dashboard() {
 
             {/* Bar Chart */}
             <Col xs={24} lg={12}>
-              <Card>
-                <h2 style={{ marginTop: "-20px" }}>Leaderboard-Top 10 Learners</h2>
+              <Card style={{
+                border: "1px solid #FFD700",  // 👈 Gold border
+                borderRadius: 12,
+                backgroundColor: "#0d0d0d",
+              }}>
+                <h2 style={{ marginTop: "-20px", color: "#FFC93F" }}>Leaderboard-Top 10 Learners</h2>
                 <Table
                   columns={columns}
                   pagination={false}

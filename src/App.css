@@ -7,7 +7,6 @@ input::-webkit-credentials-auto-fill-button {
   display: none !important;
   appearance: none;
 }
-
 h1,
 h2,
 h3,
@@ -17,19 +16,19 @@ h6,
 p {
   margin: 0px;
   padding: 0px;
+  color: #FFD700; /* Gold text */
 }
-
 /* Optional: prevent autofill styles */
 input:-webkit-autofill {
-  box-shadow: 0 0 0 1000px white inset !important;
+  box-shadow: 0 0 0 1000px #1C1C1C inset !important;
+  -webkit-text-fill-color: #FFD700 !important;
 }
-
 body {
   font-family: "Roboto", sans-serif;
   font-optical-sizing: auto;
-  background-color: #1C1C1C;
+  background-color: #000000; /* Pure Black */
+  color: #FFD700; /* Default text gold */
 }
-
 .menu-logo {
   max-width: 100%;
   position: relative;
@@ -37,63 +36,59 @@ body {
   box-sizing: border-box;
   margin: 15px 0px;
 }
-
 .menu-logo img {
-    width: 92%;
-    position: relative;
-    top: 7px;
-    left: 11px;
+  width: 92%;
+  position: relative;
+  top: 7px;
+  left: 11px;
 }
-
 .lms-body {
   padding: 15px;
   font-family: "Roboto", sans-serif;
   font-optical-sizing: auto;
-  /* background-color: #fff; */
+  background-color: #111111; /* Dark black background */
+  color: #FFD700;
   margin: 15px;
+  border-radius: 8px;
 }
-
 .lms-body h2 {
   margin-bottom: 15px;
+  color: #FFD700;
 }
-
 .notfound-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f3f4f6;
+  background-color: #000000; /* Black */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
+  color: #FFD700;
   text-align: center;
 }
-
 .notfound-title {
   font-size: 5rem;
   font-weight: bold;
   margin-bottom: 20px;
-  color: #1f2937;
+  color: #FFD700;
 }
-
 .notfound-message {
   font-size: 1.5rem;
   margin-bottom: 20px;
+  color: #FFD700;
 }
-
 .notfound-link {
   padding: 10px 20px;
-  background-color: #2563eb;
-  color: white;
+  background-color: #FFD700;
+  color: #000000;
   text-decoration: none;
   border-radius: 5px;
   transition: background-color 0.3s ease;
 }
-
 .notfound-link:hover {
-  background-color: #1d4ed8;
+  background-color: #e6c200; /* Darker gold */
+  color: #000000;
 }
-
 .section-details {
   position: relative;
   display: block;
@@ -101,70 +96,85 @@ body {
   border-radius: 8px;
   overflow: hidden;
   text-align: justify;
+  background-color: #111111;
+  border: 1px solid #FFD700;
+  padding: 15px;
+  color: #FFD700;
 }
-
 .section-details img {
-  /* right: 0px;
-  top: 0px; */
   max-width: 265px;
   max-height: 350px;
   float: right;
   margin-left: 15px;
-  /* position: absolute; */
-
+  border: 2px solid #FFD700;
+  border-radius: 8px;
 }
-
 .section-details p {
   margin-bottom: 15px;
 }
-
-/* .section-details-right-padding{
-  padding-right: 300px;
-} */
 .section-details::after {
   content: ' ';
   clear: both;
   display: block;
 }
-
 .edit-section-btn {
   position: absolute;
   left: 0px;
   border-radius: 5px;
   bottom: 0px;
+  background: #FFD700;
+  color: #000000;
 }
-
 .span-btn {
   padding: 6px;
   cursor: pointer;
-  transition: .5 ease-in-out;
+  transition: .3s ease-in-out;
   border-radius: 8px;
+  color: #FFD700;
 }
-
 .span-btn:hover {
-  background-color: #2c2c2c;
-
+  background-color: #FFD700;
+  color: #000000;
 }
-
 .block-style .ant-upload {
   display: block !important;
 }
-
 .video-wrapper {
   width: 100%;
   position: relative;
 }
-
 .video-inner-wrapper {
   position: relative;
 }
-
 .video-inner-wrapper video {
   width: 100%;
   display: block;
+  border: 2px solid #FFD700;
+  border-radius: 8px;
 }
 .circle-box .ant-progress-text {
   font-size: 28px !important;
   font-weight: bold;
+  color: #FFD700 !important;
 }
 
+
+/* Select dropdown arrow (suffix icon) gold */
+.ant-select .ant-select-arrow {
+  color: #FFD700 !important;   /* Gold */
+}
+
+/* Hover पर arrow थोड़ा dark gold */
+.ant-select:hover .ant-select-arrow {
+  color: #e6c200 !important;
+}
+
+/* Disabled Select का arrow white */
+.ant-select-disabled .ant-select-arrow {
+  color: #ffffff !important;
+}
+
+.ant-card {
+  border: .5px solid #FFD700 !important;
+  border-radius: 12px; /* optional, agar rounded chahiye */
+}

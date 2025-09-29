@@ -3,7 +3,7 @@ import { getUser } from '../../authService';
 export const TINY_KEY ="e6h4bto2malup58th41859aqxqq2xv42tys9byuuk1cpbjed";
 
 const Axios = axios.create({
-  baseURL: 'https://api.cyberfrat.com/api/phishing/',
+  baseURL: 'https://development.culsgiht.com/api/phishing/',
  
 });
 

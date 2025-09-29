@@ -277,13 +277,12 @@ function Learners() {
       <Card>
         <Row>
           <Col span={12}>
-            <h2>Learners</h2>
+            <h2 style={{color:"#FFC93F"}}>Learners</h2>
           </Col>
           <Col span={12}>
             <div className="learner-buttons" style={{ float: "right" }}>
               <Button
-                color="green"
-                variant="solid"
+                type="primary"
                 style={{ marginRight: "10px" }}
                 onClick={() => navigate("/add-learner")}
               >
@@ -367,7 +366,7 @@ function Learners() {
 
 
         <Modal
-          title="Import Users"
+          title={<span style={{color:"#FFC93F"}}>Import Learners</span>}
           open={is_model_open}
           onCancel={handleCancel}
           footer={[

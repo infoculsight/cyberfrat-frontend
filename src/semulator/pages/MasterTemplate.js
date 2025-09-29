@@ -9,9 +9,9 @@ import {
   SecurityScanOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Button, Layout, Menu } from 'antd';
+import { Button, ConfigProvider, Layout, Menu } from 'antd';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import Logo from "../assests/culsight.png";
+import Logo from "../assests/CF-PPT-1.png";
 import { getUser, logout } from '../../authService';
 import UserDropdown from '../components/UserDropdown';
 
@@ -105,17 +105,43 @@ const MasterTemplate = () => {
 
   return (
     <>
+     <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#FFD700",  // Gold
+              colorBgBase: "#000000",   // Black
+              colorText: "#FFD700",
+              colorBorder: "#FFD700",
+            },
+            components: {
+              Menu: {
+                itemBg: "#000000",
+                itemColor: "#FFD700",
+                itemHoverColor: "#e6c200",
+                itemSelectedBg: "#FFD700",
+                itemSelectedColor: "#000000",
+              },
+              Button: {
+                colorPrimary: "#FFD700",
+                colorPrimaryHover: "#e6c200",
+                colorPrimaryActive: "#bfa200",
+                colorTextLightSolid: "#000000",
+              },
+            },
+          }}
+        >
       {master_loder ? <>
         Loading...........
       </> : <>
         <Layout style={{ minHeight: '100vh' }}>
-          <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: "#141414", }}>
+          <Sider trigger={null} collapsible collapsed={collapsed}  style={{ background: "#000000" }}>
             <div className='menu-logo'>
               <img alt="logo" src={Logo} />
             </div>
 
             <Menu
               // theme="dark"
+              
               mode="inline"
               selectedKeys={selectedKeys}
               openKeys={openKeys}
@@ -179,7 +205,7 @@ const MasterTemplate = () => {
             <Header
               style={{
                 padding: '0',
-                backgroundColor: '#141414'
+                backgroundColor: '#000000',
               }}>
               <Button
                 type="text"
@@ -201,6 +227,7 @@ const MasterTemplate = () => {
           </Layout>
         </Layout>
       </>}
+      </ConfigProvider>
     </>
   );
 };
