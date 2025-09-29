@@ -127,6 +127,7 @@ const ChapterSection = (props) => {
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <Progress
                           percent={section.progress || 0}
+                          strokeColor="#FFD700"
                           size="default"
                           style={{ flex: 1, marginRight: "20px" }}
                         />
@@ -186,6 +187,7 @@ const ChapterSection = (props) => {
                         <Progress
                           percent={item.progress}
                           status="active"
+                          strokeColor="#FFD700"
                         />
                       </div>
                     </>

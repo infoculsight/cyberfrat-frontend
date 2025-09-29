@@ -285,11 +285,13 @@ export default function Chapters() {
                                 <Progress
                                   percent={single_progress}
                                   status="active"
+                                  strokeColor="#FFD700"
                                 />
                               ) : (
                                 <Progress
                                   percent={item?.progress}
                                   status="active"
+                                  strokeColor="#FFD700"
                                 />
                               )}
                               <span style={{ fontSize: "10px" }}>Video</span>

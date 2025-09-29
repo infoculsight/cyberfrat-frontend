@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import { App, Button, Layout, Menu } from "antd";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import Logo from "../assests/CF-PPT-1.png";
+import Logo from "../assests/CFGold_Logo.png";
 import { getUser, logout } from '../../authService';
 import UserDropdown from '../components/UserDropdown';
 import ThemeSetting from "../components/ThemeSetting";
@@ -103,11 +103,13 @@ const MasterTemplate = () => {
             collapsed={collapsed}
             style={balck_theme ? { background: "#141414" } : {background: "#fff"}}
           >
-            <div className="menu-logo">
+            <div className="menu-logo" style={{marginTop:"20px"}}>
               <img alt="logo" src={Logo} />
             </div>
 
             <Menu
+            style={{marginTop:"40px"}}
+             className="gold-menu"
               mode="inline"
               selectedKeys={selectedKeys}
               openKeys={openKeys}
@@ -182,7 +184,7 @@ const MasterTemplate = () => {
                     fontSize: "16px",
                     width: 64,
                     height: 64,
-                    color: balck_theme ?"#fff" : "#000",
+                    color: balck_theme ?"#fff" : "#141414",
                   }}
                 />
                 <span style={{ fontWeight: "bold", fontSize: "20px" }}>Learner Panel</span>
@@ -199,7 +201,7 @@ const MasterTemplate = () => {
 
               </div>
             </Header>
-            <Content style={balck_theme ? { backgroundColor: "#2c2c2c" } : {}}>
+            <Content style={balck_theme ? { backgroundColor: "#000000" } : {}}>
               <Outlet />
             </Content>
           </Layout>

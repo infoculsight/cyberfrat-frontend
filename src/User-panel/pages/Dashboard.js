@@ -32,6 +32,8 @@ function Dashboard() {
   const [current_course_chapter, set_current_course_chapter] = useState(null);
   const [learner_watch, set_learner_watch] = useState([]);
   const [single_learner_data, set_single_learner_data] = useState({});
+
+
   const currentcolumns = [
     {
       title: "Current Course",
@@ -94,6 +96,7 @@ function Dashboard() {
 
     }
   };
+
   const LEANER_WATCHTIME_API = async () => {
     const FORM_DATA = new FormData();
     try {
@@ -115,6 +118,7 @@ function Dashboard() {
     LIST_API();
     LEANER_WATCHTIME_API()
   }, []);
+
   const formatTime = (seconds) => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
@@ -126,8 +130,6 @@ function Dashboard() {
 
     return h + m + s;
   };
-
-
 
 
   const columns_leader_board = [
@@ -163,6 +165,8 @@ function Dashboard() {
   const getPercent = (value) =>
     all_courses > 0 ? (value / all_courses) * 100 : 0;
 
+
+  
   return (
     <div className="lms-body">
       <Card>

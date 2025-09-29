@@ -74,7 +74,7 @@ function SectionVideos(props) {
                         video_row={video_row}
                       />
                        <div style={{ marginTop: 8 }}>
-                      <Progress percent={single_progress} status="active" />
+                      <Progress percent={single_progress} status="active" strokeColor="#FFD700" />
                     </div>
                    </>
                     ) : <>
@@ -83,7 +83,7 @@ function SectionVideos(props) {
                     <div style={{backgroundColor:"black", minHeight:"64vh", position:"relative", overflow:"hidden"}}><img alt="example"  style={{maxWidth:"100%",position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)"}} src={item?.thumbnail} /></div>
                  <PlayCircleFilled   onClick={() => setSelectedVideoId(item?.id)} variant='solid' color='green' style={{ margin: "3px 16px", fontSize:"90px", position:"absolute", left:"50%", top:"50%", transform:"translate(-50%, -50%)" }}/>
                     <div style={{ marginTop: 8 }}>
-                      <Progress percent={single_progress} status="active" />
+                      <Progress percent={single_progress} status="active" strokeColor="#FFD700"/>
                     </div>
                   </div>
                     </>}

@@ -78,7 +78,7 @@ export default function CourseBox(props) {
               />
               {props.course_ribbon ? <>
                 <Tag
-                  color="green"
+                  color="#f7d40add"
                   style={{
                     position: "absolute",
                     top: 8,
@@ -116,7 +116,7 @@ export default function CourseBox(props) {
             }
           />
 
-          <Progress percent={props.progress} status="active" style={{ marginTop: "10px" }} />
+          <Progress strokeColor="#FFD700" percent={props.progress} status="active" style={{ marginTop: "10px" }} />
         </Card>
  
 

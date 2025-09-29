@@ -1,7 +1,7 @@
 // src/Callback.js
 import  { useEffect } from 'react';
 import { signinRedirectCallback, login} from './authService';
-import CulsightPageLoader from './Admin-panel/components/CulsightPageLoader';
+import CulsightPageLoader from './User-panel/components/CulsightPageLoader';
 import { jwtDecode } from 'jwt-decode';
 import { GET_LAST_LOGIN } from './User-panel/apis/apis';
 
