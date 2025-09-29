@@ -216,7 +216,7 @@ export default function Chapters() {
           <Col span={21}>
             <h2>
               <LeftOutlined onClick={handleBack} />{" "}
-              <span style={{ color: "#1ac1cb" }}>Chapters</span>
+              <span>Chapters</span>
             </h2>
           </Col>
           <Col span={3}>
@@ -273,7 +273,7 @@ export default function Chapters() {
                         <div>
                           <h5
                             style={{
-                              color: "rgb(26 193 192)",
+                              color: "#FFD700",
                               marginBottom: 0,
                             }}
                           >
