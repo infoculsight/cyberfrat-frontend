@@ -23,7 +23,6 @@ export default function Chapters() {
   const [balck_theme, set_balck_theme] = useState(true);
   const [full_screen, set_full_screen] = useState(false);
   const [last_chapter, set_last_chapter] = useState(0);
-
   // Single Progress
   const [single_progress, set_single_progress] = useState(0);
 
@@ -44,6 +43,8 @@ export default function Chapters() {
       if (newWindow) newWindow.focus();
     }
   };
+
+
   const fetchEnabledChaptersNew = useCallback(async () => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("course_id", atob(course_id));
@@ -93,7 +94,6 @@ export default function Chapters() {
     const res = await UPDATE_CURRENT_CHAPTER(FORM_DATA);
     return res?.data?.status || false;
   };
-
 
 
   const fetchEnabledChapters = useCallback(async () => {
