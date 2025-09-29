@@ -13,7 +13,7 @@ const Login = () => {
                 </div>
                 <div className="login-form" style={{paddingBottom:"50px"}}>
                     <img alt="logo" src={Logo} width={350} style={{margin:"15px"}} />
-                    <h2 style={{ marginBottom: "15px", fontSize:"30px" }}>Welcome to <span>CyberFrat</span></h2><br/>
+                    <h2 style={{ marginBottom: "15px", fontSize:"30px" }}>Welcome to CyberFrat</h2><br/>
 
                     <h4 >Access your account securely and take control of your cybersecurity journey. Log in to stay connected with your learning, tools, and resources, all in one place. Your safety and privacy are our top priorities.</h4><br></br>
 
