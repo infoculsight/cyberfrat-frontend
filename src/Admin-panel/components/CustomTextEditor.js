@@ -182,7 +182,6 @@ const CustomRichTextEditor = ({ value, onChange, editorLabel }) => {
       style={{
         //marginBottom: "30px",
         borderRadius: 12,
-        boxShadow: "0 4px 8px rgba(255, 215, 0, 0.5)"
       }}
     >
       <Space style={{ marginBottom: 12 }}>
@@ -226,7 +225,7 @@ const CustomRichTextEditor = ({ value, onChange, editorLabel }) => {
         onPaste={sanitizePaste}
         style={{
           minHeight: 200,
-           border: "1px solid #FFD700",
+          border: "1px solid gray",
           padding: 12,
           maxHeight:300,
           overflow:"auto",
