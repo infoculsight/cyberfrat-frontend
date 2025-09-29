@@ -13,7 +13,7 @@ export default function Callback() {
       if (user) {
           const decoded = jwtDecode(user.access_token);
           const roles = decoded?.resource_access?.["LMS_FRONTEND"]?.roles || [];
-          if (roles.includes("learner") && !roles.includes("portal_admin")) {
+          if (roles.includes("learner")) {
             const formData = new FormData();
             GET_LAST_LOGIN(formData);
              window.location.href = "/";

@@ -108,8 +108,8 @@ const MasterTemplate = () => {
             </div>
 
             <Menu
-            style={{marginTop:"40px"}}
-             className="gold-menu"
+              style={{marginTop:"40px"}}
+              className="gold-menu"
               mode="inline"
               selectedKeys={selectedKeys}
               openKeys={openKeys}
