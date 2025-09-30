@@ -12,7 +12,7 @@ export default function Callback() {
       .then((user) => {   
       if (user) {
           const decoded = jwtDecode(user.access_token);
-          const roles = decoded?.resource_access?.["LMS_FRONTEND"]?.roles || [];
+          const roles = decoded?.resource_access?.["GOLD_FRONTEND"]?.roles || [];
           if (roles.includes("learner")) {
             const formData = new FormData();
             GET_LAST_LOGIN(formData);
