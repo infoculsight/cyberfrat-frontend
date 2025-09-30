@@ -9,7 +9,7 @@ export default function Callback() {
 
   useEffect(() => {
     signinRedirectCallback()
-      .then((user) => {
+      .then((user) => {   
       if (user) {
           const decoded = jwtDecode(user.access_token);
           const roles = decoded?.resource_access?.["LMS_FRONTEND"]?.roles || [];
@@ -33,5 +33,4 @@ export default function Callback() {
 
   return <div><CulsightPageLoader /></div>;
 }
-
 
