@@ -143,11 +143,13 @@ function LmsLearnersGroup() {
 
 
             <Card>
-                <h2 style={{color:"#FFC93F"}}>Learners Group
+                <h2>Learners Group
 
                     <Button
                         type="primary"
                         size='large'
+                        color='green'
+                        variant='solid'
                         style={{ marginLeft: "10px", float: "right" }}
                         onClick={showModal}
                     >

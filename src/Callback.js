@@ -3,7 +3,7 @@ import  { useEffect } from 'react';
 import { signinRedirectCallback, login} from './authService';
 import CulsightPageLoader from './Admin-panel/components/CulsightPageLoader';
 import { jwtDecode } from 'jwt-decode';
-import { GET_LAST_LOGIN } from './User-panel/apis/apis';
+import { GET_LAST_LOGIN } from './Admin-panel/apis/apis';
 
 export default function Callback() {
 
@@ -13,7 +13,7 @@ export default function Callback() {
       if (user) {
           const decoded = jwtDecode(user.access_token);
           const roles = decoded?.resource_access?.["LMS_FRONTEND"]?.roles || [];
-          if (roles.includes("learner") && !roles.includes("portal_admin")) {
+          if (roles.includes("portal_admin")) {
             const formData = new FormData();
             GET_LAST_LOGIN(formData);
              window.location.href = "/";
