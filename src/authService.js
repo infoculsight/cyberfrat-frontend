@@ -12,7 +12,6 @@ const config = {
   silent_redirect_uri: window.location.origin + '/silent-renew.html',
   automaticSilentRenew: true,
   accessTokenExpiringNotificationTime: 60,
-  userStore: new WebStorageStateStore({ store: window.localStorage }),  // session persistence
 };
 
 const userManager = new UserManager(config);
