@@ -7,12 +7,12 @@ const config = {
   client_id: 'LMS_FRONTEND',       // Keycloak client id
   redirect_uri: window.location.origin + '/callback',  // redirect URI jahan Keycloak redirect karega
   response_type: 'code',
-  scope: 'openid profile email',     // jo scopes chahiye
+  scope: 'openid profile email',     
   post_logout_redirect_uri: window.location.origin + '/callback',
   silent_redirect_uri: window.location.origin + '/silent-renew.html',
   automaticSilentRenew: true,
   accessTokenExpiringNotificationTime: 60,
-  userStore: new WebStorageStateStore({ store: window.localStorage }),  // session persistence
+  userStore: new WebStorageStateStore({ store: window.localStorage }), 
 };
 
 const userManager = new UserManager(config);
