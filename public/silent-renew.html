@@ -1,0 +1,15 @@
+<!-- public/silent-renew.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Silent Renew</title>
+  <!-- Load oidc-client script (this works if you're using it via CDN or bundled in your build tool) -->
+  <script src="https://unpkg.com/oidc-client@1.11.5/lib/oidc-client.min.js"></script>
+</head>
+<body>
+  <script>
+    new Oidc.UserManager().signinSilentCallback();
+  </script>
+</body>
+</html>
