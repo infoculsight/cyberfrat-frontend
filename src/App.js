@@ -36,7 +36,9 @@ function App() {
   if (checkingAuth) return null; // or a loader
 
   return (
-     <ConfigProvider theme={{ algorithm: balck_theme ? theme.darkAlgorithm :  theme.defaultAlgorithm }}>
+     <ConfigProvider theme={{ algorithm: balck_theme ? theme.darkAlgorithm :  theme.defaultAlgorithm , token: {
+      colorPrimary: '#e9c70ada',
+          } }}>
       <AntdApp>
         <Routes>
           <Route path="/callback" element={<Callback />} />

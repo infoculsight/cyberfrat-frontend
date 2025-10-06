@@ -1,6 +1,6 @@
 import React from "react";
 import "../assests/Login.css"
-import Logo from "../assests/CF-PPT-1.png"
+import Logo from "../assests/CFGold_Logo.png"
 import { login } from "../../authService";
 import { Button } from "antd";
 const Login = () => {
