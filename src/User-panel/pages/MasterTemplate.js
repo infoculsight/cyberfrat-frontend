@@ -129,7 +129,7 @@ const MasterTemplate = () => {
                 {
                   key: "3",
                   icon: <AccountBookOutlined />,
-                  label: "Package",
+                  label: "Packages",
                 },
                 // {
                 //   key: "4",
