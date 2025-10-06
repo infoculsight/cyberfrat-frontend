@@ -1,5 +1,5 @@
-import {  Card, Progress, Tag } from "antd";
-// import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import {  Card, Progress, Tag ,Button} from "antd";
+ import {DownloadOutlined, HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
 export default function CourseBox(props) {
@@ -7,46 +7,6 @@ export default function CourseBox(props) {
   // const { notification } = App.useApp();
 
 
-  // const initialWishlistState = localStorage.getItem(`wishlist_${props.id}`);
-  // const [isWishlisted, setIsWishlisted] = useState(
-  //   initialWishlistState !== null ? JSON.parse(initialWishlistState) : (props.in_wishlist || false)
-  // );
-
-//   const handleWishlist = async () => {
-//   try {
-//     const FORM_DATA = new FormData();
-//     FORM_DATA.append("course_id", atob(props.id));
-//     const API_CALL = await ADD_COURSE_TO_WISHLIST(FORM_DATA);
-
-//     if (API_CALL?.data?.status) {
-//       const backendMessage = API_CALL.data.message || "Wishlist updated successfully.";
-//       notification.success({
-//         message: "Successful",
-//         description: backendMessage,
-//         placement: "topRight",
-//       });
-
-//       const newWishlistStatus = !isWishlisted;
-//       setIsWishlisted(newWishlistStatus);
-//       localStorage.setItem(`wishlist_${props.id}`, JSON.stringify(newWishlistStatus));
-
-//       message.success(backendMessage);
-//     } else {
-//       const errorMsg = API_CALL?.data?.message || `Could not update wishlist for ${props.course_title}.`;
-//       notification.error({
-//         message: "Failed",
-//         description: errorMsg,
-//         placement: "topRight",
-//       });
-//     }
-//   } catch (error) {
-//     notification.error({
-//       message: "Error",
-//       description: "Something went wrong while updating wishlist.",
-//       placement: "topRight",
-//     });
-//   } 
-// };
 
   return (
     <div style={{ position: "relative" }}>
@@ -112,6 +72,16 @@ export default function CourseBox(props) {
                 >
                   {isWishlisted ? <HeartFilled /> : <HeartOutlined />}
                 </span> */}
+                  <Button
+                variant="solid"
+                color="green"
+                size="small"
+                //</div>disabled={!props.certificate}
+                //onClick={handleDownload}
+              > 
+              
+                Certificate <DownloadOutlined />
+              </Button>
               </div>
             }
           />
