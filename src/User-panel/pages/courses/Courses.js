@@ -151,6 +151,7 @@ function Courses() {
                           course_image={items?.thumbnail}
                           progress={items.progress}
                           course_ribbon={items.ribbon}
+                          certificate={items?.certificate}
                         />
                       </Col>
                     ))
