@@ -1,6 +1,6 @@
 // src/authService.js
 
-import { UserManager, WebStorageStateStore } from 'oidc-client';
+import { UserManager } from 'oidc-client';
 
 const config = {
   authority: 'https://auth.cyberfrat.com/realms/CYBERFRAT', // Keycloak server URL + realm
