@@ -277,11 +277,11 @@ const handleChangeVideo = async (info) => {
                     return Upload.LIST_IGNORE; //  stop karega
                   }
 
-                  const maxSizeInBytes = 1 * 1024 * 1024 * 1024; // 1 GB
+                  const maxSizeInBytes = 3 * 1024 * 1024 * 1024; // 1 GB
                   if (file.size > maxSizeInBytes) {
                      notification.error({
                       message: "Failed",
-                      description: "Video file must be smaller than or equal to 1 GB.",
+                      description: "Video file must be smaller than or equal to 3 GB.",
                     });
                     return Upload.LIST_IGNORE; //  stop karega
                   }
