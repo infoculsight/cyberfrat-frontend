@@ -59,11 +59,11 @@ const QuizQuestion = (props) => {
       if (LIST_API_RESPONSE?.data?.status) {
         const response_data = LIST_API_RESPONSE?.data?.data;
         set_current_page(LIST_API_RESPONSE?.data?.current_page);
-        set_total_pages(LIST_API_RESPONSE?.data?.total_pages);
+        set_total_pages(LIST_API_RESPONSE?.data?.total_questions);
         setItems(response_data);
-        if (response_data.length > 0) {
-          setActivePanelKey(response_data[response_data.length - 1]?.id);
-        }
+        // if (response_data.length > 0) {
+        //   setActivePanelKey(response_data[response_data.length - 1]?.id);
+        // }
         set_page_loader(false);
       }
     };
@@ -80,11 +80,11 @@ const QuizQuestion = (props) => {
     if (LIST_API_RESPONSE?.data?.status) {
       const response_data = LIST_API_RESPONSE?.data?.data;
       set_current_page(LIST_API_RESPONSE?.data?.current_page);
-      set_total_pages(LIST_API_RESPONSE?.data?.total_pages);
+      set_total_pages(LIST_API_RESPONSE?.data?.total_questions);
       setItems(response_data);
-      if (response_data.length > 0) {
-        setActivePanelKey(response_data[response_data.length - 1]?.id);
-      }
+      // if (response_data.length > 0) {
+      //   setActivePanelKey(response_data[response_data.length - 1]?.id);
+      // }
       set_page_loader(false);
     }
   };
@@ -142,9 +142,9 @@ const QuizQuestion = (props) => {
             set_current_page(LIST_API_RESPONSE?.data?.current_page);
             set_total_pages(LIST_API_RESPONSE?.data?.total_pages);
             setItems(response_data);
-            if (response_data.length > 0) {
-              setActivePanelKey(response_data[response_data.length - 1]?.id);
-            }
+            // if (response_data.length > 0) {
+            //   setActivePanelKey(response_data[response_data.length - 1]?.id);
+            // }
           }
         } catch (err) {
           console.error("API Error:", err);
@@ -219,7 +219,7 @@ const QuizQuestion = (props) => {
               >
                 {items.map((item, index) => (
                   <Panel
-                    header={`${index + 1}. ${item?.topic}`}
+                    header={`${current_page}.${index + 1} ${item?.topic}`}
                     key={item?.id}
                     extra={
                       items.length > 1 && (
