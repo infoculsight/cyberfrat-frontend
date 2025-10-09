@@ -20,7 +20,7 @@ function App() {
       if (use) {
         setUser(use);
         const decoded = jwtDecode(use?.access_token);
-        const panelRoles = decoded?.resource_access?.["GOLD_FRONTEND"]?.roles || [];
+        const panelRoles = decoded?.resource_access?.["LMS_FRONTEND"]?.roles || [];
         const local_theme = localStorage.getItem("dark_theme")
          if (panelRoles.includes('learner')) {
           set_user_role('learner');
