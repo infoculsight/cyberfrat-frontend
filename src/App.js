@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { ConfigProvider, App as AntdApp, theme } from 'antd';
 import { Routes, Route } from "react-router-dom";
-import Login from "./Admin-panel/pages/Login";
+import Login from "./Admin-panel/pages/login/Login";
 import NotFound from "./Admin-panel/pages/NotFound";
 import { getUser, logout } from './authService';
 import Callback from "./Callback";
 import './App.css'
 import AdminRoutes from "./Routes/AdminRoutes";
 import { jwtDecode } from "jwt-decode";
+import ForgetPassword from "./Admin-panel/pages/login/ForgetPassword";
 
 
 function App() {
@@ -53,7 +54,10 @@ function App() {
               }
             />
           ) : (
-            <Route path="/" element={<Login />} />
+            <>
+             <Route path="/" element={<Login />} /> 
+            <Route path="/forget-password" element={<ForgetPassword />} />
+            </>
           )}
 
           <Route path="*" element={<NotFound />} />

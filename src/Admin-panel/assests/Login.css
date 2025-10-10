@@ -11,20 +11,23 @@
     background-blend-mode: overlay; */
 }
 .logo {
-    max-width: 285px;
+    max-width: 330px;
     display: block;
     margin: 0 auto;
-    height: 225px;
-    margin-top: -65px;
+    margin-top: 100px;
+    margin-bottom: 30px;
+
 }
-.password-eye{
-    position: absolute;
-    right: 8px;
-    top: 12px;
-    z-index: 1;
-    cursor: pointer;
-    color: #fff;
+.password-eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #888;
 }
+
 .logo img{
     max-width: 100%;
 
