@@ -1,7 +1,9 @@
-import { Card, Progress, Tag, Button } from "antd";
+import { Card, Progress, Tag, Button,Typography } from "antd";
 import { DownloadOutlined, HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
+
+const { Text } = Typography;
 export default function CourseBox(props) {
   const Navigate = useNavigate();
   // const { notification } = App.useApp();
@@ -72,7 +74,17 @@ export default function CourseBox(props) {
                 alignItems: "center",
               }}
             >
-              <span>{props.course_title}</span>
+              <Text
+            ellipsis={{ tooltip: props.course_title }}
+            style={{
+              fontSize: 14,
+              maxWidth: "calc(100% - 40px)", // adjust based on checkbox width
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+              <span>{props.course_title}</span></Text>
 
               <Button
                 type="primary"

@@ -1,6 +1,7 @@
-import { Card } from "antd";
+import { Card,Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 
+const { Text } = Typography;
 export default function PackageBox(props) {
  
    const Navigate = useNavigate();
@@ -60,7 +61,16 @@ export default function PackageBox(props) {
         //   </Popover>,
         // ]}
       >
-        <Card.Meta title={props.package_name}  description={props.package_tag_line}/>
+        <Card.Meta title=     <Text
+            ellipsis={{ tooltip: props.course_title }}
+            style={{
+              fontSize: 14,
+              maxWidth: "calc(100% - 40px)", // adjust based on checkbox width
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >{props.package_name}</Text>  description={props.package_tag_line}/>
       </Card>
     </div>
   );
