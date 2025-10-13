@@ -73,8 +73,11 @@ const LiveTestQuestionOptions = (props) => {
     FORM.append("option_details", formattedAnswer);
 
     try {
-      await ADD_LIVE_TEST_ANSWERS(FORM);
-    } catch (error) {
+      const API_RESPONSE = await ADD_LIVE_TEST_ANSWERS(FORM);
+      if (API_RESPONSE?.data?.status) {
+        props.onAnswerSubmitted();
+      }
+    }  catch (error) {
       console.error("Answer submit failed:", error);
     }
   };

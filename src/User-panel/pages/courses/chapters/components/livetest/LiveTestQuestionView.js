@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Popconfirm } from "antd";
+import { Button, Card, Col, Popconfirm, Row, Tag } from "antd";
 import {
   ADD_LIVE_TEST_ANSWERS,
   LIST_LIVE_TEST_QUESTION,
@@ -8,7 +8,7 @@ import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 import LiveTestQuestionOptions from "./LiveTestQuestionOptions";
 
 const LiveTestQuestionView = (props) => {
-  const { chapter_id , time_spend, set_submit_true} = props;
+  const { chapter_id, time_spend, set_submit_true } = props;
   const chapter_id_new = atob(chapter_id);
   const [items, setItems] = useState([]);
   const [question_id, set_question_id] = useState('');
@@ -18,6 +18,7 @@ const LiveTestQuestionView = (props) => {
   const [current_page, set_current_page] = useState(1);
   const [total_questions, set_total_questions] = useState(0);
   const [submit_test, set_submit_test] = useState(false);
+  const [attempted_questions, set_attempted_questions] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,9 +38,9 @@ const LiveTestQuestionView = (props) => {
 
         const options = response_data?.data[0]?.option_details
           ? JSON.parse(response_data?.data[0]?.option_details).map((opt) => ({
-              ...opt,
-              selected: opt.selected ?? false,
-            }))
+            ...opt,
+            selected: opt.selected ?? false,
+          }))
           : [];
 
         set_option_details(options);
@@ -57,6 +58,7 @@ const LiveTestQuestionView = (props) => {
     try {
       const API_RESPONSE = await ADD_LIVE_TEST_ANSWERS(FORM_DATA);
       if (API_RESPONSE?.data?.status) {
+        set_attempted_questions((prev) => [...new Set([...prev, current_page])]);
         set_submit_test(true);
         set_current_page(1);
         set_submit_true(true)
@@ -66,7 +68,7 @@ const LiveTestQuestionView = (props) => {
     }
   };
 
-  
+
 
   return (
     <div style={{ marginTop: "20px" }}>
@@ -91,13 +93,48 @@ const LiveTestQuestionView = (props) => {
               <Card>
                 <h2>{`Ques ${current_page}. ${items?.question_title}`}</h2>
 
-                <LiveTestQuestionOptions
-                  chapter_id={chapter_id_new}
-                  question_id={question_id}
-                  options={option_details}
-                  setOptions={set_option_details}
-                  optionChoice={question_type}
-                />
+                <Row>
+                  <Col span={18}>
+
+                    <LiveTestQuestionOptions
+                      chapter_id={chapter_id_new}
+                      question_id={question_id}
+                      options={option_details}
+                      setOptions={set_option_details}
+                      optionChoice={question_type}
+                      onAnswerSubmitted={() =>
+                        set_attempted_questions((prev) => [...new Set([...prev, current_page])])
+                      }
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Card style={{ height: "100%", width: "100%", marginLeft: "5px" }}>
+                      {Array.from({ length: total_questions || 0 }).map((_, index) => (
+                        <Tag
+                          key={index}
+                          onClick={() => set_current_page(index + 1)}
+                          // color={current_page === index + 1 ? "blue" : "default"}
+                          color={
+                            current_page === index + 1
+                              ? "blue"
+                              : attempted_questions.includes(index + 1)
+                                ? "green"
+                                : "default"
+                          }
+                          style={{
+                            cursor: "pointer",
+                            userSelect: "none",
+                            margin: "4px",
+                          }}
+                        >
+                          Q{index + 1}
+                        </Tag>
+                      ))}
+                    </Card>
+
+
+                  </Col>
+                </Row>
 
                 <div
                   style={{
@@ -130,25 +167,25 @@ const LiveTestQuestionView = (props) => {
                       onClick={() =>
                         set_current_page(
                           parseInt(current_page) + 1 !== current_page &&
-                            parseInt(current_page) + 1
+                          parseInt(current_page) + 1
                         )
                       }
                     >
                       Next
                     </Button>
                   ) : (
-                   <Popconfirm
-                    title="Submit Live Test"
-                    description="Are you sure want to submit live test?"
-                    onConfirm={submit_question}
-                    // onCancel={cancel}
-                    okText="Yes"
-                    
-                    cancelText="No"
-                  >
-                    <Button  variant="solid"
-                      color="green">Submit</Button>
-                  </Popconfirm>
+                    <Popconfirm
+                      title="Submit Live Test"
+                      description="Are you sure want to submit live test?"
+                      onConfirm={submit_question}
+                      // onCancel={cancel}
+                      okText="Yes"
+
+                      cancelText="No"
+                    >
+                      <Button variant="solid"
+                        color="green">Submit</Button>
+                    </Popconfirm>
                   )}
                 </div>
               </Card>

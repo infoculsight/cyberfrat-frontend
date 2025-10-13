@@ -1,6 +1,7 @@
-import { Card, Col, Row, Button, List, Progress, App } from "antd";
+import { Card, Col, Row, Button, List, Progress, App, Skeleton, Divider } from "antd";
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import InfiniteScroll from "react-infinite-scroll-component";
 import {
   LIST_ENABLED_CHAPTER,
   UPDATE_CURRENT_CHAPTER,
@@ -176,7 +177,7 @@ export default function Chapters() {
         atob(course_id)
       );
       if (success) {
-      fetchEnabledChaptersNew()
+        fetchEnabledChaptersNew()
       }
     } else {
       // next chapter
@@ -186,7 +187,7 @@ export default function Chapters() {
         atob(course_id)
       );
       if (success) {
-         fetchEnabledChaptersNew()
+        fetchEnabledChaptersNew()
       }
     }
   };
@@ -197,17 +198,17 @@ export default function Chapters() {
       style={
         full_screen
           ? {
-              position: "fixed",
-              width: "100%",
-              height: "100%",
-              zIndex: 1000,
-              left: 0,
-              top: 0,
-              backgroundColor: balck_theme ? "rgb(46 46 46)" : "#fff",
-              margin: 0,
-              padding: 0,
-              overflow: "auto",
-            }
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            zIndex: 1000,
+            left: 0,
+            top: 0,
+            backgroundColor: balck_theme ? "rgb(46 46 46)" : "#fff",
+            margin: 0,
+            padding: 0,
+            overflow: "auto",
+          }
           : {}
       }
     >
@@ -236,7 +237,7 @@ export default function Chapters() {
         ) : (
           <Row gutter={10}>
             {/* LEFT LIST */}
-            <Col xs={24} sm={24} md={24} lg={5}>
+            {/* <Col xs={24} sm={24} md={24} lg={5}>
               <List
                 header={<div>Chapter List</div>}
                 bordered
@@ -314,6 +315,111 @@ export default function Chapters() {
                   </List.Item>
                 )}
               />
+            </Col> */}
+
+            <Col xs={24} sm={24} md={24} lg={5}>
+              <div
+                id="scrollableDiv"
+                style={{
+                  height: "70vh",
+                  overflow: "auto",
+                  padding: "0 8px",
+                  borderRadius: "8px",
+                }}
+              >
+                <InfiniteScroll
+                  dataLength={enabledChapters?.length || 0}
+                  hasMore={false}
+                  loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+                  scrollableTarget="scrollableDiv"
+                >
+                  <List
+                    header={<div>Chapter List</div>}
+                    bordered
+                    itemLayout="horizontal"
+                    dataSource={enabledChapters}
+                    renderItem={(item, index) => (
+                      <List.Item
+                        key={item.id}
+                        style={
+                          currentChapter?.id === item?.id
+                            ? {
+                              cursor: "pointer",
+                              backgroundColor: balck_theme
+                                ? "rgb(46 46 46)"
+                                : "rgb(208 208 208)",
+                              padding: "12px",
+                            }
+                            : {
+                              padding: "12px",
+                              cursor:
+                                index === 0 || item.get_tracking_chapter_data
+                                  ? "pointer"
+                                  : "not-allowed",
+                              opacity:
+                                index === 0 || item.get_tracking_chapter_data ? 1 : 0.5,
+                            }
+                        }
+                        onClick={() => handleChapterClick(item, index)}
+                      >
+                        <List.Item.Meta
+                          description={
+                            <div>
+                              <h5
+                                style={{
+                                  color: "#FFD700",
+                                  marginBottom: 0,
+                                }}
+                              >
+                                {item.title}
+                              </h5>
+                              {item?.video_id ? (
+                                <>
+                                  {currentChapter?.id === item?.id ? (
+                                    <Progress
+                                      percent={single_progress}
+                                      status="active"
+                                      strokeColor="#FFD700"
+                                    />
+                                  ) : (
+                                    <Progress
+                                      percent={item?.progress}
+                                      status="active"
+                                      strokeColor="#FFD700"
+                                    />
+                                  )}
+                                  <span style={{ fontSize: "10px" }}>Video</span>
+                                  {item.scorm && (
+                                    <span style={{ fontSize: "10px" }}>, PDF</span>
+                                  )}
+                                  {item.quiz_available && (
+                                    <span style={{ fontSize: "10px" }}>, Quiz</span>
+                                  )}
+                                  {item.test_available && (
+                                    <span style={{ fontSize: "10px" }}>, Live Test</span>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  {item.quiz_available && (
+                                    <span style={{ fontSize: "10px" }}>Quiz</span>
+                                  )}
+                                  {item.scorm && (
+                                    <span style={{ fontSize: "10px" }}>, PDF</span>
+                                  )}
+                                  {item.test_available && (
+                                    <span style={{ fontSize: "10px" }}>, Live Test</span>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          }
+                        />
+                      </List.Item>
+                    )}
+                  />
+                </InfiniteScroll>
+              </div>
             </Col>
 
             {/* RIGHT VIEW */}
@@ -377,7 +483,7 @@ export default function Chapters() {
                                 onClick={() =>
                                   openFullscreenWindow(
                                     "/live-test/" +
-                                      btoa(currentChapter.id)
+                                    btoa(currentChapter.id)
                                   )
                                 }
                               >
@@ -386,11 +492,11 @@ export default function Chapters() {
                             )}
                           </>
                         )}
-                    
+
                         {single_progress >= 90 || !currentChapter.video_id ? (
                           <>
                             {currentChapter?.quiz_available ||
-                            currentChapter?.quiz_submitted ? (
+                              currentChapter?.quiz_submitted ? (
                               currentChapter?.quiz_submitted ? (
                                 <Button
                                   type="primary"
@@ -411,7 +517,7 @@ export default function Chapters() {
                                   onClick={() =>
                                     openFullscreenWindow(
                                       "/quiz-test/" +
-                                        btoa(currentChapter.id)
+                                      btoa(currentChapter.id)
                                     )
                                   }
                                 >
@@ -426,7 +532,7 @@ export default function Chapters() {
                   </Row><br></br>
 
                   <SectionVideos
-                    set_next_view={() => {}}
+                    set_next_view={() => { }}
                     chapter_id={btoa(currentChapter.id)}
                     single_progress={single_progress}
                     video_row={currentChapter.video_row}

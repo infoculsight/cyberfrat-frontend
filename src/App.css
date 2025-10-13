@@ -214,3 +214,32 @@ body {
   background-color: #FFD700 !important; /* Gold line */
 }
 
+
+
+/* Scrollbar Styling for Chapter List  */
+#scrollableDiv::-webkit-scrollbar {
+  width: 8px;
+}
+
+#scrollableDiv::-webkit-scrollbar-track {
+  background: #1f1f1f; 
+  border-radius: 4px;
+}
+
+#scrollableDiv::-webkit-scrollbar-thumb {
+  background-color: #555; 
+  border-radius: 4px;
+  border: 1px solid #333; 
+}
+
+#scrollableDiv::-webkit-scrollbar-thumb:hover {
+  background-color: #777; 
+}
+
+
+#scrollableDiv {
+  scrollbar-width: thin;
+  scrollbar-color: #555 #1f1f1f;
+}
+
+

@@ -142,6 +142,7 @@ export default function QuizTestDetails({
                    <Col span={24}>
                  <p style={{textAlign:"center", margin:"30px"}}>You can attempt this test a maximum of {number_of_retake} times. Currently, you are on your second attempt. The time limit for the test is {time_limit} minutes, and you must score at least {passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
                 </Col>
+              
                 </>}
              
               </Row>

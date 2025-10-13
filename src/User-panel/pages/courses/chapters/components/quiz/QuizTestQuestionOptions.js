@@ -71,9 +71,11 @@ const QuizTestQuestionOptions = (props) => {
     FORM.append("chapter_id", chapter_id);
     FORM.append("question_id", question_id);
     FORM.append("option_details", formattedAnswer);
-
     try {
-      await ADD_QUIZ_ANSWER(FORM);
+      const API_RESPONSE = await ADD_QUIZ_ANSWER(FORM);
+      if (API_RESPONSE?.data?.status) {
+        props.onAnswerSubmitted();
+      }
     } catch (error) {
       console.error("Answer submit failed:", error);
     }

@@ -94,7 +94,7 @@ export default function QuizTest() {
     <div
       className="lms-body"
       style={{
-        maxWidth: "800px",
+        maxWidth: "1400px",
         margin: "0 auto",
         marginTop: "60px",
       }}

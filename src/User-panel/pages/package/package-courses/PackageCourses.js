@@ -126,6 +126,7 @@ function PackageCourses() {
                           course_title={items?.title}
                           course_image={items?.thumbnail}
                           progress={items?.progress}
+                          certificate ={items?.certificate}
                         />
                       </Col>
                     ))

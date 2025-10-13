@@ -22,7 +22,7 @@ function App() {
         const decoded = jwtDecode(use?.access_token);
         const panelRoles = decoded?.resource_access?.["LMS_FRONTEND"]?.roles || [];
         const local_theme = localStorage.getItem("dark_theme")
-         if (panelRoles.includes('learner')) {
+        if (panelRoles.includes('learner')) {
           set_user_role('learner');
           parseInt(local_theme) === 0 ? set_balck_theme(false) : set_balck_theme(true)
         } else {
@@ -36,9 +36,12 @@ function App() {
   if (checkingAuth) return null; // or a loader
 
   return (
-     <ConfigProvider theme={{ algorithm: balck_theme ? theme.darkAlgorithm :  theme.defaultAlgorithm , token: {
-      colorPrimary: '#e9c70ada',
-          } }}>
+    <ConfigProvider theme={{
+      algorithm: balck_theme ? theme.darkAlgorithm : theme.defaultAlgorithm, 
+      token: {
+        colorPrimary: '#e9c70ada',
+      }
+    }}>
       <AntdApp>
         <Routes>
           <Route path="/callback" element={<Callback />} />
@@ -47,7 +50,7 @@ function App() {
             <Route
               path="/*"
               element={
-               user_role === 'learner' ? (
+                user_role === 'learner' ? (
                   <UsersRoutes />
                 ) : (
                   <NotFound />

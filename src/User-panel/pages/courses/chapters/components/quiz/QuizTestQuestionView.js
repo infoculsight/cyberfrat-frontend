@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Popconfirm } from "antd";
+import { Button, Card, Col, Popconfirm, Row, Tag } from "antd";
 import {
   ADD_QUIZ_ANSWER,
   List_QUIZ_QUESTION,
@@ -8,9 +8,10 @@ import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 import QuizTestQuestionOptions from "./QuizTestQuestionOptions";
 
 const QuizTestQuestionView = (props) => {
-  const { chapter_id , time_spend, set_submit_true} = props;
+  const { chapter_id, time_spend, set_submit_true } = props;
   const chapter_id_new = atob(chapter_id);
   const [items, setItems] = useState([]);
+
   const [question_id, set_question_id] = useState('');
   const [page_loader, set_page_loader] = useState(true);
   const [question_type, set_question_type] = useState("single_choice");
@@ -18,6 +19,10 @@ const QuizTestQuestionView = (props) => {
   const [current_page, set_current_page] = useState(1);
   const [total_questions, set_total_questions] = useState(0);
   const [test_submitted, set_test_submitted] = useState(false);
+  const [attempted_questions, set_attempted_questions] = useState([]);
+
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,17 +42,17 @@ const QuizTestQuestionView = (props) => {
 
         const options = response_data?.data[0]?.option_details
           ? JSON.parse(response_data?.data[0]?.option_details).map((opt) => ({
-              ...opt,
-              selected: opt.selected ?? false,
-            }))
+            ...opt,
+            selected: opt.selected ?? false,
+          }))
           : [];
 
         set_option_details(options);
         set_page_loader(false);
       }
     };
-      fetchData();
-    
+    fetchData();
+
   }, [current_page, props.quiz_test_id, props.chapter_id]);
 
   const submit_question = async () => {
@@ -58,6 +63,7 @@ const QuizTestQuestionView = (props) => {
     try {
       const API_RESPONSE = await ADD_QUIZ_ANSWER(FORM_DATA);
       if (API_RESPONSE?.data?.status) {
+        set_attempted_questions((prev) => [...new Set([...prev, current_page])]);
         set_test_submitted(true);
         set_current_page(1);
         set_submit_true(true)
@@ -67,7 +73,9 @@ const QuizTestQuestionView = (props) => {
     }
   };
 
-  
+
+
+
 
   return (
     <div style={{ marginTop: "20px" }}>
@@ -85,27 +93,64 @@ const QuizTestQuestionView = (props) => {
                 fontSize: "42px",
               }}
             >
-             Quiz Test submitted <br></br>
+              Quiz Test submitted <br></br>
               <Button type="primary" size="small" onClick={() => window.close()}>Close</Button>
             </h3>
           ) : (
             <>
               <Card>
                 <h2>{`Ques ${current_page}. ${items?.question_text}`}</h2>
+                <Row>
+                  <Col span={18}>
+                    <QuizTestQuestionOptions
+                      chapter_id={chapter_id_new}
+                      question_id={question_id}
+                      options={option_details}
+                      setOptions={set_option_details}
+                      optionChoice={question_type}
+                      onAnswerSubmitted={() =>
+                        set_attempted_questions((prev) => [...new Set([...prev, current_page])])
+                      }
+                    />
+                  </Col>
+                  <Col span={6}>
 
-                <QuizTestQuestionOptions
-                  chapter_id={chapter_id_new}
-                  question_id={question_id}
-                  options={option_details}
-                  setOptions={set_option_details}
-                  optionChoice={question_type}
-                />
+                    <Card style={{ height: "100%", width: "100%", marginLeft: "5px" }}>
+                      {Array.from({ length: total_questions || 0 }).map((_, index) => (
+                        <Tag
+                          key={index}
+                          onClick={() => set_current_page(index + 1)}
+                          // color={current_page === index + 1 ? "blue" : "default"}
+                          color={
+                            current_page === index + 1
+                              ? "blue"
+                              : attempted_questions.includes(index + 1)
+                                ? "green"
+                                : "default"
+                          }
+                          style={{
+                            cursor: "pointer",
+                            userSelect: "none",
+                            margin: "4px",
+                          }}
+                        >
+                          Q{index + 1}
+                        </Tag>
+                      ))}
+                    </Card>
+
+
+
+
+                  </Col>
+                </Row>
+
 
                 <div
                   style={{
                     display: "flex",
-                    justifyContent: "center",
                     marginTop: "15px",
+                    paddingLeft: "370px",
                     gap: "20px",
                   }}
                 >
@@ -131,26 +176,26 @@ const QuizTestQuestionView = (props) => {
                       color="orange"
                       onClick={() =>
                         set_current_page(
-                        parseInt(current_page) + 1 !== current_page &&
-                        parseInt(current_page) + 1
+                          parseInt(current_page) + 1 !== current_page &&
+                          parseInt(current_page) + 1
                         )
                       }
                     >
                       Next
                     </Button>
                   ) : (
-                   <Popconfirm
-                    title="Submit Quiz Test"
-                    description="Are you sure want to submit Quiz test?"
-                    onConfirm={submit_question}
-                    // onCancel={cancel}
-                    okText="Yes"
-                    
-                    cancelText="No"
-                  >
-                    <Button  variant="solid"
-                      color="green">Submit</Button>
-                  </Popconfirm>
+                    <Popconfirm
+                      title="Submit Quiz Test"
+                      description="Are you sure want to submit Quiz test?"
+                      onConfirm={submit_question}
+                      // onCancel={cancel}
+                      okText="Yes"
+
+                      cancelText="No"
+                    >
+                      <Button variant="solid"
+                        color="green">Submit</Button>
+                    </Popconfirm>
                   )}
                 </div>
               </Card>
