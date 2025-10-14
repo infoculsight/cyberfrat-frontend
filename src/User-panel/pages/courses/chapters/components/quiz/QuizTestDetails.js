@@ -22,6 +22,7 @@ export default function QuizTestDetails({
   const [remainingTime, setRemainingTime] = useState(null);
   const [expired, set_expired] = useState(false);
   const [submitted, set_submitted] = useState(false);
+  const [display_question,set_display_question] = useState("")
 
   useEffect(() => {
     const VIEW_API = async () => {
@@ -34,6 +35,7 @@ export default function QuizTestDetails({
         set_title(data?.title);
         set_quiz_title(data?.title);
         set_time_limit(data?.time_limit);
+        set_display_question(data?.display_question)
         if (!data?.expired && !data?.test_submitted) {
           set_quiz_test_id(data?.id);
         }
@@ -128,19 +130,20 @@ export default function QuizTestDetails({
                     <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
                       Number of retake :-{" "}
                     </span>
-                    {number_of_retake}
-                    <br />
+                    {number_of_retake} <br />
 
-                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Attempted :-{" "}
+                     <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                      Number of questions :-{" "}
                     </span>
-                    {current_attempt}
+                    {display_question}
+                    <br />
+                   
 
                   </div>
                 </Col>
                 {para_show && <>
                    <Col span={24}>
-                 <p style={{textAlign:"center", margin:"30px"}}>You can attempt this test a maximum of {number_of_retake} times. Currently, you are on your second attempt. The time limit for the test is {time_limit} minutes, and you must score at least {passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
+                 <p style={{textAlign:"center", margin:"30px"}}>You can attempt this test a maximum of {number_of_retake} times. Currently, you are on your {current_attempt} attempt. The time limit for the test is {time_limit} minutes, and you must score at least {passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
                 </Col>
               
                 </>}

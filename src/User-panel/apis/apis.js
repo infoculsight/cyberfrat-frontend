@@ -40,6 +40,8 @@ export const VIEW_COURSE = async (body) => {
   }
 };
 
+
+
 export const COURSE_LIST = async (body) => {
   try {
       const response = await Axios.post('course-list/', body);
@@ -68,6 +70,24 @@ export const LIST_WISHLIST_COURSES = async (body) => {
   }
 };
 
+export const ADD_COMMENT = async (body) => {
+  try {
+      const response = await Axios.post('add-comment/', body);
+      return response;
+  } catch (error) {
+      console.error(error);
+  }
+};
+
+
+export const LIST_COMMENT = async (body) => {
+  try {
+      const response = await Axios.post('list-comments/', body);
+      return response;
+  } catch (error) {
+      console.error(error);
+  }
+};
 
 
 //CHAPTER API
@@ -403,6 +423,15 @@ export const ADD_PACKAGE = async (body) => {
 export const LIST_PACKAGE = async (body) => {
     try {
         const response = await Axios.post('list-package/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const LIST_ALL_PACKAGE = async (body) => {
+    try {
+        const response = await Axios.post('list-all-package/', body);
         return response;
     } catch (error) {
         console.error(error);

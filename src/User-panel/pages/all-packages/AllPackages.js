@@ -1,12 +1,12 @@
 import { Card, Col, Input, Pagination, Row, Spin } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import PackageBox from "../../components/PackageBox";
-import { LIST_PACKAGE } from "../../apis/apis";
+import { LIST_ALL_PACKAGE } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import { LoadingOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 
-function Packages() {
+function AllPackages() {
   const [packages, set_packages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pagination_loader, set_pagination_loader] = useState(false);
@@ -19,7 +19,7 @@ function Packages() {
 
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
-    const API_CALL = await LIST_PACKAGE(FORM_DATA);
+    const API_CALL = await LIST_ALL_PACKAGE(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_packages(API_CALL.data?.data);
       set_total_packages(API_CALL.data?.total_packages);
@@ -27,7 +27,6 @@ function Packages() {
       set_total_pages(API_CALL?.data?.total_pages);
       setLoading(false);
     } else {
-      console.log("error");
       setLoading(false);
     }
   };
@@ -40,9 +39,8 @@ function Packages() {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", data);
-    FORM_DATA.append("token", localStorage.getItem("token"));
     FORM_DATA.append("name", search_query_name);
-    const API_CALL = await LIST_PACKAGE(FORM_DATA);
+    const API_CALL = await LIST_ALL_PACKAGE(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_packages(API_CALL.data?.data);
       set_current_page(API_CALL?.data?.current_page);
@@ -58,9 +56,8 @@ function Packages() {
         set_search_query_name(value);
         set_pagination_loader(true);
         const FORM_DATA = new FormData();
-        FORM_DATA.append("token", localStorage.getItem("token"));
         FORM_DATA.append("name", value);
-        const API_CALL = await LIST_PACKAGE(FORM_DATA);
+        const API_CALL = await LIST_ALL_PACKAGE(FORM_DATA);
         if (API_CALL?.data?.status) {
           set_packages(API_CALL.data?.data);
           set_current_page(API_CALL?.data?.current_page);
@@ -157,4 +154,4 @@ function Packages() {
   );
 }
 
-export default Packages;
+export default AllPackages;

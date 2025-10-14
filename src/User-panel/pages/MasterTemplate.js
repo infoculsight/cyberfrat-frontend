@@ -44,7 +44,9 @@ const MasterTemplate = () => {
     const pathToKey = {
       "/": { selected: "1" },
       "/courses": { selected: "2",open:"2" },
+      "/view-course":{selected:"2",open:"2"},
       "/packages": { selected: "3",open:"3" },
+      "/all-packages": {selected:"4",open:"4"},
       "/account": { selected: "7",oepn:"7" },
      
     };
@@ -68,6 +70,7 @@ const MasterTemplate = () => {
       1: "/",
       2: "courses",
       3: "packages",
+      4:"all-packages",
       7: "/account"
     };
 
@@ -129,7 +132,12 @@ const MasterTemplate = () => {
                 {
                   key: "3",
                   icon: <AccountBookOutlined />,
-                  label: "Packages",
+                  label: "My Packages",
+                },
+                {
+                  key: "4",
+                  icon: <AccountBookOutlined />,
+                  label: "All Packages",
                 },
                 // {
                 //   key: "4",

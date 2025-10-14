@@ -113,90 +113,91 @@ function Courses() {
         {loading ? (
           <CulsightPageLoader />
         ) : (
-      <Tabs
-  activeKey={activeTabKey}
-  onChange={onTabChange}
-  items={[
-    {
-      key: "1",
-      label: "All Courses",
-      children: (
-        <>
-          <Row gutter={[16, 16]} align="middle">
-            <Col xs={24} sm={24} md={18} lg={20}>
-              <Input
-                addonBefore={<span>Title</span>}
-                placeholder="Search by title"
-                onChange={handleInput}
-                size="large"
-                style={{ width: "100%" }}
-              />
-            </Col>
-          </Row>
-
-          {pagination_loader ? (
-            <div style={{ textAlign: "center", padding: "60px" }}>
-              <Spin indicator={<LoadingOutlined spin />} size="large" />
-            </div>
-          ) : (
-            <>
-              <div className="courses-card" style={{ marginTop: "20px" }}>
-                <Row gutter={[20, 30]}>
-                  {courses?.length > 0 ? (
-                    courses.map((items) => (
-                      <Col key={items?.id} lg={8} md={8} sm={12} xs={24}>
-                        <CourseBox
-                          id={btoa(items?.id)}
-                          course_title={items?.title}
-                          course_image={items?.thumbnail}
-                          progress={items.progress}
-                          course_ribbon={items.ribbon}
-                          certificate={items?.certificate}
+          <Tabs
+            activeKey={activeTabKey}
+            onChange={onTabChange}
+            items={[
+              {
+                key: "1",
+                label: "All Courses",
+                children: (
+                  <>
+                    <Row gutter={[16, 16]} align="middle">
+                      <Col xs={24} sm={24} md={18} lg={20}>
+                        <Input
+                          addonBefore={<span>Title</span>}
+                          placeholder="Search by title"
+                          onChange={handleInput}
+                          size="large"
+                          style={{ width: "100%" }}
                         />
                       </Col>
-                    ))
-                  ) : (
-                    <Col span={24}>
-                      <p
-                        style={{
-                          textAlign: "center",
-                          fontSize: "20px",
-                          color: "red",
-                          marginTop: "15px",
-                        }}
-                      >
-                        No Result
-                      </p>
-                    </Col>
-                  )}
-                </Row>
-              </div>
-              <div style={{ float: "right", marginTop: "20px" }}>
-                {total_pages > 0 && (
-                  <Pagination
-                    current={current_page}
-                    total={total_courses}
-                    onChange={pagination_on_change}
-                  />
-                )}
-              </div>
-            </>
-          )}
-        </>
-      ),
-    },
-    {
-      key: "3",
-      label: "In Progress",
-      children: <IncompleteCouse />,
-    },
-    {
-      key: "2",
-      label: "Completed Courses",
-      children: <CompleteCourse />,
-    },
-  ]}
-/>
+                    </Row>
+
+                    {pagination_loader ? (
+                      <div style={{ textAlign: "center", padding: "60px" }}>
+                        <Spin indicator={<LoadingOutlined spin />} size="large" />
+                      </div>
+                    ) : (
+                      <>
+                        <div className="courses-card" style={{ marginTop: "20px" }}>
+                          <Row gutter={[20, 30]}>
+                            {courses?.length > 0 ? (
+                              courses.map((items) => (
+                                <Col key={items?.id} lg={8} md={8} sm={12} xs={24}>
+                                  <CourseBox
+                                    id={btoa(items?.id)}
+                                    course_title={items?.title}
+                                    course_image={items?.thumbnail}
+                                    progress={items.progress}
+                                    course_ribbon={items.ribbon}
+                                    certificate={items?.certificate}
+                                  />
+                                </Col>
+                              ))
+                            ) : (
+                              <Col span={24}>
+                                <p
+                                  style={{
+                                    textAlign: "center",
+                                    fontSize: "20px",
+                                    color: "red",
+                                    marginTop: "15px",
+                                  }}
+                                >
+                                  No Result
+                                </p>
+                              </Col>
+                            )}
+                          </Row>
+                        </div>
+                        <div style={{ float: "right", marginTop: "20px" }}>
+                          {total_pages > 0 && (
+                            <Pagination
+                              current={current_page}
+                              total={total_courses}
+                              pageSize={9}
+                              onChange={pagination_on_change}
+                            />
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </>
+                ),
+              },
+              {
+                key: "3",
+                label: "In Progress",
+                children: <IncompleteCouse />,
+              },
+              {
+                key: "2",
+                label: "Completed Courses",
+                children: <CompleteCourse />,
+              },
+            ]}
+          />
 
         )}
       </Card>

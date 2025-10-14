@@ -1,8 +1,10 @@
-import { Card, Col, Row, Button, List, Progress, App, Skeleton, Divider } from "antd";
+import { Card, Col, Row, Button, List, Progress, App, Skeleton, Avatar, Pagination } from "antd";
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
+  ADD_COMMENT,
+  LIST_COMMENT,
   LIST_ENABLED_CHAPTER,
   UPDATE_CURRENT_CHAPTER,
 } from "../../../apis/apis";
@@ -11,12 +13,14 @@ import { FixTruncatedHTMLList } from "../../../components/TruncatedHTML";
 import { LeftOutlined } from "@ant-design/icons";
 import SectionVideos from "./components/sectionmedia/sectionVideos";
 import PdfIframeViewer from "../../../components/PdfIframeViewer";
+import CustomRichTextEditor from "../../../components/CustomTextEditor";
 
 export default function Chapters() {
   const { message } = App.useApp();
   const Navigate = useNavigate();
   const location = useLocation();
   const { course_id } = useParams();
+  const { notification } = App.useApp();
 
   const [enabledChapters, setEnabledChapters] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,6 +30,121 @@ export default function Chapters() {
   const [last_chapter, set_last_chapter] = useState(0);
   // Single Progress
   const [single_progress, set_single_progress] = useState(0);
+  const [description, set_description] = useState("");
+  const [comments, set_comments] = useState([]);
+  const [current_page, set_current_page] = useState(1);
+  const [total_comments, set_total_comments] = useState(0);
+  const [total_pages, set_total_pages] = useState(1);
+  const [card_loader, set_card_loader] = useState(true);
+
+  // 🔹 Format time (IST) + Relative time (under 4 hours)
+  const formatTime = (timestamp) => {
+    if (!timestamp) return "";
+    // Convert server string "2025-10-14 10:41:40" → Date object in IST
+    const createdTimeUTC = new Date(timestamp.replace(" ", "T") + "Z");
+    const nowUTC = new Date();
+
+    const diffMs = nowUTC - createdTimeUTC;
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMinutes / 60);
+
+    if (diffHours < 4) {
+      if (diffMinutes < 1) return "Just now";
+      if (diffMinutes < 60)
+        return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+    }
+
+    // 🔸 Convert to IST
+    const istDate = new Date(createdTimeUTC.getTime() + 5.5 * 60 * 60 * 1000);
+    const formatted = istDate.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "Asia/Kolkata",
+    });
+
+    return formatted; // e.g., "14 Oct 2025, 3:41 PM"
+  };
+
+  const fetchCommentList = useCallback(
+    async (page = 1,chapter_id) => {
+     
+      const FORM_DATA = new FormData();
+      FORM_DATA.append("view_id", chapter_id);
+      FORM_DATA.append("page", page);
+      FORM_DATA.append("comment_type", "chapter");
+
+      try {
+        const API_CALL = await LIST_COMMENT(FORM_DATA);
+        if (API_CALL?.data?.status) {
+          const data = API_CALL.data;
+          set_comments(data.comments || []);
+          set_current_page(data.page || 1);
+          set_total_comments(data.total_comments || 0);
+          set_total_pages(data.total_pages || 1);
+        } else {
+          set_comments([]);
+        }
+      } catch (error) {
+        console.error("Network error:", error);
+      } finally {
+        set_card_loader(false);
+      }
+    },
+    []
+  );
+
+useEffect(() => {
+  if (currentChapter?.id) {
+    fetchCommentList(1, currentChapter.id);
+  }
+}, [currentChapter, fetchCommentList]);
+
+  // 🔹 Add new comment
+  const onFinish = async () => {
+    if (!description.trim()) {
+      message.warning("Please write a comment first.");
+      return;
+    }
+
+    set_card_loader(true);
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("view_id", currentChapter?.id);
+    FORM_DATA.append("description", description);
+    FORM_DATA.append("comment_type", "chapter");
+
+    try {
+      const response = await ADD_COMMENT(FORM_DATA);
+      if (response?.data?.status) {
+        notification.success({
+          message: "Success",
+          description: response?.data?.message,
+        });
+        set_description("");
+        fetchCommentList(1, currentChapter?.id);
+      } else {
+        message.error(response?.data?.message || "Failed to add comment");
+      }
+    } catch (error) {
+      message.error(
+        "Server Error: " + (error?.response?.data?.message || "Unknown error")
+      );
+    } finally {
+      set_card_loader(false);
+    }
+  };
+
+  // 🔹 Handle pagination
+  const pagination_on_change = (page) => {
+    set_card_loader(true);
+    set_current_page(page);
+    fetchCommentList(page, currentChapter.id);
+  };
+
 
   const handleBack = () => {
     if (location.state?.from) {
@@ -236,86 +355,7 @@ export default function Chapters() {
           <CulsightPageLoader />
         ) : (
           <Row gutter={10}>
-            {/* LEFT LIST */}
-            {/* <Col xs={24} sm={24} md={24} lg={5}>
-              <List
-                header={<div>Chapter List</div>}
-                bordered
-                itemLayout="horizontal"
-                dataSource={enabledChapters}
-                renderItem={(item, index) => (
-                  <List.Item
-                    key={item.id}
-                    style={
-                      currentChapter?.id === item?.id
-                        ? {
-                            cursor: "pointer",
-                            backgroundColor: balck_theme
-                              ? "rgb(46 46 46)"
-                              : "rgb(208 208 208)",
-                            padding: "12px",
-                          }
-                        : {
-                            padding: "12px",
-                            cursor:
-                              index === 0 || item.get_tracking_chapter_data
-                                ? "pointer"
-                                : "not-allowed",
-                            opacity:
-                              index === 0 || item.get_tracking_chapter_data
-                                ? 1
-                                : 0.5,
-                          }
-                    }
-                    onClick={() => handleChapterClick(item, index)}
-                  >
-                    <List.Item.Meta
-                      description={
-                        <div>
-                          <h5
-                            style={{
-                              color: "#FFD700",
-                              marginBottom: 0,
-                            }}
-                          >
-                            {item.title}
-                          </h5>
-                          {item?.video_id ? (
-                            <>
-                              {currentChapter?.id === item?.id ? (
-                                <Progress
-                                  percent={single_progress}
-                                  status="active"
-                                  strokeColor="#FFD700"
-                                />
-                              ) : (
-                                <Progress
-                                  percent={item?.progress}
-                                  status="active"
-                                  strokeColor="#FFD700"
-                                />
-                              )}
-                              <span style={{ fontSize: "10px" }}>Video</span>
-                              {item.scorm && <> <span style={{ fontSize: "10px" }}>, PDF</span></>}
-                              {item.quiz_available && <> <span style={{ fontSize: "10px" }}>, Quiz</span></>}
-                              {item.test_available && <> <span style={{ fontSize: "10px" }}>, Live Test</span></>}
-                            </>
-                          ) : (
-                            <>
-                           
-                             {item.quiz_available && <> <span style={{ fontSize: "10px" }}> Quiz</span></>}
-                              {item.scorm && <> <span style={{ fontSize: "10px" }}>, PDF</span></>}
-                             {item.test_available && <> <span style={{ fontSize: "10px" }}>, Live Test</span></>}
-                            </>
-                           
-                          )}
-                        </div>
-                      }
-                    />
-                  </List.Item>
-                )}
-              />
-            </Col> */}
+
 
             <Col xs={24} sm={24} md={24} lg={5}>
               <div
@@ -325,6 +365,8 @@ export default function Chapters() {
                   overflow: "auto",
                   padding: "0 8px",
                   borderRadius: "8px",
+                  color: balck_theme ? "#fff" : "#000",
+                  scrollbarColor: balck_theme ? "#555 #1f1f1f" : "#ccc #fafafa",
                 }}
               >
                 <InfiniteScroll
@@ -332,6 +374,7 @@ export default function Chapters() {
                   hasMore={false}
                   loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
                   scrollableTarget="scrollableDiv"
+
                 >
                   <List
                     header={<div>Chapter List</div>}
@@ -545,6 +588,62 @@ export default function Chapters() {
                         html={currentChapter.introduction}
                       />
                     )}
+
+                  {/* 🔹 Comment Section */}
+                  <Card style={{ marginTop: "30px" }} loading={card_loader}>
+                    <CustomRichTextEditor
+                      editorLabel="Course Discussions"
+                      value={description}
+                      onChange={(val) => set_description(val)}
+                      placeholder="Write something..."
+                    />
+                    <Button
+                      type="primary"
+                      style={{ marginTop: "-20px" }}
+                      onClick={onFinish}
+                      loading={card_loader}
+                    >
+                      Submit
+                    </Button>
+
+                    <List
+                      itemLayout="horizontal"
+                      dataSource={comments}
+                      style={{ marginTop: "20px" }}
+                      locale={{ emptyText: "No discussions yet." }}
+                      renderItem={(item) => (
+                        <List.Item>
+                          <List.Item.Meta
+                            avatar={<Avatar>{item.first_name?.[0]}</Avatar>}
+                            title={<b>{item.first_name + " " + item.last_name}</b>}
+                            description={
+                              <>
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: item.description,
+                                  }}
+                                />
+                                <small style={{ color: "#888" }}>
+                                  {formatTime(item.created_at)}
+                                </small>
+                              </>
+                            }
+                          />
+                        </List.Item>
+                      )}
+                    />
+
+                    {total_pages > 1 && (
+                      <div style={{ float: "right", marginTop: "20px" }}>
+                        <Pagination
+                          current={current_page}
+                          total={total_comments}
+                          pageSize={10}
+                          onChange={pagination_on_change}
+                        />
+                      </div>
+                    )}
+                  </Card>
 
                   {currentChapter.scorm && (
                     <>

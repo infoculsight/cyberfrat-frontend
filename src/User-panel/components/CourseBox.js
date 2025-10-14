@@ -1,5 +1,5 @@
 import { Card, Progress, Tag, Button,Typography } from "antd";
-import { DownloadOutlined, HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { DownloadOutlined, } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
 
@@ -28,13 +28,7 @@ export default function CourseBox(props) {
             <img
               alt="example"
               src={props.course_image}
-              onClick={() => {
-                localStorage.setItem("course_title", props.course_title);
-                Navigate("/chapters/" + props.id, {
-                  state: { title: props.course_title },
-                  from: window.location.pathname,
-                });
-              }}
+              onClick={() => Navigate("/view-course/" + props.id)}
               style={{
                 width: "100%",
                 height: "200px",

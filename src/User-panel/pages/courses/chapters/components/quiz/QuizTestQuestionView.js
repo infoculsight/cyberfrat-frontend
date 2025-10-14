@@ -55,6 +55,8 @@ const QuizTestQuestionView = (props) => {
 
   }, [current_page, props.quiz_test_id, props.chapter_id]);
 
+
+
   const submit_question = async () => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("chapter_id", atob(props.chapter_id));
@@ -72,8 +74,6 @@ const QuizTestQuestionView = (props) => {
       console.error("Answer submit failed:", error);
     }
   };
-
-
 
 
 

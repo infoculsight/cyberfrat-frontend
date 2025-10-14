@@ -49,20 +49,14 @@ function Dashboard() {
         <span>{record.chapter_data?.title}</span>
       ),
     },
-    // {
-    //   title: "Action",
-    //   key: "action",
-    //   render: (_, record) => (
-    //     <Button
-    //       type="primary"
-    //       onClick={() =>
-    //         navigate("/chapters/" + btoa(record.chapter_data?.course_id))
-    //       }
-    //     >
-    //       View
-    //     </Button>
-    //   ),
-    // },
+       {
+      title: "Progress",
+      dataIndex: "progress",
+      render: (_, record) => (
+        <span>{record.course_data?.progress}</span>
+      ),
+    },
+
     {
       title: "Action",
       key: "action",

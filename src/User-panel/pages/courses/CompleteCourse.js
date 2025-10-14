@@ -145,6 +145,7 @@ function CompleteCourse() {
               <Pagination
                 current={current_page}
                 total={total_courses}
+                pageSize={9}
                 onChange={pagination_on_change}
               />
             )}
