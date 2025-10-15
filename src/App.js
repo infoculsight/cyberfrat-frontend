@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ConfigProvider, App as AntdApp, theme } from 'antd';
 import { Routes, Route } from "react-router-dom";
-import Login from "./User-panel/pages/Login";
+import Login from "./User-panel/pages/login/Login";
 import NotFound from "./User-panel/pages/NotFound";
 import { getUser, logout } from './authService';
 import Callback from "./Callback";
