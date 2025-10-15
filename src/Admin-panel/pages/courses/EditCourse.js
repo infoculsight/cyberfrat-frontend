@@ -154,14 +154,14 @@ export default function EditCourse() {
                   beforeUpload={(file) => {
                     console.log(file)
                     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
-                    const isLt2M = file.size <= 512000;
+                    const isLt2M = file.size <= 2 * 1024 * 1024;
                     if (!isJpgOrPng) {
                       setthumbnailError("Only JPG/PNG files are allowed.");
                       return false;
                     }
 
                     if (!isLt2M) {
-                      setthumbnailError("Thumbnail must be smaller than or equal to 500KB.");
+                      setthumbnailError("Thumbnail must be smaller than or equal to 2MB.");
                       return false;
                     }
                     const img = new Image();
@@ -207,7 +207,7 @@ export default function EditCourse() {
                 {errors?.thumbnail && (
                   <span style={{ color: "red", display: "block", marginTop: 8 }}>{errors?.thumbnail}</span>
                 )}
-                <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 500KB and must be at least 600x400 pixels.</p>
+                <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 2MB and must be at least 600x400 pixels.</p>
 
               </Form.Item>
 

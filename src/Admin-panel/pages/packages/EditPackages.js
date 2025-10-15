@@ -203,14 +203,14 @@ export default function Packages() {
                   beforeUpload={(file) => {
                     console.log(file)
                     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
-                    const isLt2M = file.size <= 512000;
+                    const isLt2M = file.size <= 2 * 1024 * 1024;
                     if (!isJpgOrPng) {
                       setthumbnailError("Only JPG/PNG files are allowed.");
                       return false;
                     }
 
                     if (!isLt2M) {
-                      setthumbnailError("Thumbnail must be smaller than or equal to 500KB.");
+                      setthumbnailError("Thumbnail must be smaller than or equal to 2MB.");
                       return false;
                     }
                     const img = new Image();

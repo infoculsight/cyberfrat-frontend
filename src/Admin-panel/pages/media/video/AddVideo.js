@@ -177,7 +177,7 @@ const handleChangeVideo = async (info) => {
                 style={{ width: "100%", height: "32vh", overflow: "hidden" }}
                 beforeUpload={(file) => {
                   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
-                  const isLt2M = file.size <= 512000;
+                  const isLt2M = file.size <= 2 * 1024 * 1024;
                   if (!isJpgOrPng) {
                     set_thumbnail_api('');
                     set_thumbnail('')
@@ -188,7 +188,7 @@ const handleChangeVideo = async (info) => {
                   if (!isLt2M) {
                     set_thumbnail_api('');
                     set_thumbnail('')
-                    setthumbnailError("Thumbnail must be smaller than or equal to 500KB.");
+                    setthumbnailError("Thumbnail must be smaller than or equal to 2MB.");
                     return false;
                   }
                   const img = new Image();

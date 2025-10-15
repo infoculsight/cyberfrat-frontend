@@ -156,7 +156,7 @@ export default function AddLearners() {
                     beforeUpload={(file) => {
                       console.log(file)
                       const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
-                      const isLt2M = file.size <= 512000;
+                      const isLt2M = file.size <= 2 * 1024 * 1024;
                       if (!isJpgOrPng) {
                         set_image_api('');
                         set_image('')
@@ -167,7 +167,7 @@ export default function AddLearners() {
                       if (!isLt2M) {
                         set_image_api('');
                         set_image('')
-                        setimageError("Thumbnail must be smaller than or equal to 500KB.");
+                        setimageError("Thumbnail must be smaller than or equal to 2MB.");
                         return false;
                       }
                       const img = new Image();
@@ -227,7 +227,7 @@ export default function AddLearners() {
                     </span>
                   )}
 
-                  <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 500KB and must be at least 600x400 pixels.</p>
+                  <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 2MB and must be at least 600x400 pixels.</p>
                 </Form.Item>
 
                 <Row gutter={16}>
