@@ -31,7 +31,6 @@ export default function CourseBox(props) {
               onClick={() => Navigate("/view-course/" + props.id)}
               style={{
                 width: "100%",
-                height: "200px",
                 objectFit: "cover",
                 borderTopLeftRadius: 8,
                 borderTopRightRadius: 8,
