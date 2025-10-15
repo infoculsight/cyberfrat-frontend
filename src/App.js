@@ -8,7 +8,7 @@ import Callback from "./Callback";
 import './App.css'
 import AdminRoutes from "./Routes/AdminRoutes";
 import { jwtDecode } from "jwt-decode";
-import ForgetPassword from "./Admin-panel/pages/login/ForgetPassword";
+
 
 
 function App() {
@@ -55,8 +55,8 @@ function App() {
             />
           ) : (
             <>
-             <Route path="/" element={<Login />} /> 
-            <Route path="/forget-password" element={<ForgetPassword />} />
+            <Route path="/" element={<Login />} /> 
+           
             </>
           )}
 
