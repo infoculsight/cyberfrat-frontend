@@ -136,18 +136,6 @@ function PackageLeaners(props) {
       render: (text, record) => <span>{record.email}</span>,
     },
     {
-      title: "Last Login",
-      dataIndex: "last_login",
-      render: (text, record) => (
-        <div>
-          <div>{moment(record.last_login).format("YYYY-MM-DD")}</div>
-          <div style={{ fontSize: "12px", color: "#888" }}>
-            {moment(record.last_login).format("hh:mm A")}
-          </div>
-        </div>
-      ),
-    },
-    {
       title: "Joined On",
       key: "joining_on",
       render: (text, record) => (
