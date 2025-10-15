@@ -177,8 +177,8 @@ export default function Packages() {
                   placeholder="Please select"
                   style={{ width: "100%" }}
                 />
-                {errors?.tag && (
-                  <span style={{ color: "red" }}>{errors?.tag}</span>
+                {errors?.tags && (
+                  <span style={{ color: "red" }}>{errors?.tags}</span>
                 )}
               </Form.Item>
 
