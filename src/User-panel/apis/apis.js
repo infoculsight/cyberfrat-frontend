@@ -1,15 +1,6 @@
 import Axios from "../config/config";
 export const LMS_STORAGE = '#';
 
-export const LOGIN_API = async (body) => {
-    try {
-        const response = await Axios.post('login/', body);
-        return response;
-    } catch (error) {
-        console.error(error);
-    }
-};
-
 export const LOGOUT_API = async (body) => {
   try {
       const response = await Axios.post('logout/', body);

@@ -1,36 +1,44 @@
 // src/Callback.js
-import  { useEffect } from 'react';
-import { signinRedirectCallback, login} from './authService';
-import CulsightPageLoader from './User-panel/components/CulsightPageLoader';
-import { jwtDecode } from 'jwt-decode';
-import { GET_LAST_LOGIN } from './User-panel/apis/apis';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import CulsightPageLoader from "./User-panel/components/CulsightPageLoader";
+import { signinRedirectCallback, login, getUser } from "./authService";
+import { GET_LAST_LOGIN } from "./User-panel/apis/apis";
 
 export default function Callback() {
+  const navigate = useNavigate();
 
   useEffect(() => {
-    signinRedirectCallback()
-      .then((user) => {   
-      if (user) {
-          const decoded = jwtDecode(user.access_token);
-          const roles = decoded?.resource_access?.["LMS_FRONTEND"]?.roles || [];
-          if (roles.includes("learner")) {
-            const formData = new FormData();
-            GET_LAST_LOGIN(formData);
-             window.location.href = "/";
-          }else{
-            window.location.href = "/";
-          }
-         
-      }else{
-        window.location.href = "/";
+    const handleCallback = async () => {
+      try {
+        // Keycloak redirect response handle
+        const user = await signinRedirectCallback();
+
+        if (!user) {
+          // अगर कोई user info नहीं मिला → login page
+          login();
+          return;
+        }
+
+        // Cookie में set token check via backend
+        const backendUser = await getUser();
+
+        if (!backendUser) {
+          // Cookie expired या login नहीं → redirect login
+          login();
+          return;
+        }
+        
+        navigate("/", { replace: true });
+      } catch (err) {
+        console.error("Callback error:", err);
+        // कुछ भी error → login page
+        login();
       }
-      
-      })
-      .catch(err => {
-        login()
-      });
-  }, []);
+    };
+
+    handleCallback();
+  }, [navigate]);
 
   return <div><CulsightPageLoader /></div>;
 }
-
