@@ -23,9 +23,21 @@ const VideoPage = ({
   const [duration, setDuration] = useState(0);
   const [segments, setSegments] = useState([]);
   const playbackRate = 1.0;
+
   const lastWatchedKey = `video-progress-${chapter_id}-${btoa(row_id)}`;
   const lastWatchedTime = useRef(video_row?.watched_seconds || 0);
 
+  // ✅ New flags for skip detection and API control
+  const hasUserSkipped = useRef(false);
+  const apiTriggered = useRef(false);
+
+  // 🔹 Reset flags on new video
+  useEffect(() => {
+    hasUserSkipped.current = false;
+    apiTriggered.current = false;
+  }, [video_id]);
+
+  // 🔹 Handle Fullscreen logo size change
   useEffect(() => {
     const logo = document.getElementById("fullscreen-logo");
     const handleFullscreen = () => {
@@ -52,6 +64,7 @@ const VideoPage = ({
     };
   }, []);
 
+  // 🔹 Fetch video URL
   useEffect(() => {
     const fetchVideoUrl = async () => {
       setLoading(true);
@@ -66,6 +79,7 @@ const VideoPage = ({
     fetchVideoUrl();
   }, [video_id]);
 
+  // 🔹 Send progress to backend
   const sendProgressToBackend = async (single_progress) => {
     const video = videoRef.current;
     if (!video) return;
@@ -84,6 +98,7 @@ const VideoPage = ({
     }
   }, [single_progress]);
 
+  // 🔹 Track video progress and trigger at 90%
   const handleTimeUpdate = () => {
     const video = videoRef.current;
     const current = video.currentTime;
@@ -97,17 +112,26 @@ const VideoPage = ({
     if (total > 0) {
       const percent = (current / total) * 100;
       set_current_video_id(row_id);
-      if(Math.floor(percent) > single_progress){
- set_single_progress(Math.floor(percent));
+      if (Math.floor(percent) > single_progress) {
+        set_single_progress(Math.floor(percent));
       }
-     
+
+      // ✅ If reached 90% and no skip, trigger API once
+      if (percent >= 90 && !hasUserSkipped.current && !apiTriggered.current) {
+        apiTriggered.current = true;
+        sendProgressToBackend(90);
+        console.log("✅ 90% reached without skip — API triggered");
+      }
     }
   };
 
+  // 🔹 Prevent skipping forward
   const handleSeeking = () => {
     const video = videoRef.current;
-    if (video.currentTime > lastWatchedTime.current) {
+    if (video.currentTime > lastWatchedTime.current + 2) {
+      hasUserSkipped.current = true; // ✅ mark user skipped
       video.currentTime = lastWatchedTime.current;
+      console.warn("⚠️ Skip attempt detected!");
     }
   };
 
@@ -127,7 +151,7 @@ const VideoPage = ({
     }
   };
 
-  // 🚨 Tab switch पर auto pause
+  // 🔹 Pause video on tab switch
   useEffect(() => {
     const handleVisibilityChange = () => {
       const video = videoRef.current;
@@ -142,6 +166,7 @@ const VideoPage = ({
     };
   }, []);
 
+  // 🔹 Load HLS stream
   useEffect(() => {
     if (!videoUrl) return;
     let hls;
@@ -221,6 +246,7 @@ const VideoPage = ({
 
       {/* ✅ Watermark Logo */}
       <img
+        id="fullscreen-logo"
         src={logo}
         alt="Watermark"
         style={{

@@ -8,6 +8,7 @@ import UsersRoutes from "./Routes/UsersRoutes";
 import { getUser } from "./authService";
 import Login from "./User-panel/pages/login/Login";
 import CulsightPageLoader from "./User-panel/components/CulsightPageLoader";
+import ForgetPassword from "./User-panel/pages/login/ForgetPassword";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -38,7 +39,10 @@ function App() {
       {user ? (
         <Route path="/*" element={user_role === "learner" ? <UsersRoutes /> : <NotFound />} />
       ) : (
+        <>
         <Route path="/" element={<Login />} />
+        <Route path="/forget-password" element={<ForgetPassword />} />
+        </>
       )}
       <Route path="*" element={<NotFound />} />
     </Routes>

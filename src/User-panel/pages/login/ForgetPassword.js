@@ -2,40 +2,30 @@
 import React, { useState } from "react";
 import "../../assests/Login.css"
 import { Button, Spin } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone, InfoCircleOutlined, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
-import Logo from "../../assests/CF-PPT-1.png"
+import { InfoCircleOutlined, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
+import Logo from "../../assests/CFGold_Logo.png"
 import { Link } from "react-router-dom";
-import { LOGIN_API } from "../../apis/apis";
-const Login = () => {
+const ForgetPassword = () => {
     // const navigate = useNavigate();
     const [loader, setLoader] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [error, setError] = useState([]);
-
-    const togglePasswordVisibility = () => {
-        setShowPassword(prev => !prev);
-    };
-
  
     return (
         <>
-            <div className="login-wapper">
-                <div className="logo">
-                    <img alt="logo" src={Logo} />
-                </div>
-                <div className="login-form">
-                    <h2 style={{ marginBottom: "15px" }}>Admin Login</h2>
-                    <p>Enter your details to sign in to your account</p>
-                    <div style={{ position: "relative", width: "100%", display: "block" }}>{error ? <><p style={{ position: "absolute", width: "100%", top: "-46px", color: "red", fontWeight: "bold" }}>{error}</p></> : ''}</div>
-                    <input className="black-input" placeholder="Employee Email ID" value={email} onChange={e => setEmail(e.target.value)} />
+           <div className="login-wapper">
+                <div className="login-form" style={{ marginTop: "70px", padding: "50px" }}>
+                    <img alt="logo" src={Logo} style={{ maxWidth: "300px" }} />
+                    <h2 style={{ marginBottom: "15px", marginTop:"20px", }}>Forget Password</h2>
+                    {/* <p>Enter your details to sign in to your account</p> */}
+                    <div style={{ position: "relative", width: "100%", display: "block",marginTop:"30px" }}>{error ? <><p style={{ position: "absolute", width: "100%", top: "-46px", color: "red", fontWeight: "bold" }}>{error}</p></> : ''}</div>
+                    <input className="black-input" placeholder="Email ID" value={email} onChange={e => setEmail(e.target.value)} />
 
                     <Button type="primary"  style={{ width: "100%", height: "42px",marginBottom:"20px" }}>
                         {loader ? <>
                             <Spin indicator={<LoadingOutlined spin />} style={{ color: "#FFF" }} size="small" />
                         </> : <>
-                            Send Code
+                            Submit
                         </>}
                     </Button>
                 </div>
@@ -50,6 +40,6 @@ const Login = () => {
     )
 }
 
-export default Login;
+export default ForgetPassword;
 
 

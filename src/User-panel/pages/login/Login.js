@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../assests/Login.css"
 import { Button, Spin } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone, InfoCircleOutlined, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
 import Logo from "../../assests/CFGold_Logo.png"
 import { Link } from "react-router-dom";
-import Axios from "../../config/config";
+import {AxiosFirst} from "../../config/config";
 const Login = () => {
     // const navigate = useNavigate();
     const [loader, setLoader] = useState(false);
@@ -16,8 +16,6 @@ const Login = () => {
     const togglePasswordVisibility = () => {
         setShowPassword(prev => !prev);
     };
-
-
     const LOGIN_ACCOUNT = async () => {
         setLoader(true);
         try {
@@ -25,9 +23,10 @@ const Login = () => {
             formData.append("email", email);
             formData.append("password", password);
 
-            const res = await Axios.post("login-view/", formData);
-
+            const res = await AxiosFirst.post("login-view/", formData);
+           
             if (res.data.status) {
+                 console.log(res)
                 window.location.href = "/";
             } else {
                 setError(res.data.error || "Login failed");
@@ -59,7 +58,7 @@ const Login = () => {
                             <EyeInvisibleOutlined className="password-eye" onClick={togglePasswordVisibility} />
                         )}
                     </div>
-                    <Link to="/forget-password" className="lms-link right" style={{ position: "relative", top: "-18px", left: "145px" }}>Forgot Password?</Link>
+                    <Link to="/forget-password" className="lms-link right" style={{ position: "relative", top: "-18px", left: "145px", color:"#fff" }}>Forgot Password?</Link>
                     <Button type="primary" onClick={LOGIN_ACCOUNT} style={{ width: "100%", height: "42px" }}>
                         {loader ? <>
                             <Spin indicator={<LoadingOutlined spin />} style={{ color: "#FFF" }} size="small" />

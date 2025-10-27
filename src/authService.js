@@ -10,16 +10,15 @@ export async function getUser() {
     return null;
   }
 }
+
 export async function logout() {
   try {
-    const res =  await Axios.get("logout/"); // because baseURL = https://development.culsight.com/api/learner/
-     // Client side cookies remove (extra safety)
+    await Axios.get("logout/");
+    // Clear client-side cookies
     document.cookie = "cf_at=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure";
     document.cookie = "cf_rt=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure";
-    console.error("Logout done", res);
-  } catch (e) {
-    console.error("Logout failed", e);
-  } finally {
-    // window.location.href = "/"; // redirect after logout
+     window.location.href = "/";
+  } catch(e) {
+    console.error(e);
   }
 }
