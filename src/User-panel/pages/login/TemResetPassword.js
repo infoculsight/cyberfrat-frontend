@@ -4,15 +4,16 @@
 
 import React, { useEffect, useState } from "react";
 import "../../assests/Login.css"
-import { Button, Spin } from "antd";
+import { App, Button, Spin } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone, InfoCircleOutlined, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
 import Logo from "../../assests/CFGold_Logo.png"
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { LOGIN_API, NEW_PASSWORD_SET, RESET_PASSWORD_TOKEN_CHECK } from "../../apis/apis";
+import {  SET_TEMP_NEW_PASSWORD } from "../../apis/apis";
 
 
-const ResetPassword = () => {
+const TemResetPassword = (props) => {
     // const navigate = useNavigate();
+    const { notification } = App.useApp();
     const { token } = useParams();
     const Navigate = useNavigate();
     const [loader, setLoader] = useState(false);
@@ -26,32 +27,6 @@ const ResetPassword = () => {
     const togglePasswordVisibility = () => {
         setShowPassword(prev => !prev);
     };
-
-    const RESET_PASSWORD_TOKEN_CHECK_API = async () => {
-        setLoader(true);
-        const FORM_DATA = new FormData();
-        FORM_DATA.append("token", token);
-
-        try {
-            const response = await RESET_PASSWORD_TOKEN_CHECK(FORM_DATA);
-            if (response?.data?.status) {
-                set_form_hidden(false)
-                setError("");
-
-            } else {
-                setError(response?.data?.message);
-            }
-        } catch (error) {
-            setError(
-                "Server Error: " + (error?.response?.data?.message || "Unknown error")
-            );
-        } finally {
-            setLoader(false);
-        }
-    };
-    useEffect(() => {
-        RESET_PASSWORD_TOKEN_CHECK_API()
-    }, [])
 
     const isStrongPassword = (password) => {
         const minLength = 8;
@@ -76,14 +51,18 @@ const ResetPassword = () => {
             if (isStrongPassword(password)) {
                 try {
                     const FORM_DATA = new FormData();
-                    FORM_DATA.append("token", token);
+                    FORM_DATA.append("user_id", props.user_id);
 
-                    FORM_DATA.append("password", cpassword);
-                    const response = await NEW_PASSWORD_SET(FORM_DATA);
+                    FORM_DATA.append("new_password", cpassword);
+                    const response = await SET_TEMP_NEW_PASSWORD(FORM_DATA);
                     if (response?.data?.status) {
                         set_form_hidden(true)
                         setError("");
-                        Navigate("/reset-password-message")
+                        notification.success({
+                        message: "Successful",
+                        description: response?.data?.message,
+                        });
+                       props.set_temporary_password(false)
                     } else {
                         setError(response?.data?.message);
                     }
@@ -117,11 +96,8 @@ const ResetPassword = () => {
                 <div className="login-form" style={{ marginTop: "70px", padding: "50px" }}>
                     <img alt="logo" src={Logo} style={{ maxWidth: "300px" }} />
 
-                    {form_hidden ? <>
-
-                    </> : <>
-                        <h2 style={{ marginBottom: "35px" }}>Reset Password</h2>
-
+                    <h2 style={{ marginBottom: "35px" }}>Reset Password</h2>
+                        <p>You’re using a temporary password. Please set a new password to proceed.</p>
                         <div style={{ position: "relative" }}>
                             <input
                                 type={showPassword ? "text" : "password"}
@@ -159,9 +135,6 @@ const ResetPassword = () => {
                             <Button type="primary" onClick={NEW_PASSWORD_SET_API} style={{ width: "100%", height: "42px", marginBottom: "20px" }}>    Reset Password </Button>
                         </>}
 
-
-                    </>}
-
                     <div style={{ position: "relative", marginTop: "80px", width: "100%", display: "block" }}>{error ? <><p style={{ position: "absolute", width: "100%", top: "-46px", color: "red", fontWeight: "bold" }}>{error}</p></> : ''}</div>
                 </div>
 
@@ -176,6 +149,6 @@ const ResetPassword = () => {
     )
 }
 
-export default ResetPassword;
+export default TemResetPassword;
 
 

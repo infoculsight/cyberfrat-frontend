@@ -1,50 +1,72 @@
 
-import React, { useState } from "react";
+
+
+
+import React, { useEffect, useState } from "react";
 import "../../assests/Login.css"
-import { Button, Spin } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone, InfoCircleOutlined, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
-import Logo from "../../assests/CF-PPT-1.png"
-import { Link } from "react-router-dom";
+import { Button } from "antd";
+import { InfoCircleOutlined, CopyrightOutlined, } from "@ant-design/icons";
+import Logo from "../../assests/CFGold_Logo.png"
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { EMAIL_VERIFY } from "../../apis/apis";
+import CulsightPageLoader from "../../components/CulsightPageLoader";
+
 
 const VerifyEmail = () => {
     // const navigate = useNavigate();
-    const [loader, setLoader] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState([]);
+    const [loader, setLoader] = useState(true);
+    const { token } = useParams();
+    const Navigate = useNavigate();
+    const [form_hidden, set_form_hidden] = useState(false);
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(prev => !prev);
+
+    const EMAIL_VERIFY_API = async () => {
+        const FORM_DATA = new FormData();
+        FORM_DATA.append("token", token);
+
+        try {
+            const response = await EMAIL_VERIFY(FORM_DATA);
+            if (response?.data?.status) {
+                set_form_hidden(true)
+
+            }
+            setLoader(false);
+        } catch (error) {
+            setLoader(false);
+        } finally {
+            setLoader(false);
+        }
     };
+    useEffect(() => {
+        EMAIL_VERIFY_API()
+    }, [])
 
- 
     return (
         <>
             <div className="login-wapper">
-                <div className="logo">
-                    <img alt="logo" src={Logo} />
-                </div>
-                <div className="login-form">
-                    <h2 style={{ marginBottom: "15px" }}>Admin Login</h2>
-                    <p>Enter your email for verification</p>
-                    <div style={{ position: "relative", width: "100%", display: "block" }}>{error ? <><p style={{ position: "absolute", width: "100%", top: "-46px", color: "red", fontWeight: "bold" }}>{error}</p></> : ''}</div>
-                    <input className="black-input" placeholder="Employee Email ID" value={email} onChange={e => setEmail(e.target.value)} />
+                {loader ? <>
+                    <CulsightPageLoader />
+                </> : <>
+                    {form_hidden ? <>
+                        <div className="login-form" style={{ marginTop: "70px", padding: "50px" }}>
+                            <img alt="logo" src={Logo} style={{ maxWidth: "300px" }} />
+                            <p className="reset-text">Your Email Address is Verified Successfully</p>
+                            <Button type="primary"  onClick={() => Navigate('/')} style={{ width: "100%", height: "42px", marginBottom: "20px" }}>   Login Now</Button>
+                        </div>
+                    </> : <>
+                        <div className="login-form" style={{ marginTop: "70px", padding: "50px" }}>
+                            <img alt="logo" src={Logo} style={{ maxWidth: "300px" }} />
+                            <div style={{ position: "relative", marginTop: "80px", width: "100%", display: "block" }}><p style={{ position: "absolute", width: "100%", top: "-46px", color: "red", fontWeight: "bold" }}>Token is not valid</p></div>
+                        </div>
+                    </>}
 
-                    <Button type="primary"  style={{ width: "100%", height: "42px",marginBottom:"20px" }}>
-                        {loader ? <>
-                            <Spin indicator={<LoadingOutlined spin />} style={{ color: "#FFF" }} size="small" />
-                        </> : <>
-                            Verify
-                        </>}
-                    </Button>
-                </div>
-                <div className="login-footer">
-                    <div>Copyright <CopyrightOutlined /></div>
-                    <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div>
+                    <div className="login-footer">
+                        <div>Copyright <CopyrightOutlined /></div>
+                        <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div>
 
-                    <div>  <Link className="lms-link">Terms & Policies</Link></div>
-                </div>
+                        <div>  <Link className="lms-link">Terms & Policies</Link></div>
+                    </div>
+                </>}
             </div>
         </>
     )

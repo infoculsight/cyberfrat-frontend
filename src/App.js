@@ -9,6 +9,10 @@ import { getUser } from "./authService";
 import Login from "./User-panel/pages/login/Login";
 import CulsightPageLoader from "./User-panel/components/CulsightPageLoader";
 import ForgetPassword from "./User-panel/pages/login/ForgetPassword";
+import ResetPassword from "./User-panel/pages/login/ResetPassword";
+import ResetPasswordMessage from "./User-panel/pages/login/ResetPasswordMessage";
+import VerifyEmail from "./User-panel/pages/login/VerifyEmail";
+import VerifyEmailMessage from "./User-panel/pages/login/VerifyEmailMessage";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -42,6 +46,9 @@ function App() {
         <>
         <Route path="/" element={<Login />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/reset-password-message" element={<ResetPasswordMessage />} />
+        <Route path="/verify-email/:token" element={<VerifyEmail />} />
         </>
       )}
       <Route path="*" element={<NotFound />} />

@@ -10,7 +10,7 @@ import {
 } from "../../../apis/apis";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
 import { FixTruncatedHTMLList } from "../../../components/TruncatedHTML";
-import { LeftOutlined } from "@ant-design/icons";
+import { CheckCircleFilled, LeftOutlined, RightCircleFilled } from "@ant-design/icons";
 import SectionVideos from "./components/sectionmedia/sectionVideos";
 import PdfIframeViewer from "../../../components/PdfIframeViewer";
 import CustomRichTextEditor from "../../../components/CustomTextEditor";
@@ -71,8 +71,8 @@ export default function Chapters() {
   };
 
   const fetchCommentList = useCallback(
-    async (page = 1,chapter_id) => {
-     
+    async (page = 1, chapter_id) => {
+
       const FORM_DATA = new FormData();
       FORM_DATA.append("view_id", chapter_id);
       FORM_DATA.append("page", page);
@@ -98,11 +98,11 @@ export default function Chapters() {
     []
   );
 
-useEffect(() => {
-  if (currentChapter?.id) {
-    fetchCommentList(1, currentChapter.id);
-  }
-}, [currentChapter, fetchCommentList]);
+  useEffect(() => {
+    if (currentChapter?.id) {
+      fetchCommentList(1, currentChapter.id);
+    }
+  }, [currentChapter, fetchCommentList]);
 
   // 🔹 Add new comment
   const onFinish = async () => {
@@ -267,10 +267,10 @@ useEffect(() => {
   }, [fetchEnabledChapters]);
 
   const handleChapterClick = async (chapter, index) => {
-    if (index !== 0 && !chapter.get_tracking_chapter_data) {
-      message.warning("Please complete previous chapter first");
-      return;
-    }
+    // if (index !== 0 && !chapter.get_tracking_chapter_data) {
+    //   message.warning("Please complete previous chapter first");
+    //   return;
+    // }
 
     const success = await UPDATE_CURRENT_CHAPTER_API(
       chapter.id,
@@ -395,10 +395,7 @@ useEffect(() => {
                             }
                             : {
                               padding: "12px",
-                              cursor:
-                                index === 0 || item.get_tracking_chapter_data
-                                  ? "pointer"
-                                  : "not-allowed",
+                              cursor: "pointer",
                               opacity:
                                 index === 0 || item.get_tracking_chapter_data ? 1 : 0.5,
                             }
@@ -414,22 +411,30 @@ useEffect(() => {
                                   marginBottom: 0,
                                 }}
                               >
+
                                 {item.title}
                               </h5>
+                              <div style={{position:"relative"}}>
                               {item?.video_id ? (
                                 <>
                                   {currentChapter?.id === item?.id ? (
-                                    <Progress
-                                      percent={single_progress}
-                                      status="active"
-                                      strokeColor="#FFD700"
-                                    />
+                                    <>
+                                      {single_progress >= 90 ? <><CheckCircleFilled  className="check-pro"  /> </> : ""}
+                                      <Progress
+                                        percent={single_progress}
+                                        status="active"
+                                        strokeColor="#FFD700"
+                                      />
+                                    </>
                                   ) : (
-                                    <Progress
-                                      percent={item?.progress}
-                                      status="active"
-                                      strokeColor="#FFD700"
-                                    />
+                                    <>
+                                      {item?.progress >= 90 ? <><CheckCircleFilled className="check-pro" /> </> : ""}
+                                      <Progress
+                                        percent={item?.progress}
+                                        status="active"
+                                        strokeColor="#FFD700"
+                                      />
+                                    </>
                                   )}
                                   <span style={{ fontSize: "10px" }}>Video</span>
                                   {item.scorm && (
@@ -455,6 +460,7 @@ useEffect(() => {
                                   )}
                                 </>
                               )}
+                              </div>
                             </div>
                           }
                         />
@@ -478,14 +484,15 @@ useEffect(() => {
                         <Button
                           style={{ marginRight: "5px" }}
                           size="small"
-                          type="primary"
-                          danger
+                          variant="solid"
+                          color="green"
                           disabled={
                             !(single_progress >= 90 || !currentChapter.video_id)
                           }
-                          onClick={handleNext}
+                        // onClick={handleNext}
                         >
-                          Next
+                          {single_progress >= 90 || !currentChapter.video_id ? <><CheckCircleFilled /> Completed</> : "Uncomplete"}
+
                         </Button>
 
                         {currentChapter?.test_available && (

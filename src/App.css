@@ -241,5 +241,13 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #555 #1f1f1f;
 }
+.check-pro {
+    position: absolute;
+    right: -6px;
+    z-index: 10;
+    opacity: inherit;
+    top: -14px;
+    color: #ffc107;
+}
 
 

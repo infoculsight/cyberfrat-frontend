@@ -35,6 +35,7 @@ const MasterTemplate = () => {
 
     getUser().then(usr => {
       setUser(usr);
+      console.log(usr)
       set_master_loder(false)
     });
   }, []);

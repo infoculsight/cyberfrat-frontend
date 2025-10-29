@@ -50,7 +50,7 @@ const UserDropdown = ({ user }) => {
   return (
     <div style={{ float: "right" }}>
       <div style={{ marginRight: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span>Welcome, <b>{user?.profile?.name}</b></span>
+        <span>Welcome, <b>{user?.user_info?.name}</b></span>
         <Dropdown menu={{ items: menuItems }} trigger={['click']}>
           <Avatar style={{ backgroundColor: '#e9c70ada', cursor: 'pointer' }} icon={<UserOutlined />} />
         </Dropdown>

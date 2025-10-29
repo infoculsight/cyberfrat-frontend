@@ -649,3 +649,57 @@ export const LEANER_WATCHTIME= async (body) => {
     }
 };
 
+
+export const RESET_PASSWORD_REQUEST= async (body) => {
+    try {
+        const response = await Axios.post('reset-password-request/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const RESET_PASSWORD_TOKEN_CHECK= async (body) => {
+    try {
+        const response = await Axios.post('reset-password-token-check/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+
+export const NEW_PASSWORD_SET= async (body) => {
+    try {
+        const response = await Axios.post('new-password-set/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const EMAIL_VERIFY= async (body) => {
+    try {
+        const response = await Axios.post('email-verify/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const SET_TEMP_NEW_PASSWORD= async (body) => {
+    try {
+        const response = await Axios.post('set-temp-new-password/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+
+
+
+
