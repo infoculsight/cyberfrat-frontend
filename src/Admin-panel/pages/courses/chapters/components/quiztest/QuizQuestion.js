@@ -44,9 +44,9 @@ const QuizQuestion = (props) => {
     if (LIST_API_RESPONSE?.data?.status) {
       const response_data = LIST_API_RESPONSE?.data?.data;
       setItems(response_data);
-      if (expandLatest && response_data.length > 0) {
-        setActivePanelKey(response_data[response_data.length - 1]?.id);
-      }
+      // if (expandLatest && response_data.length > 0) {
+      //   setActivePanelKey(response_data[response_data.length - 1]?.id);
+      // }
       set_page_loader(false);
     }
   };
@@ -61,9 +61,9 @@ const QuizQuestion = (props) => {
         set_current_page(LIST_API_RESPONSE?.data?.current_page);
         set_total_pages(LIST_API_RESPONSE?.data?.total_pages);
         setItems(response_data);
-        if (response_data.length > 0) {
-          setActivePanelKey(response_data[response_data.length - 1]?.id);
-        }
+        // if (response_data.length > 0) {
+        //   setActivePanelKey(response_data[response_data.length - 1]?.id);
+        // }
         set_page_loader(false);
       }
     };
@@ -82,9 +82,9 @@ const QuizQuestion = (props) => {
       set_current_page(LIST_API_RESPONSE?.data?.current_page);
       set_total_pages(LIST_API_RESPONSE?.data?.total_pages);
       setItems(response_data);
-      if (response_data.length > 0) {
-        setActivePanelKey(response_data[response_data.length - 1]?.id);
-      }
+      // if (response_data.length > 0) {
+      //   setActivePanelKey(response_data[response_data.length - 1]?.id);
+      // }
       set_page_loader(false);
     }
   };
@@ -142,9 +142,9 @@ const QuizQuestion = (props) => {
             set_current_page(LIST_API_RESPONSE?.data?.current_page);
             set_total_pages(LIST_API_RESPONSE?.data?.total_pages);
             setItems(response_data);
-            if (response_data.length > 0) {
-              setActivePanelKey(response_data[response_data.length - 1]?.id);
-            }
+            // if (response_data.length > 0) {
+            //   setActivePanelKey(response_data[response_data.length - 1]?.id);
+            // }
           }
         } catch (err) {
           console.error("API Error:", err);
