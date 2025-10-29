@@ -44,9 +44,9 @@ const QuizQuestion = (props) => {
     if (LIST_API_RESPONSE?.data?.status) {
       const response_data = LIST_API_RESPONSE?.data?.data;
       setItems(response_data);
-      if (expandLatest && response_data.length > 0) {
-        setActivePanelKey(response_data[response_data.length - 1]?.id);
-      }
+      // if (expandLatest && response_data.length > 0) {
+      //   setActivePanelKey(response_data[response_data.length - 1]?.id);
+      // }
       set_page_loader(false);
     }
   };

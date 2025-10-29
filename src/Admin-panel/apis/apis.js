@@ -320,6 +320,15 @@ export const CHAPTER_LIST = async (body) => {
     }
 };
 
+export const CHAPTER_STATUS = async (body) => {
+    try {
+        const response = await Axios.post('chapter-status/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 
 export const VIEW_ASSIGNMENT = async (body) => {
     try {
