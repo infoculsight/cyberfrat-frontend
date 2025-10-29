@@ -38,7 +38,7 @@ export default function EditQuizQuestion({
   const [tags, set_tags] = useState([]);
   const [difficulty, set_difficulty] = useState([]);
   const [question_text, set_question_text] = useState("");
-  const [is_group, set_is_group] = useState(false);
+  const [is_group, set_is_group] = useState(0);
   const [option_details, set_option_details] = useState([]);
   const [explanation, set_explanation] = useState("");
   const [errors, set_errors] = useState({});
@@ -62,7 +62,7 @@ export default function EditQuizQuestion({
     set_tags(Array.isArray(data?.tags) ? data.tags : (data?.tags?.split(",") || []));
     set_difficulty(data?.difficulty || []);
     set_question_text(data?.question_text || "");
-    set_is_group(Number(data?.is_group) || 0);
+    set_is_group(Number(data?.is_group));
     
     try {
       const options = data?.option_details
@@ -91,7 +91,7 @@ export default function EditQuizQuestion({
      FORM_DATA.append("id", atob(quiz_question_id));
     FORM_DATA.append("type", type);
     FORM_DATA.append("tags", tags);
-    FORM_DATA.append("is_group", is_group.toString());
+    FORM_DATA.append("is_group",is_group.toString());
     FORM_DATA.append("topic", topic);
     FORM_DATA.append("subject", subject);
     FORM_DATA.append("question_text", question_text);
@@ -205,8 +205,8 @@ export default function EditQuizQuestion({
                     value={is_group}
                     onChange={(e) => set_is_group(e.target.value)}
                   >
-                    <Radio value={0}>Yes</Radio>
-                    <Radio value={1}>No</Radio>
+                    <Radio value={1}>Yes</Radio>
+                    <Radio value={0}>No</Radio>
                   </Radio.Group>
                   {errors?.is_group && (
                     <span style={{ color: "red" }}>{errors.is_group}</span>
