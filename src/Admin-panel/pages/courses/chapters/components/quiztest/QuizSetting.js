@@ -164,6 +164,7 @@ function QuizSetting({ course_id, chapter_id }) {
       }
     } catch (error) {
       message.error(
+        
         "Server Error: " + (error?.response?.data?.message || "Unknown error")
       );
       setLoading(false);
