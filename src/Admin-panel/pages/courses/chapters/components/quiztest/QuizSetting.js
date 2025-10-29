@@ -157,6 +157,7 @@ function QuizSetting({ course_id, chapter_id }) {
         });
         set_edit_loading(true);
         setLoading(false);
+        set_errors([])
       } else {
         setLoading(false);
         set_errors(response.data.errors);

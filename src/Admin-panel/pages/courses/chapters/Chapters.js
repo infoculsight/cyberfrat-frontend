@@ -1,15 +1,16 @@
-import { Card, Col, Input, Row, Select, Button, Pagination } from "antd";
+import { Card, Col, Input, Row, Select, Button, Pagination, App, Popconfirm } from "antd";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { CHAPTER_LIST } from "../../../apis/apis";
+import { CHAPTER_LIST, CHAPTER_STATUS } from "../../../apis/apis";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
 // import TruncatedHTML from "../../../components/TruncatedHTML";
-import { LeftOutlined } from "@ant-design/icons";
+import { GlobalOutlined, LeftOutlined, LockOutlined } from "@ant-design/icons";
 import debounce from "lodash.debounce";
 
 const { Option } = Select;
 
 export default function Chapters() {
+   const { notification } = App.useApp();
   const Navigate = useNavigate();
   const location = useLocation();
   const course_title =
@@ -90,7 +91,25 @@ export default function Chapters() {
       <Option value="Title">Title</Option>
     </Select>
   );
+ const change_status = async (id) => {
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("id", id);
+    try {
+      const response = await CHAPTER_STATUS(FORM_DATA);
+      if (response?.data?.status) {
+        notification.success({
+          message: "Successful",
+          description: response?.data?.message,
+        });
 
+      } else {
+        // setLoader(false);
+
+      }
+    } catch (error) {
+        console.log(error)
+    }
+  };
   return (
     <div className="lms-body">
       <Card>
@@ -131,9 +150,21 @@ export default function Chapters() {
             <Row gutter={[16, 16]} style={{ marginTop: "15px" }}>
               {chapters?.length > 0 ? (
                 chapters.map((item) => (
-                  <Col xs={24} sm={12} md={8} lg={6} key={item?.id} style={{ display: "flex" }}>
+                  <Col
+                    xs={24}
+                    sm={12}
+                    md={8}
+                    lg={6}
+                    key={item?.id}
+                    style={{ display: "flex" }}
+                  >
                     <Card
-                      style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
                       // cover={
                       //   item?.image ? (
                       //     <img
@@ -156,17 +187,48 @@ export default function Chapters() {
                         >
                           View
                         </Button>,
+                        <Popconfirm
+                          title={
+                            item?.status
+                              ? "Are you sure you want to Unpublish this chapter ?"
+                              : " Are you sure you want to publish this chapter ?"
+                          }
+                          onConfirm={() => change_status(item?.id)}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <Button
+                            size="small"
+                            type="primary"
+                            style={{
+                              backgroundColor: item?.status 
+                                ? "#52c41a"
+                                : "#faad14",
+                              borderColor: item?.status 
+                                ? "#52c41a"
+                                : "#faad14",
+                            }}
+                          >
+                            {item?.status ? (
+                             <> Published <GlobalOutlined /></>
+                            ) : (
+                             <> UnPublished <LockOutlined /> </>
+                            )}
+                          </Button>
+                        </Popconfirm>,
                       ]}
                     >
                       <Card.Meta
-                        title={<div style={{ width: "100%", textAlign: "center" }}>
-                          <span>{item?.title}</span>
-                        </div>}
-                      // description={
-                      //   item?.introduction ? (
-                      //     <TruncatedHTML html={item.introduction} />
-                      //   ) : null
-                      // }
+                        title={
+                          <div style={{ width: "100%", textAlign: "center" }}>
+                            <span>{item?.title}</span>
+                          </div>
+                        }
+                        // description={
+                        //   item?.introduction ? (
+                        //     <TruncatedHTML html={item.introduction} />
+                        //   ) : null
+                        // }
                       />
                       {/* agar content add karna ho to neeche space fill kare */}
                       <div style={{ flexGrow: 1 }}></div>
@@ -175,11 +237,12 @@ export default function Chapters() {
                 ))
               ) : (
                 <Col span={24}>
-                  <p style={{ textAlign: "center", color: "red" }}>No chapters found</p>
+                  <p style={{ textAlign: "center", color: "red" }}>
+                    No chapters found
+                  </p>
                 </Col>
               )}
             </Row>
-
 
             {total_pages > 0 && (
               <div style={{ float: "right", marginTop: "20px" }}>
