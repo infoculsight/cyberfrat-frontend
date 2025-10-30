@@ -475,7 +475,7 @@ export default function Chapters() {
                     </Col>
                   </Row>
                   <br />
-                  {currentChapter?.quiz_row ? <>
+                  {currentChapter?.quiz_row && currentChapter?.title?.toLowerCase().includes("quiz") ? <>
                         {currentChapter?.quiz_row?.time_limit > 0 ? (
             <div
               className="section-details section-details-right-padding"
