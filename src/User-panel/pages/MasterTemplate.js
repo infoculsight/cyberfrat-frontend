@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
+import Icon, {
   AccountBookOutlined,
   DashboardOutlined,
   HomeOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   SettingFilled,
+  SnippetsOutlined,
   UploadOutlined
 } from "@ant-design/icons";
 import { App, Button, Layout, Menu } from "antd";
@@ -49,6 +50,7 @@ const MasterTemplate = () => {
       "/packages": { selected: "3",open:"3" },
       "/all-packages": {selected:"4",open:"4"},
       "/account": { selected: "7",oepn:"7" },
+      "/live-test":{selected:"8",open:"8"},
      
     };
 
@@ -72,7 +74,8 @@ const MasterTemplate = () => {
       2: "courses",
       3: "packages",
       4:"all-packages",
-      7: "/account"
+      7: "/account",
+      8:"/live-test"
     };
 
     const route = keyToPath[key];
@@ -140,6 +143,11 @@ const MasterTemplate = () => {
                   key: "4",
                   icon: <AccountBookOutlined />,
                   label: "All Packages",
+                },
+                   {
+                  key: "8",
+                  icon: <SnippetsOutlined />,
+                  label: "Live Test",
                 },
                 // {
                 //   key: "4",

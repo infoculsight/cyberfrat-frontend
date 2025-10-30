@@ -7,7 +7,7 @@ import CourseDetails from "../User-panel/pages/courses/CourseDetails";
 import NotFound from "../User-panel/pages/NotFound";
 import Chapters from "../User-panel/pages/courses/chapters/Chapters";
 import Learners from "../User-panel/pages/learners/Learners";
-import LiveTest from "../User-panel/pages/courses/chapters/components/livetest/LiveTest";
+import LiveTest from "../User-panel/pages/livetest/LiveTest";
 import Settings from "../User-panel/pages/setting/Settings";
 import Packages from "../User-panel/pages/package/Packages";
 import PackageCourses from "../User-panel/pages/package/package-courses/PackageCourses";
@@ -32,6 +32,7 @@ function UsersRoutes() {
         <Route path="all-packages" element={<AllPackages />} />
         <Route path="/video/:video_id" element={<VideoPage />} />
         <Route path="/account" element={<Settings />} />
+        <Route path="live-test" element ={<LiveTest />} />
 
 
 
