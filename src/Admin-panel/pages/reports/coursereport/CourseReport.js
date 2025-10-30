@@ -57,6 +57,8 @@ const DOWNLOAD_REPORT_ACTION = async (course_id) => {
         setLoader(false);
       }
     };
+
+    
     const pagination_on_change = async (data) => {
       set_pagination_loader(true);
       const FORM_DATA = new FormData();

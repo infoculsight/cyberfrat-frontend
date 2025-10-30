@@ -10,7 +10,6 @@ import LiveTest from "./components/livetest/LiveTest";
 import QuizSetting from "./components/quiztest/QuizSetting";
 import { VIEW_CHAPTER } from "../../../apis/apis";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
-import LiveTestQuestion from "./components/livetest/LiveTestQuestion";
 import QuizQuestion from "./components/quiztest/QuizQuestion";
 
 const { TabPane } = Tabs;
@@ -72,7 +71,7 @@ export default function EditChapter(props) {
                 </div>
               </TabPane>
              
-              <TabPane tab="Live Test Setting" key="4">
+              {/* <TabPane tab="Live Test Setting" key="4">
                 <div style={{ backgroundColor: "#141414", padding: "15px", marginTop: "-16px", marginLeft: "1px" }}>
                   <LiveTest chapter_id={id} course_id={course_id} />
                 </div>
@@ -81,7 +80,7 @@ export default function EditChapter(props) {
                 <div style={{ backgroundColor: "#141414", padding: "15px", marginTop: "-16px", marginLeft: "1px" }}>
                   <LiveTestQuestion chapter_id={id} course_id={course_id} />
                 </div>
-              </TabPane>
+              </TabPane> */}
 
               <TabPane tab="Quiz Setting" key="6">
                 <div style={{ backgroundColor: "#141414", padding: "15px", marginTop: "-16px", marginLeft: "1px" }}>

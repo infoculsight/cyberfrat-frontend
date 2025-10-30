@@ -49,15 +49,11 @@ function LiveTestList() {
       key: "created_at",
     },
     {
-      title: "Chapter Title",
-      dataIndex: "chapter_title",
-      key: "chapter_title",
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
     },
-    {
-      title: "Course Title",
-      dataIndex: "course_title",
-      key: "course_title",
-    },
+  
     {
       title: "Timings",
       dataIndex: "timings",

@@ -37,6 +37,10 @@ import EditNotification from "../Admin-panel/pages/notification/EditNotification
 import QuizReport from "../Admin-panel/pages/reports/quizreport/QuizReport";
 import QuizLearnerReport from "../Admin-panel/pages/reports/quizreport/QuizLearnerReport";
 import QuizLearnerReportDetails from "../Admin-panel/pages/reports/quizreport/QuizLearnerReportDetails";
+import LiveTest from "../Admin-panel/pages/livetest/LiveTest";
+import AddLiveTest from "../Admin-panel/pages/livetest/AddLiveTest";
+import EditLiveTest from "../Admin-panel/pages/livetest/EditLiveTest";
+import LiveTestQuestion from "../Admin-panel/pages/livetest/LiveTestQuestions";
 
 
 
@@ -68,7 +72,10 @@ function AdminRoutes() {
         <Route path="edit-package/:id" element={<EditPackages />} />
         <Route path="package-learners/:package_id" element={<PackageLeaners />}/>
         <Route path="package-courses/:package_id" element={<PackageCourses />}/>
-        
+        <Route path="live-test" element={<LiveTest />} />
+        <Route path="/add-live-test" element={<AddLiveTest />} />
+        <Route path="edit-live-test/:id" element={<EditLiveTest />} />
+        <Route path="live-test-questions/:live_test_id" element={<LiveTestQuestion />} />
 
          <Route path="report" element={<Reports />}>
             <Route path="course-report" element={<CourseReport />} />

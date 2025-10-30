@@ -807,6 +807,16 @@ export const PACKAGE_REPORT = async (body) => {
 };
 
 
+export const DOWNLOAD_PACKAGE_REPORT = async (body) => {
+    try {
+        const response = await Axios.post('download-package-excel/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
 export const VIEW_LEARNER_REPORT = async (body) => {
     try {
         const response = await Axios.post('view-learner-report/', body);

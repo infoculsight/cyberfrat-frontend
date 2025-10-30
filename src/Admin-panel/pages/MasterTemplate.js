@@ -58,6 +58,10 @@ const MasterTemplate = () => {
       '/media': { selected: '8' },
       '/report': { selected: '9' },
       '/download': { selected: '10' },
+      '/live-test':{selected:'11',open:'5'},
+      '/add-live-test': {selected:'11',open:'5'},
+      '/edit-live-test':{selected:'11',open:'5'},
+      '/live-test-questions':{selected:'11',open:'5'},
       '/notification': { selected: '13' },
       '/add-notification': { selected: '13', open: '13' },
       '/edit-notification': { selected: '13', open: '13' },
@@ -85,6 +89,7 @@ const MasterTemplate = () => {
       '8': '/media',
       '9': '/report',
       '10': '/download',
+      '11':'/live-test',
       '12': '/learners-group',
       '13': '/notification',
       '14': '/deleted-courses'
@@ -149,6 +154,7 @@ const MasterTemplate = () => {
                     { key: '6', label: "Courses" },
                     { key: '14', label: "Deleted Courses" },
                     { key: '7', label: "Packages" },
+                    {key: '11',label:"Live Test"}
                   ]
                 },
                 { key: '8', icon: <ProfileFilled />, label: 'Media' },

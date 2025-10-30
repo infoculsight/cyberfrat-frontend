@@ -72,7 +72,6 @@ function Learners() {
   }, []);
 
 
-
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
     const API_CALL = await LEARNER_LIST(FORM_DATA);

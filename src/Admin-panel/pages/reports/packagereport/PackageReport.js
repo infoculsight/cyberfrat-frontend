@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Table, Button, Row, Col, Input, Pagination, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
-import { PACKAGE_REPORT } from "../../../apis/apis";
+import { DOWNLOAD_PACKAGE_REPORT, PACKAGE_REPORT } from "../../../apis/apis";
 import moment from "moment";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
-import { LoadingOutlined, } from "@ant-design/icons";
+import { DownCircleFilled, DownloadOutlined, EyeFilled, LoadingOutlined, } from "@ant-design/icons";
 
 
 
@@ -58,6 +58,7 @@ const PackageReport = () => {
       set_pagination_loader(false);
     }
   };
+
 
   const fetchResultsTitle = useCallback((value) => {
     debounce(async () => {
@@ -127,15 +128,30 @@ const PackageReport = () => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button type="link" onClick={() =>
+        <>
+        <Button type="primary" size="small" onClick={() =>
           navigate("/package-courses/" + btoa(record.package_id), {
             state: { from: "/report/package-report" },
           })
-        }>view report</Button>
+        }><EyeFilled /></Button>
+        <Button style={{marginLeft:"5px"}} color="green" variant="solid" size="small" onClick={() => GET_DOWNLOAD_REPORT_ACTION(record.package_id)}><DownloadOutlined /></Button></>
 
       ),
     },
   ];
+
+      const GET_DOWNLOAD_REPORT_ACTION = async (package_id) => {
+      const FORM_DATA = new FormData();
+      FORM_DATA.append("package_id", package_id);
+      const API_CALL = await DOWNLOAD_PACKAGE_REPORT(FORM_DATA);
+      if (API_CALL?.data?.status) {
+            window.location= API_CALL?.data?.url
+      } else {
+        console.log("error");
+        setLoader(false);
+      }
+    };
+  
 
 
   return (
