@@ -64,7 +64,7 @@ function QuizSetting({ course_id, chapter_id }) {
         set_quiz_setting_id(data?.id);
         set_title(data?.title);
         set_tag(
-          Array.isArray(data?.tags) ? data.tags : data?.tags?.split(",")  || []
+          Array.isArray(data?.tags) ? data.tags : data?.tags?.split(",") || []
         );
         set_time_limit(data?.time_limit);
         set_no_of_retake(data?.no_of_retake);
@@ -107,13 +107,13 @@ function QuizSetting({ course_id, chapter_id }) {
     FORM_DATA.append("course_id", course_id)
     FORM_DATA.append("time_limit", time_limit);
     FORM_DATA.append("no_of_retake", no_of_retake);
-  
+
     FORM_DATA.append("show_instructions", show_instructions);
     FORM_DATA.append("show_calculator", show_calculator);
     FORM_DATA.append("post_submit_message", post_submit_message);
     FORM_DATA.append(
       "display_question",
-     display_question
+      display_question
     );
     FORM_DATA.append(
       "passing_percentage",
@@ -164,7 +164,7 @@ function QuizSetting({ course_id, chapter_id }) {
       }
     } catch (error) {
       message.error(
-        
+
         "Server Error: " + (error?.response?.data?.message || "Unknown error")
       );
       setLoading(false);
@@ -258,6 +258,33 @@ function QuizSetting({ course_id, chapter_id }) {
                 )}
               </Form.Item>
 
+
+              <Form.Item label="Passing Percentage">
+                <Input
+                  placeholder="Enter Percentage"
+                  value={passing_percentage}
+                  onChange={(e) => set_passing_percentage(e.target.value)}
+                />
+                {errors?.passing_percentage && (
+                  <span style={{ color: "red" }}>
+                    {errors.passing_percentage}
+                  </span>
+                )}
+              </Form.Item>
+              
+              <Form.Item label="Minimum Time Before Submit">
+                <Input
+                  placeholder="Enter Time"
+                  value={min_time_before_submit}
+                  onChange={(e) => set_min_time_before_submit(e.target.value)}
+                />
+                {errors?.min_time_before_submit && (
+                  <span style={{ color: "red" }}>
+                    {errors.min_time_before_submit}
+                  </span>
+                )}
+              </Form.Item>
+
               {/* Advanced Setting Toggle */}
               <h3
                 style={{
@@ -273,6 +300,7 @@ function QuizSetting({ course_id, chapter_id }) {
                 Advanced Setting
                 {showAdvanced ? <UpOutlined /> : <DownOutlined />}
               </h3>
+
 
               {showAdvanced && (
                 <>
@@ -304,19 +332,6 @@ function QuizSetting({ course_id, chapter_id }) {
                     {errors?.post_submit_message && (
                       <span style={{ color: "red" }}>
                         {errors?.post_submit_message}
-                      </span>
-                    )}
-                  </Form.Item>
-
-                  <Form.Item label="Passing Percentage">
-                    <Input
-                      placeholder="Enter Percentage"
-                      value={passing_percentage}
-                      onChange={(e) => set_passing_percentage(e.target.value)}
-                    />
-                    {errors?.passing_percentage && (
-                      <span style={{ color: "red" }}>
-                        {errors.passing_percentage}
                       </span>
                     )}
                   </Form.Item>
@@ -361,18 +376,7 @@ function QuizSetting({ course_id, chapter_id }) {
                     )}
                   </Form.Item>
 
-                  <Form.Item label="Minimum Time Before Submit">
-                    <Input
-                      placeholder="Enter Time"
-                      value={min_time_before_submit}
-                      onChange={(e) => set_min_time_before_submit(e.target.value)}
-                    />
-                    {errors?.min_time_before_submit && (
-                      <span style={{ color: "red" }}>
-                        {errors.min_time_before_submit}
-                      </span>
-                    )}
-                  </Form.Item>
+
 
                   <Form.Item
                     label="Show Solutions to learner"

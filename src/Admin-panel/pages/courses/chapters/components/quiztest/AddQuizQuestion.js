@@ -30,7 +30,7 @@ export default function AddQuizQuestion({
   const [subject, set_subject] = useState("");
   const [topic, set_topic] = useState("");
   const [tags, set_tags] = useState([]);
-  const [difficulty, set_difficulty] = useState([]);
+  const [difficulty, set_difficulty] = useState("easy");
   const [question_text, set_question_text] = useState("");
   const [is_group, set_is_group] = useState(0);
   const [option_details, set_option_details] = useState([]);
