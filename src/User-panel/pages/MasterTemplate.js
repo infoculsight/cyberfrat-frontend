@@ -117,6 +117,7 @@ const MasterTemplate = () => {
               mode="inline"
               selectedKeys={selectedKeys}
               openKeys={openKeys}
+             
               onOpenChange={onOpenChange}
               onClick={handleMenuClick}
               items={[
@@ -210,7 +211,7 @@ const MasterTemplate = () => {
 
               </div>
             </Header>
-            <Content style={balck_theme ? { backgroundColor: "#000000" } : {}}>
+            <Content style={balck_theme ? { backgroundColor: "#000000" } : {backgroundColor: "#e6e6e6ff"}}>
               <Outlet />
             </Content>
           </Layout>
