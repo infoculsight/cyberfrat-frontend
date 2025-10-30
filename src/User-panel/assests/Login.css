@@ -1,5 +1,6 @@
 .login-wapper{
-    background-image: url("figma.png");
+    /* background-image: url("figma.png"); */
+    background-color: #101010;
     background-size: cover;
     background-position: center center;
     text-align: center;
@@ -28,7 +29,7 @@
     max-width: 100%;
 
 }
-.login-form{
+.login-form {
     max-width: 400px;
     display: block;
     background-color: rgba(0, 0, 0, 0.3);
@@ -36,6 +37,7 @@
     margin: 0 auto;
     font-family: "Roboto", sans-serif;
     padding: 15px 60px;
+    box-shadow: 0px 0px 14px #3e3c3c;
 }
 .login-form h2, .login-form p{
     color: #F8F8F8;
@@ -93,4 +95,12 @@
 }
 .login-footer div:last-child{
     text-align: right;
+}
+
+p.reset-text{
+    color: #c9ac0ce0 !important;
+    text-align: center;
+    font-size: 20px !important;
+    line-height: 22px !important;
+    margin-top: 28px !important;
 }

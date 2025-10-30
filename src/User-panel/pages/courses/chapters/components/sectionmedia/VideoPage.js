@@ -10,22 +10,27 @@ const VideoPage = ({
   title,
   row_id,
   set_current_video_id,
-  single_progress,
-  set_single_progress,
   set_video_api_refresh,
+  video_api_refresh,
+ last_progress,
   chapter_id,
-  video_row
+  video_row,
 }) => {
   const videoRef = useRef(null);
+  const apiDisabledRef = useRef(false);
+  const skipDetectedAtRef = useRef(0); // ✅ new - to track when skip happened
   const [videoUrl, setVideoUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [duration, setDuration] = useState(0);
-  const [segments, setSegments] = useState([]);
+  const [api_disabled, set_api_disabled] = useState(false);
+  const [single_progress, set_single_progress] = useState(last_progress);
+
   const playbackRate = 1.0;
   const lastWatchedKey = `video-progress-${chapter_id}-${btoa(row_id)}`;
-  const lastWatchedTime = useRef(video_row?.watched_seconds || 0);
+  const lastWatchedTime = useRef(video_row?.watched_seconds || 1);
+  const isInitialSeek = useRef(true);
 
+  // ✅ Fullscreen logo adjustment
   useEffect(() => {
     const logo = document.getElementById("fullscreen-logo");
     const handleFullscreen = () => {
@@ -47,45 +52,62 @@ const VideoPage = ({
       }
     };
     document.addEventListener("fullscreenchange", handleFullscreen);
-    return () => {
-      document.removeEventListener("fullscreenchange", handleFullscreen);
-    };
+    return () => document.removeEventListener("fullscreenchange", handleFullscreen);
   }, []);
 
+  // ✅ Fetch HLS URL
   useEffect(() => {
     const fetchVideoUrl = async () => {
       setLoading(true);
-      const FORM_DATA = new FormData();
-      FORM_DATA.append("url", video_id);
-      const API_CALL = await VIDEO_PLAYER_URL(FORM_DATA);
-      if (API_CALL?.data?.status) {
-        setVideoUrl(API_CALL?.data?.video_url);
-      }
+      const form = new FormData();
+      form.append("url", video_id);
+      const res = await VIDEO_PLAYER_URL(form);
+      if (res?.data?.status) setVideoUrl(res.data.video_url);
       setLoading(false);
     };
     fetchVideoUrl();
   }, [video_id]);
 
-  const sendProgressToBackend = async (single_progress) => {
+  // ✅ Send progress (only if not disabled)
+  const sendProgressToBackend = async (progress) => {
+    if (apiDisabledRef.current) return;
     const video = videoRef.current;
     if (!video) return;
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("video_id", row_id);
-    FORM_DATA.append("single_progress", single_progress);
-    FORM_DATA.append("chapter_id", atob(chapter_id));
-    FORM_DATA.append("watched_seconds", parseFloat(lastWatchedTime.current.toFixed(1)));
-    FORM_DATA.append("total_seconds", parseFloat(video.duration?.toFixed(1)) || 0);
-    await VIDEO_TRACK_PROGRESS(FORM_DATA);
+
+    const form = new FormData();
+    form.append("video_id", row_id);
+    form.append("single_progress", progress);
+    form.append("chapter_id", atob(chapter_id));
+    form.append("watched_seconds", parseFloat(lastWatchedTime.current.toFixed(1)));
+    form.append("total_seconds", parseFloat(video.duration?.toFixed(1)) || 0);
+    await VIDEO_TRACK_PROGRESS(form);
+    set_video_api_refresh(!video_api_refresh)
   };
 
-  useEffect(() => {
-    if (single_progress > 0 && single_progress % 5 === 0) {
-      sendProgressToBackend(single_progress);
-    }
-  }, [single_progress]);
+  // ✅ Skip detection
+  const handleSeeking = () => {
+    const video = videoRef.current;
+    if (!video) return;
 
+    if (isInitialSeek.current) {
+      isInitialSeek.current = false;
+      return;
+    }
+
+    // ✅ First user skip → permanently disable instantly
+    if (!apiDisabledRef.current) {
+      apiDisabledRef.current = true;
+      skipDetectedAtRef.current = Date.now(); // mark timestamp
+      set_api_disabled(true);
+      console.warn("⚠️ Skip detected — API tracking disabled");
+    }
+  };
+
+  // ✅ Time tracking
   const handleTimeUpdate = () => {
     const video = videoRef.current;
+    if (!video) return;
+
     const current = video.currentTime;
     const total = video.duration || 0;
 
@@ -97,108 +119,59 @@ const VideoPage = ({
     if (total > 0) {
       const percent = (current / total) * 100;
       set_current_video_id(row_id);
-      if(Math.floor(percent) > single_progress){
- set_single_progress(Math.floor(percent));
+      if (Math.floor(percent) > single_progress) {
+        set_single_progress(Math.floor(percent));
       }
-     
     }
   };
 
-  const handleSeeking = () => {
-    const video = videoRef.current;
-    if (video.currentTime > lastWatchedTime.current) {
-      video.currentTime = lastWatchedTime.current;
-    }
-  };
-
-  const handlePause = () => {
-    setIsPlaying(false);
-    sendProgressToBackend();
-  };
-
-  const handlePlayPause = () => {
-    const video = videoRef.current;
-    if (video.paused) {
-      video.play();
-      setIsPlaying(true);
-    } else {
-      video.pause();
-      setIsPlaying(false);
-    }
-  };
-
-  // 🚨 Tab switch पर auto pause
+  // ✅ Progress API every 2%, but cancel instantly if skip within same frame
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      const video = videoRef.current;
-      if (document.hidden && video && !video.paused) {
-        video.pause();
-        setIsPlaying(false);
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
+    const now = Date.now();
 
+    // ✅ if skip was detected recently (within 1 second) → block even queued API
+    if (apiDisabledRef.current || now - skipDetectedAtRef.current < 1000) {
+      return;
+    }
+
+    if (single_progress > 0 && single_progress % 2 === 0) {
+      sendProgressToBackend(single_progress);
+    }
+  }, [single_progress]);
+
+  // ✅ Initialize HLS
   useEffect(() => {
     if (!videoUrl) return;
+    const video = videoRef.current;
     let hls;
+
     if (Hls.isSupported()) {
       hls = new Hls();
       hls.loadSource(videoUrl);
-      hls.attachMedia(videoRef.current);
+      hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        const video = videoRef.current;
         video.currentTime = lastWatchedTime.current;
-        video.play();
+        isInitialSeek.current = true;
+        video.play().catch(() => {});
         setIsPlaying(true);
       });
-    } else if (videoRef.current.canPlayType("application/vnd.apple.mpegurl")) {
-      const video = videoRef.current;
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoUrl;
       video.addEventListener("loadedmetadata", () => {
         video.currentTime = lastWatchedTime.current;
-        video.play();
+        isInitialSeek.current = true;
+        video.play().catch(() => {});
         setIsPlaying(true);
       });
     }
 
-    const handleLoaded = () => {
-      const dur = videoRef.current.duration;
-      setDuration(dur);
-
-      const chunkSize = dur / 10;
-      const segs = [];
-      for (let i = 0; i < 10; i++) {
-        const start = i * chunkSize;
-        const end = Math.min(dur, (i + 1) * chunkSize);
-        segs.push({ label: `Part ${i + 1} (${formatTime(start)} - ${formatTime(end)})`, value: start });
-      }
-      setSegments(segs);
-    };
-
-    videoRef.current.addEventListener("loadedmetadata", handleLoaded);
-    window.addEventListener("beforeunload", sendProgressToBackend);
-    return () => {
-      if (hls) hls.destroy();
-      sendProgressToBackend();
-      window.removeEventListener("beforeunload", sendProgressToBackend);
-    };
+    return () => hls && hls.destroy();
   }, [videoUrl]);
 
+  // ✅ Maintain playback speed
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = playbackRate;
-    }
+    if (videoRef.current) videoRef.current.playbackRate = playbackRate;
   }, [playbackRate]);
-
-  const formatTime = (seconds) => {
-    const min = Math.floor(seconds / 60);
-    const sec = Math.floor(seconds % 60);
-    return `${min}:${sec < 10 ? "0" : ""}${sec}`;
-  };
 
   return loading ? (
     <CulsightPageLoader />
@@ -208,7 +181,6 @@ const VideoPage = ({
         ref={videoRef}
         onTimeUpdate={handleTimeUpdate}
         onSeeking={handleSeeking}
-        onPause={handlePause}
         controls
         width="100%"
         style={{
@@ -219,8 +191,8 @@ const VideoPage = ({
         }}
       />
 
-      {/* ✅ Watermark Logo */}
       <img
+        id="fullscreen-logo"
         src={logo}
         alt="Watermark"
         style={{
@@ -233,7 +205,6 @@ const VideoPage = ({
         }}
       />
 
-      {/* ✅ Watermark Text */}
       <div
         style={{
           position: "absolute",
@@ -247,6 +218,30 @@ const VideoPage = ({
       >
         © cyberfrat
       </div>
+
+      {api_disabled ? (
+        <div
+          style={{
+            color: "red",
+            textAlign: "center",
+            fontWeight: "bold",
+            marginTop: "5px",
+          }}
+        >
+          ⚠️ Tracking disabled — video skipped
+        </div>
+      ) :(
+        <div
+          style={{
+            color: "#e9c70ada",
+            textAlign: "center",
+            fontWeight: "bold",
+            marginTop: "5px",
+          }}
+        >
+          Video Tracking Start
+        </div>
+      )}
 
       <Space wrap style={{ marginTop: "10px" }}></Space>
     </div>

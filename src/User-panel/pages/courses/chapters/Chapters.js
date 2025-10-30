@@ -10,9 +10,8 @@ import {
 } from "../../../apis/apis";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
 import { FixTruncatedHTMLList } from "../../../components/TruncatedHTML";
-import { LeftOutlined } from "@ant-design/icons";
+import { CheckCircleFilled, DownloadOutlined, LeftOutlined } from "@ant-design/icons";
 import SectionVideos from "./components/sectionmedia/sectionVideos";
-import PdfIframeViewer from "../../../components/PdfIframeViewer";
 import CustomRichTextEditor from "../../../components/CustomTextEditor";
 
 export default function Chapters() {
@@ -28,7 +27,6 @@ export default function Chapters() {
   const [balck_theme, set_balck_theme] = useState(true);
   const [full_screen, set_full_screen] = useState(false);
   const [last_chapter, set_last_chapter] = useState(0);
-  // Single Progress
   const [single_progress, set_single_progress] = useState(0);
   const [description, set_description] = useState("");
   const [comments, set_comments] = useState([]);
@@ -36,28 +34,30 @@ export default function Chapters() {
   const [total_comments, set_total_comments] = useState(0);
   const [total_pages, set_total_pages] = useState(1);
   const [card_loader, set_card_loader] = useState(true);
+  const [course_watch_percent, set_course_watch_percent] = useState(0);
+  const [course_status, set_course_status] = useState('');
 
-  // 🔹 Format time (IST) + Relative time (under 4 hours)
+  // ✅ Helper to detect quiz keyword in title
+  function hasQuiz(title) {
+    return /\bquiz\b/i.test(title);
+  }
+
+  // 🔹 Format time (IST) + Relative time
   const formatTime = (timestamp) => {
     if (!timestamp) return "";
-    // Convert server string "2025-10-14 10:41:40" → Date object in IST
     const createdTimeUTC = new Date(timestamp.replace(" ", "T") + "Z");
     const nowUTC = new Date();
-
     const diffMs = nowUTC - createdTimeUTC;
     const diffMinutes = Math.floor(diffMs / (1000 * 60));
     const diffHours = Math.floor(diffMinutes / 60);
-
     if (diffHours < 4) {
       if (diffMinutes < 1) return "Just now";
       if (diffMinutes < 60)
         return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
       return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
     }
-
-    // 🔸 Convert to IST
     const istDate = new Date(createdTimeUTC.getTime() + 5.5 * 60 * 60 * 1000);
-    const formatted = istDate.toLocaleString("en-IN", {
+    return istDate.toLocaleString("en-IN", {
       day: "2-digit",
       month: "short",
       year: "numeric",
@@ -66,43 +66,37 @@ export default function Chapters() {
       hour12: true,
       timeZone: "Asia/Kolkata",
     });
-
-    return formatted; // e.g., "14 Oct 2025, 3:41 PM"
   };
 
-  const fetchCommentList = useCallback(
-    async (page = 1,chapter_id) => {
-     
-      const FORM_DATA = new FormData();
-      FORM_DATA.append("view_id", chapter_id);
-      FORM_DATA.append("page", page);
-      FORM_DATA.append("comment_type", "chapter");
-
-      try {
-        const API_CALL = await LIST_COMMENT(FORM_DATA);
-        if (API_CALL?.data?.status) {
-          const data = API_CALL.data;
-          set_comments(data.comments || []);
-          set_current_page(data.page || 1);
-          set_total_comments(data.total_comments || 0);
-          set_total_pages(data.total_pages || 1);
-        } else {
-          set_comments([]);
-        }
-      } catch (error) {
-        console.error("Network error:", error);
-      } finally {
-        set_card_loader(false);
+  // 🔹 Fetch comments
+  const fetchCommentList = useCallback(async (page = 1, chapter_id) => {
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("view_id", chapter_id);
+    FORM_DATA.append("page", page);
+    FORM_DATA.append("comment_type", "chapter");
+    try {
+      const API_CALL = await LIST_COMMENT(FORM_DATA);
+      if (API_CALL?.data?.status) {
+        const data = API_CALL.data;
+        set_comments(data.comments || []);
+        set_current_page(data.page || 1);
+        set_total_comments(data.total_comments || 0);
+        set_total_pages(data.total_pages || 1);
+      } else {
+        set_comments([]);
       }
-    },
-    []
-  );
+    } catch (error) {
+      console.error("Network error:", error);
+    } finally {
+      set_card_loader(false);
+    }
+  }, []);
 
-useEffect(() => {
-  if (currentChapter?.id) {
-    fetchCommentList(1, currentChapter.id);
-  }
-}, [currentChapter, fetchCommentList]);
+  useEffect(() => {
+    if (currentChapter?.id) {
+      fetchCommentList(1, currentChapter.id);
+    }
+  }, [currentChapter, fetchCommentList]);
 
   // 🔹 Add new comment
   const onFinish = async () => {
@@ -110,13 +104,11 @@ useEffect(() => {
       message.warning("Please write a comment first.");
       return;
     }
-
     set_card_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("view_id", currentChapter?.id);
     FORM_DATA.append("description", description);
     FORM_DATA.append("comment_type", "chapter");
-
     try {
       const response = await ADD_COMMENT(FORM_DATA);
       if (response?.data?.status) {
@@ -130,28 +122,21 @@ useEffect(() => {
         message.error(response?.data?.message || "Failed to add comment");
       }
     } catch (error) {
-      message.error(
-        "Server Error: " + (error?.response?.data?.message || "Unknown error")
-      );
+      message.error("Server Error: " + (error?.response?.data?.message || "Unknown error"));
     } finally {
       set_card_loader(false);
     }
   };
 
-  // 🔹 Handle pagination
   const pagination_on_change = (page) => {
     set_card_loader(true);
     set_current_page(page);
     fetchCommentList(page, currentChapter.id);
   };
 
-
   const handleBack = () => {
-    if (location.state?.from) {
-      Navigate(location.state.from);
-    } else {
-      Navigate(-1);
-    }
+    if (location.state?.from) Navigate(location.state.from);
+    else Navigate(-1);
   };
 
   const openFullscreenWindow = (url) => {
@@ -164,49 +149,6 @@ useEffect(() => {
     }
   };
 
-
-  const fetchEnabledChaptersNew = useCallback(async () => {
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("course_id", atob(course_id));
-    try {
-      setLoading(true);
-      const API_CALL = await LIST_ENABLED_CHAPTER(FORM_DATA);
-      if (API_CALL?.data?.status) {
-        const data = API_CALL.data?.data || [];
-        setEnabledChapters(data);
-
-        if (data.length > 0) {
-          set_last_chapter(data[data.length - 1].id);
-          // अगर backend ने current chapter दिया है
-          if (data[0].current_chapter_data) {
-            const chapter = data.find(
-              (item) =>
-                item.id === data[0].current_chapter_data.chapter_id
-            );
-            if (chapter) {
-              setCurrentChapter(chapter);
-              set_single_progress(parseInt(chapter.progress) || 0);
-              await UPDATE_CURRENT_CHAPTER_API(chapter.id, atob(course_id));
-            }
-          } else {
-            setCurrentChapter(data[0]);
-            set_single_progress(data[0].progress || 0);
-            await UPDATE_CURRENT_CHAPTER_API(data[0].id, atob(course_id));
-          }
-        } else {
-          setCurrentChapter(null);
-        }
-      } else {
-        setEnabledChapters([]);
-        setCurrentChapter(null);
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [course_id]);
-
   const UPDATE_CURRENT_CHAPTER_API = async (chapter_id, courseId) => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("course_id", courseId);
@@ -215,7 +157,7 @@ useEffect(() => {
     return res?.data?.status || false;
   };
 
-
+  // ✅ Fetch enabled chapters
   const fetchEnabledChapters = useCallback(async () => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("course_id", atob(course_id));
@@ -223,36 +165,27 @@ useEffect(() => {
       setLoading(true);
       const API_CALL = await LIST_ENABLED_CHAPTER(FORM_DATA);
       if (API_CALL?.data?.status) {
-        const data = API_CALL.data?.data || [];
+        let data = API_CALL.data?.data || [];
+        set_course_watch_percent(API_CALL.data?.course_watch_percent);
+        console.log('sdsds', API_CALL.data?.course_status)
+        set_course_status(API_CALL.data?.course_status)
+        const normal = data.filter((ch) => !hasQuiz(ch.title));
+        const quiz = data.filter((ch) => hasQuiz(ch.title));
+        data = [...normal, ...quiz];
         setEnabledChapters(data);
-
         if (data.length > 0) {
           set_last_chapter(data[data.length - 1].id);
-          // अगर backend ने current chapter दिया है
-          if (data[0].current_chapter_data) {
-            const chapter = data.find(
-              (item) =>
-                item.id === data[0].current_chapter_data.chapter_id
-            );
-            if (chapter) {
-              setCurrentChapter(chapter);
-              set_single_progress(parseInt(chapter.progress) || 0);
-              await UPDATE_CURRENT_CHAPTER_API(chapter.id, atob(course_id));
-            }
-          } else {
-            setCurrentChapter(data[0]);
-            set_single_progress(data[0].progress || 0);
-            await UPDATE_CURRENT_CHAPTER_API(data[0].id, atob(course_id));
-          }
-        } else {
-          setCurrentChapter(null);
+          const chapter =
+            data.find((i) => i.id === data[0]?.current_chapter_data?.chapter_id) || data[0];
+          setCurrentChapter(chapter);
+          set_single_progress(parseInt(chapter.progress) || 0);
+          await UPDATE_CURRENT_CHAPTER_API(chapter.id, atob(course_id));
         }
       } else {
         setEnabledChapters([]);
-        setCurrentChapter(null);
       }
     } catch (error) {
-      console.error("Network error:", error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -261,54 +194,23 @@ useEffect(() => {
   useEffect(() => {
     fetchEnabledChapters();
     const local_theme = localStorage.getItem("dark_theme");
-    parseInt(local_theme) === 0
-      ? set_balck_theme(false)
-      : set_balck_theme(true);
+    parseInt(local_theme) === 0 ? set_balck_theme(false) : set_balck_theme(true);
   }, [fetchEnabledChapters]);
 
   const handleChapterClick = async (chapter, index) => {
-    if (index !== 0 && !chapter.get_tracking_chapter_data) {
-      message.warning("Please complete previous chapter first");
+    if (hasQuiz(chapter.title) && course_watch_percent < 90) {
+      message.warning("Please complete at least 90% of the course before attempting the quiz.");
       return;
     }
-
-    const success = await UPDATE_CURRENT_CHAPTER_API(
-      chapter.id,
-      atob(course_id)
-    );
-    if (success) {
-      fetchEnabledChaptersNew()
-    }
+    const success = await UPDATE_CURRENT_CHAPTER_API(chapter.id, atob(course_id));
+    if (success) fetchEnabledChapters();
   };
-
-  const handleNext = async () => {
-    if (!currentChapter) return;
-
-    const currentIndex = enabledChapters.findIndex(
-      (c) => c.id === currentChapter.id
-    );
-
-    if (currentChapter.id === last_chapter) {
-      // last chapter → first chapter पर redirect
-      const firstChapter = enabledChapters[0];
-      const success = await UPDATE_CURRENT_CHAPTER_API(
-        firstChapter.id,
-        atob(course_id)
-      );
-      if (success) {
-        fetchEnabledChaptersNew()
-      }
-    } else {
-      // next chapter
-      const nextChapter = enabledChapters[currentIndex + 1];
-      const success = await UPDATE_CURRENT_CHAPTER_API(
-        nextChapter.id,
-        atob(course_id)
-      );
-      if (success) {
-        fetchEnabledChaptersNew()
-      }
-    }
+  const handleDownload = () => {
+    const url = course_status;
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${course_status}_Certificate.pdf`;
+    link.click();
   };
 
   return (
@@ -333,13 +235,33 @@ useEffect(() => {
     >
       <Card>
         <Row>
-          <Col span={21}>
+          <Col span={14}>
             <h2>
-              <LeftOutlined onClick={handleBack} />{" "}
-              <span>Chapters</span>
+              <LeftOutlined onClick={handleBack} /> Chapters
             </h2>
           </Col>
-          <Col span={3}>
+          <Col span={10}>
+            <div style={{ float: "right", marginLeft: "15px" }}>
+              {course_status ? <Button
+                type="primary"
+                size="small"
+                disabled={false}
+                onClick={handleDownload}
+              >
+
+                Certificate <DownloadOutlined />
+              </Button> : <Button
+                variant="solid"
+                size="small"
+                color="green"
+                disabled={true}
+              >
+
+                Certificate <DownloadOutlined />
+              </Button>}
+
+            </div>
+
             <Button
               type="primary"
               style={{ float: "right" }}
@@ -355,117 +277,145 @@ useEffect(() => {
           <CulsightPageLoader />
         ) : (
           <Row gutter={10}>
-
-
+            {/* ✅ LEFT PANEL */}
             <Col xs={24} sm={24} md={24} lg={5}>
-              <div
-                id="scrollableDiv"
-                style={{
-                  height: "70vh",
-                  overflow: "auto",
-                  padding: "0 8px",
-                  borderRadius: "8px",
-                  color: balck_theme ? "#fff" : "#000",
-                  scrollbarColor: balck_theme ? "#555 #1f1f1f" : "#ccc #fafafa",
-                }}
-              >
-                <InfiniteScroll
-                  dataLength={enabledChapters?.length || 0}
-                  hasMore={false}
-                  loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
-                  scrollableTarget="scrollableDiv"
-
-                >
-                  <List
-                    header={<div>Chapter List</div>}
-                    bordered
-                    itemLayout="horizontal"
-                    dataSource={enabledChapters}
-                    renderItem={(item, index) => (
-                      <List.Item
-                        key={item.id}
-                        style={
-                          currentChapter?.id === item?.id
-                            ? {
-                              cursor: "pointer",
-                              backgroundColor: balck_theme
-                                ? "rgb(46 46 46)"
-                                : "rgb(208 208 208)",
-                              padding: "12px",
-                            }
-                            : {
-                              padding: "12px",
-                              cursor:
-                                index === 0 || item.get_tracking_chapter_data
-                                  ? "pointer"
-                                  : "not-allowed",
-                              opacity:
-                                index === 0 || item.get_tracking_chapter_data ? 1 : 0.5,
-                            }
-                        }
-                        onClick={() => handleChapterClick(item, index)}
-                      >
-                        <List.Item.Meta
-                          description={
-                            <div>
-                              <h5
-                                style={{
-                                  color: "#FFD700",
-                                  marginBottom: 0,
-                                }}
-                              >
-                                {item.title}
-                              </h5>
-                              {item?.video_id ? (
-                                <>
-                                  {currentChapter?.id === item?.id ? (
+              <List
+                header={<div>Chapter List</div>}
+                bordered
+                itemLayout="horizontal"
+                dataSource={enabledChapters}
+                renderItem={(item, index) => (
+                  <List.Item
+                    key={item.id}
+                    style={{
+                      padding: "12px",
+                      cursor:
+                        hasQuiz(item.title) && course_watch_percent < 90
+                          ? "not-allowed"
+                          : "pointer",
+                      backgroundColor:
+                        currentChapter?.id === item?.id
+                          ? balck_theme
+                            ? "rgb(46 46 46)"
+                            : "rgb(243 242 242)"
+                          : "transparent",
+                      opacity:
+                        hasQuiz(item.title) && course_watch_percent < 90
+                          ? 0.4
+                          : index === 0 || item.get_tracking_chapter_data
+                            ? 1
+                            : 0.5,
+                    }}
+                    onClick={() => handleChapterClick(item, index)}
+                  >
+                    <List.Item.Meta
+                      description={
+                        <div>
+                          <h5 style={{ color: "#FFD700", marginBottom: 0 }}>
+                            {item.title}
+                          </h5>
+                          <div style={{ position: "relative" }}>
+                            {currentChapter?.id === item?.id ? (
+                              <>
+                                {item?.title?.toLowerCase().includes("quiz") ? <>
+                                  {!course_status ? <>
                                     <Progress
-                                      percent={single_progress}
+                                      percent={0}
                                       status="active"
                                       strokeColor="#FFD700"
                                     />
-                                  ) : (
+
+                                  </> : <>
+                                    <CheckCircleFilled className="check-pro" />
+                                    <Progress
+                                      percent={100}
+                                      status="active"
+                                      strokeColor="#FFD700"
+                                    />
+                                  </>}
+                                </> : <>
+                                  {single_progress >= 90 && (
+                                    <CheckCircleFilled className="check-pro" />
+                                  )}
+                                  <Progress
+                                    percent={single_progress}
+                                    status="active"
+                                    strokeColor="#FFD700"
+                                  />
+                                </>}
+
+
+
+
+                              </>
+                            ) : (
+                              <>
+                                {item.get_tracking_chapter_data ? <>
+                                  {item?.video_id ? <>
+                                    {item.progress >= 90 && (
+                                      <CheckCircleFilled className="check-pro" />
+                                    )}
                                     <Progress
                                       percent={item?.progress}
                                       status="active"
                                       strokeColor="#FFD700"
                                     />
-                                  )}
-                                  <span style={{ fontSize: "10px" }}>Video</span>
-                                  {item.scorm && (
-                                    <span style={{ fontSize: "10px" }}>, PDF</span>
-                                  )}
-                                  {item.quiz_available && (
-                                    <span style={{ fontSize: "10px" }}>, Quiz</span>
-                                  )}
-                                  {item.test_available && (
-                                    <span style={{ fontSize: "10px" }}>, Live Test</span>
-                                  )}
-                                </>
-                              ) : (
-                                <>
-                                  {item.quiz_available && (
-                                    <span style={{ fontSize: "10px" }}>Quiz</span>
-                                  )}
-                                  {item.scorm && (
-                                    <span style={{ fontSize: "10px" }}>, PDF</span>
-                                  )}
-                                  {item.test_available && (
-                                    <span style={{ fontSize: "10px" }}>, Live Test</span>
-                                  )}
-                                </>
-                              )}
-                            </div>
-                          }
-                        />
-                      </List.Item>
-                    )}
-                  />
-                </InfiniteScroll>
-              </div>
+                                  </> : <>
+
+                                    {item?.title?.toLowerCase().includes("quiz") ? <>
+                                      {!course_status ? <>
+                                        <Progress
+                                          percent={0}
+                                          status="active"
+                                          strokeColor="#FFD700"
+                                        />
+
+                                      </> : <>
+                                        <CheckCircleFilled className="check-pro" />
+                                        <Progress
+                                          percent={100}
+                                          status="active"
+                                          strokeColor="#FFD700"
+                                        />
+                                      </>}
+                                    </> : <>
+                                      <CheckCircleFilled className="check-pro" />
+                                      <Progress
+                                        percent={100}
+                                        status="active"
+                                        strokeColor="#FFD700"
+                                      />
+                                    </>}
+
+                                  </>}
+
+
+                                </> : <>
+
+                                  <Progress
+                                    percent={0}
+                                    status="active"
+                                    strokeColor="#FFD700"
+                                  />
+
+                                </>}
+                              </>
+                            )}
+                            <span style={{ fontSize: "10px" }}>
+                              {item.video_id && "Video"}
+                              {item.scorm && " PDF"}
+                              {item.quiz_available && " Quiz"}
+                            </span>
+                          </div>
+                        </div>
+                      }
+                    />
+                  </List.Item>
+                )}
+              />
             </Col>
 
-            {/* RIGHT VIEW */}
+            {/* ✅ RIGHT PANEL */}
             <Col xs={24} sm={24} md={24} lg={19}>
               {currentChapter ? (
                 <Card>
@@ -475,78 +425,31 @@ useEffect(() => {
                     </Col>
                     <Col span={12}>
                       <div style={{ float: "right" }}>
+                        {/* ✅ Completion Tag */}
+                          {!currentChapter?.quiz_row && <>
                         <Button
-                          style={{ marginRight: "5px" }}
                           size="small"
-                          type="primary"
-                          danger
-                          disabled={
-                            !(single_progress >= 90 || !currentChapter.video_id)
-                          }
-                          onClick={handleNext}
+                          disabled={!(single_progress >= 90 || !currentChapter.video_id)}
                         >
-                          Next
+                         
+                          {single_progress >= 90 || !currentChapter.video_id ? (
+                            <>
+                              <CheckCircleFilled /> Completed
+                            </>
+                          ) : (
+                            "Incomplete"
+                          )}
                         </Button>
+                        </>}
 
-                        {currentChapter?.test_available && (
-                          <>
-                            {currentChapter.expired ? (
-                              <Button
-                                type="primary"
-                                size="small"
-                                style={{
-                                  marginTop: "10px",
-                                  marginRight: "5px",
-                                }}
-                                disabled
-                              >
-                                Live Test Expired
-                              </Button>
-                            ) : currentChapter?.test_submitted ? (
-                              <Button
-                                type="primary"
-                                size="small"
-                                style={{
-                                  marginTop: "10px",
-                                  marginRight: "5px",
-                                }}
-                                disabled
-                              >
-                                Attempted Live Test
-                              </Button>
-                            ) : (
-                              <Button
-                                type="primary"
-                                style={{
-                                  backgroundColor: "#ffc107",
-                                  color: "#000",
-                                  marginRight: "5px",
-                                }}
-                                size="small"
-                                onClick={() =>
-                                  openFullscreenWindow(
-                                    "/live-test/" +
-                                    btoa(currentChapter.id)
-                                  )
-                                }
-                              >
-                                Live Test
-                              </Button>
-                            )}
-                          </>
-                        )}
+                      
 
-                        {single_progress >= 90 || !currentChapter.video_id ? (
+                        {/* ✅ Quiz Buttons (All Conditions Preserved) */}
+                        {(single_progress >= 90 || !currentChapter.video_id) && (
                           <>
-                            {currentChapter?.quiz_available ||
+                            {currentChapter?.quiz_available && (
                               currentChapter?.quiz_submitted ? (
-                              currentChapter?.quiz_submitted ? (
-                                <Button
-                                  type="primary"
-                                  size="small"
-                                  style={{ marginTop: "10px" }}
-                                  disabled
-                                >
+                                <Button disabled size="small" style={{ marginLeft: 5 }}>
                                   Attempted Quiz Test
                                 </Button>
                               ) : (
@@ -555,25 +458,97 @@ useEffect(() => {
                                   style={{
                                     backgroundColor: "#ffc107",
                                     color: "#000",
+                                    marginLeft: 5,
                                   }}
                                   size="small"
                                   onClick={() =>
-                                    openFullscreenWindow(
-                                      "/quiz-test/" +
-                                      btoa(currentChapter.id)
-                                    )
+                                    openFullscreenWindow("/quiz-test/" + btoa(currentChapter.id))
                                   }
                                 >
                                   Quiz Test
                                 </Button>
                               )
-                            ) : null}
+                            )}
                           </>
-                        ) : <></>}
+                        )}
                       </div>
                     </Col>
-                  </Row><br></br>
+                  </Row>
+                  <br />
+                  {currentChapter?.quiz_row && currentChapter?.title?.toLowerCase().includes("quiz") ? <>
+                        {currentChapter?.quiz_row?.time_limit > 0 ? (
+            <div
+              className="section-details section-details-right-padding"
+              style={{ minHeight: "auto" }}
+            >
+              <Row>
+                <Col span={12}>
 
+                  <p>
+                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                      Time Limit :-{" "}
+                    </span>
+                    {currentChapter?.quiz_row?.time_limit} min
+                    <br />
+                  
+                  </p>
+                </Col>
+
+                <Col span={12}>
+                  <div style={{ float: "right" }}>
+                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                      Passing percentage :-{" "}
+                    </span>
+                    {currentChapter?.quiz_row?.passing_percentage}%  <br />
+
+                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                      Number of retake :-{" "}
+                    </span>
+                    {currentChapter?.quiz_row?.no_of_retake} <br />
+
+                     <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                      Number of questions :-{" "}
+                    </span>
+                    {currentChapter?.quiz_row?.display_question}
+                    <br />
+                   
+
+                  </div>
+                </Col>
+               <p style={{textAlign:"center", margin:"30px"}}>You can attempt this test a maximum of {currentChapter?.quiz_row?.number_of_retake} times. Currently, you are on your {currentChapter?.quiz_row?.current_attempt} attempt. The time limit for the test is {currentChapter?.quiz_row?.time_limit} minutes, and you must score at least {currentChapter?.quiz_row?.passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
+              </Row>
+              
+             
+            </div>
+          ) : (
+            <h3
+              style={{
+                padding: "50px",
+                textAlign: "center",
+                color: "red",
+                fontSize: "42px",
+              }}
+            >
+              Data Empty
+           
+            </h3>
+          )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  </> : <>
                   <SectionVideos
                     set_next_view={() => { }}
                     chapter_id={btoa(currentChapter.id)}
@@ -584,13 +559,11 @@ useEffect(() => {
 
                   {currentChapter.introduction &&
                     currentChapter.introduction !== "null" && (
-                      <FixTruncatedHTMLList
-                        html={currentChapter.introduction}
-                      />
+                      <FixTruncatedHTMLList html={currentChapter.introduction} />
                     )}
 
-                  {/* 🔹 Comment Section */}
-                  <Card style={{ marginTop: "30px" }} loading={card_loader}>
+                  {/* ✅ Comments Section */}
+                  <div style={{ marginTop: "30px" }}>
                     <CustomRichTextEditor
                       editorLabel="Course Discussions"
                       value={description}
@@ -599,11 +572,10 @@ useEffect(() => {
                     />
                     <Button
                       type="primary"
-                      style={{ marginTop: "-20px" }}
+                      style={{ marginTop: "-20px", marginBottom: "20px" }}
                       onClick={onFinish}
-                      loading={card_loader}
                     >
-                      Submit
+                      Add Comment
                     </Button>
 
                     <List
@@ -632,28 +604,12 @@ useEffect(() => {
                         </List.Item>
                       )}
                     />
-
-                    {total_pages > 1 && (
-                      <div style={{ float: "right", marginTop: "20px" }}>
-                        <Pagination
-                          current={current_page}
-                          total={total_comments}
-                          pageSize={10}
-                          onChange={pagination_on_change}
-                        />
-                      </div>
-                    )}
-                  </Card>
-
-                  {currentChapter.scorm && (
-                    <>
-                      <br />
-                      <PdfIframeViewer pdfUrl={currentChapter.scorm} />
-                    </>
-                  )}
+                  </div>
+                  </>}
+                  
                 </Card>
               ) : (
-                <p>No Chapter Selected</p>
+                <p>No chapters found.</p>
               )}
             </Col>
           </Row>

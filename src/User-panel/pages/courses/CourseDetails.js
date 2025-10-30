@@ -156,8 +156,8 @@ function CourseDetails(props) {
       {page_loader ? (
         <CulsightPageLoader />
       ) : (
-        <div style={{ margin: "0 100px" }}>
-          <Card style={{ padding: "0px 25px 20px 25px" }}>
+        <div>
+          <Card>
             <Row>
               <Col span={12}>
                 <h3
@@ -191,25 +191,32 @@ function CourseDetails(props) {
                 </Button>
               </Col>
             </Row>
+            <Row>
+              <Col span={14} style={{ paddingRight: "30px" }}>
+                <img
+                  src={course_data.thumbnail}
+                  alt="cyberfrat"
+                  style={{ width: "100%", }}
+                />
+              </Col>
+              <Col span={10}>
+                <h2>{course_data.title}</h2>
+                <p>
+                  <b style={{ color: "#e9c70ada" }}>Instructor:</b>{" "}
+                  {course_data.instructor_display_name}
+                </p>
+                <p>
+                  <b style={{ color: "#e9c70ada" }}>Language:</b>{" "}
+                  {course_data.language}
+                </p>
+                <p>
+                  <b style={{ color: "#e9c70ada" }}>Duration:</b>{" "}
+                  {course_data.course_duration}
+                </p>
 
-            <img
-              src={course_data.thumbnail}
-              alt="cyberfrat"
-              style={{ width: "100%", height: "500px" }}
-            />
-            <h2>{course_data.title}</h2>
-            <p>
-              <b style={{ color: "#e9c70ada" }}>Instructor:</b>{" "}
-              {course_data.instructor_display_name}
-            </p>
-            <p>
-              <b style={{ color: "#e9c70ada" }}>Language:</b>{" "}
-              {course_data.language}
-            </p>
-            <p>
-              <b style={{ color: "#e9c70ada" }}>Duration:</b>{" "}
-              {course_data.course_duration}
-            </p>
+
+              </Col>
+            </Row>
 
             <h3 style={{ color: "#e9c70ada" }}>Description</h3>
             <p>{course_data.description}</p>
@@ -218,7 +225,7 @@ function CourseDetails(props) {
             <p>{course_data.how_to_use}</p>
 
             {/* 🔹 Comment Section */}
-            <Card style={{ marginTop: "30px" }} loading={card_loader}>
+            <div style={{ marginTop: "30px" }} >
               <CustomRichTextEditor
                 editorLabel="Course Discussions"
                 value={description}
@@ -271,7 +278,7 @@ function CourseDetails(props) {
                   />
                 </div>
               )}
-            </Card>
+            </div>
           </Card>
         </div>
       )}
