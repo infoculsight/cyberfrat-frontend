@@ -40,13 +40,40 @@ function LiveTest() {
   }, []);
 
 
-// create a debounced function once
-const debouncedSearch = useCallback(
-  debounce(async (search_value) => {
+  // create a debounced function once
+  const debouncedSearch = useCallback(
+    debounce(async (search_value) => {
+      try {
+        set_pagination_loader(true);
+        const FORM_DATA = new FormData();
+        FORM_DATA.append("title", search_value);
+        const API_CALL = await LIST_LIVE_TESTS(FORM_DATA);
+        if (API_CALL?.data?.status) {
+          set_table_data(API_CALL.data.data);
+          set_current_page(API_CALL.data.current_page);
+          set_total_pages(API_CALL.data.total_pages);
+        }
+      } catch (err) {
+        console.error("Search API Error:", err);
+      } finally {
+        set_pagination_loader(false);
+      }
+    }, 500),
+    []
+  );
+  const handleInput = (e) => {
+    const value = e.target.value;
+    set_search_query_value(value);
+    debouncedSearch(value);
+  };
+
+
+  const pagination_on_change = async (page) => {
+    set_pagination_loader(true);
     try {
-      set_pagination_loader(true);
       const FORM_DATA = new FormData();
-      FORM_DATA.append("title", search_value);
+      FORM_DATA.append("page", page);
+      FORM_DATA.append("title", search_query_value || "");
       const API_CALL = await LIST_LIVE_TESTS(FORM_DATA);
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL.data.data);
@@ -54,38 +81,11 @@ const debouncedSearch = useCallback(
         set_total_pages(API_CALL.data.total_pages);
       }
     } catch (err) {
-      console.error("Search API Error:", err);
+      console.error("Pagination API Error:", err);
     } finally {
       set_pagination_loader(false);
     }
-  }, 500),
-  []
-);
-const handleInput = (e) => {
-  const value = e.target.value;
-  set_search_query_value(value);
-  debouncedSearch(value);
-};
-
-
- const pagination_on_change = async (page) => {
-  set_pagination_loader(true);
-  try {
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("page", page);
-    FORM_DATA.append("title", search_query_value || "");
-    const API_CALL = await LIST_LIVE_TESTS(FORM_DATA);
-    if (API_CALL?.data?.status) {
-      set_table_data(API_CALL.data.data);
-      set_current_page(API_CALL.data.current_page);
-      set_total_pages(API_CALL.data.total_pages);
-    }
-  } catch (err) {
-    console.error("Pagination API Error:", err);
-  } finally {
-    set_pagination_loader(false);
-  }
-};
+  };
 
 
   const columns = [
@@ -114,8 +114,20 @@ const handleInput = (e) => {
             <EyeFilled />
           </Button>
           <Button color="green" variant="solid"
-           onClick={() => navigate("/live-test-questions/" + btoa(record.id))}
-           >Questions</Button>
+            onClick={() => navigate("/live-test-questions/" + btoa(record.id))}
+          >Questions</Button>
+          <Button
+            color="red"
+            variant="solid"
+            onClick={() =>
+              navigate("/assign-learner-live-test/" + btoa(record.id), {
+                state: { title: record.title },
+              })
+            }
+          >
+            learners
+          </Button>
+
         </Space>
       ),
     },

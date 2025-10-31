@@ -14,12 +14,13 @@ import {
 import { Option } from "antd/es/mentions";
 import { LoadingOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
-import { ASSIGN_COURSE } from "../../../apis/apis";
+import { ASSIGN_LIVE_TEST_LEARNER } from "../../apis/apis";
 import debounce from "lodash.debounce";
-import CulsightPageLoader from "../../../components/CulsightPageLoader";
-import ConfirmationAssignCourse from "./ConfirmationAssignCourse";
+import CulsightPageLoader from "../../components/CulsightPageLoader";
+import ConfirmationAssignLiveTest from "./ConfirmationAssignLiveTest"
 
-function AssignLeaners(props) {
+
+function AssignLeanersToLiveTest(props) {
   //PAGE STATES
   const { notification } = App.useApp();
   const [loader, setLoader] = useState(true);
@@ -43,8 +44,8 @@ function AssignLeaners(props) {
 useEffect(() => {
   const fetchData = async () => {
     const FORM_DATA = new FormData();
-    FORM_DATA.append("course_id", atob(props.course_id));
-    const API_CALL = await ASSIGN_COURSE(FORM_DATA);
+    FORM_DATA.append("live_test_id", atob(props.live_test_id));
+    const API_CALL = await ASSIGN_LIVE_TEST_LEARNER(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.learners);
       set_current_page(API_CALL?.data?.current_page);
@@ -56,13 +57,13 @@ useEffect(() => {
   };
 
   fetchData();
-}, [props.course_id]); // ✅ Now no linter warning
+}, []); // ✅ Now no linter warning
 
 
 const refreshList = () => {
   const FORM_DATA = new FormData();
-  FORM_DATA.append("course_id", atob(props.course_id));
-  ASSIGN_COURSE(FORM_DATA).then((API_CALL) => {
+  FORM_DATA.append("live_test_id", atob(props.live_test_id));
+  ASSIGN_LIVE_TEST_LEARNER(FORM_DATA).then((API_CALL) => {
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.learners);
       set_current_page(API_CALL?.data?.current_page);
@@ -147,8 +148,8 @@ const refreshList = () => {
     FORM_DATA.append("page", page);
     FORM_DATA.append("name", search_query_name);
     FORM_DATA.append("email", search_query_email);
-    FORM_DATA.append("course_id", atob(props.course_id));
-    const API_CALL = await ASSIGN_COURSE(FORM_DATA);
+    FORM_DATA.append("live_test_id", atob(props.live_test_id));
+    const API_CALL = await ASSIGN_LIVE_TEST_LEARNER(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.learners);
       set_current_page(API_CALL?.data?.current_page);
@@ -163,11 +164,10 @@ const refreshList = () => {
       set_search_query_name(value);
       set_pagination_loader(true);
       const FORM_DATA = new FormData();
-      FORM_DATA.append("token", localStorage.getItem("token"));
       FORM_DATA.append("name", value);
       FORM_DATA.append("email", "");
-      FORM_DATA.append("course_id", atob(props.course_id));
-      const API_CALL = await ASSIGN_COURSE(FORM_DATA);
+      FORM_DATA.append("live_test_id", atob(props.live_test_id));
+      const API_CALL = await ASSIGN_LIVE_TEST_LEARNER(FORM_DATA);
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.learners);
         set_current_page(API_CALL?.data?.current_page);
@@ -188,8 +188,8 @@ const refreshList = () => {
       const FORM_DATA = new FormData();
       FORM_DATA.append("name", "");
       FORM_DATA.append("email", value);
-      FORM_DATA.append("course_id", atob(props.course_id));
-      const API_CALL = await ASSIGN_COURSE(FORM_DATA);
+      FORM_DATA.append("live_test_id", atob(props.live_test_id));
+      const API_CALL = await ASSIGN_LIVE_TEST_LEARNER(FORM_DATA);
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.learners);
         set_current_page(API_CALL?.data?.current_page);
@@ -219,7 +219,7 @@ const refreshList = () => {
       <Card>
         <Row>
           <Col span={12}>
-            <h2>Add Learners To Course</h2>
+            <h2>Add Learners To Live Test</h2>
           </Col>
         </Row>
 
@@ -267,7 +267,7 @@ const refreshList = () => {
           open={isModalVisible}
           onOk={async () => {
             const FORM_DATA = new FormData();
-            FORM_DATA.append("course_id", atob(props.course_id));
+            FORM_DATA.append("live_test_id", atob(props.live_test_id));
             FORM_DATA.append("learner_id", selectedLearner?.id);
             FORM_DATA.append(
               "access_type",
@@ -286,7 +286,7 @@ const refreshList = () => {
             }
 
             try {
-              const API_CALL = await ASSIGN_COURSE(FORM_DATA);
+              const API_CALL = await ASSIGN_LIVE_TEST_LEARNER(FORM_DATA);
               if (API_CALL?.data?.status) {
                 notification.success({
                   message: "Learner Assigned",
@@ -323,11 +323,7 @@ const refreshList = () => {
           okText="Assign"
           cancelText="Cancel"
         >
-          <ConfirmationAssignCourse
-            first_name={selectedLearner?.first_name}
-            last_name={selectedLearner?.last_name}
-            onAccessDetailsChange={(data) => setAccessDetails(data)}
-          />
+        
         </Modal>
 
         
@@ -336,4 +332,4 @@ const refreshList = () => {
   );
 }
 
-export default AssignLeaners;
+export default AssignLeanersToLiveTest;

@@ -18,21 +18,20 @@ import { Option } from "antd/es/mentions";
 import { ArrowDownOutlined, ArrowUpOutlined, LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { LIST_COURSE_LEANERS, LEANERS_COURSE_STATUS } from "../../../apis/apis";
-import moment from "moment";
+import { LIST_LIVE_TEST_LEARNERS, LIST_LIVE_TEST_LEARNERS_STATUS } from "../../apis/apis";
 import debounce from "lodash.debounce";
-import CulsightPageLoader from "../../../components/CulsightPageLoader";
-import AssignLeaners from "./AssignLeaners";
-import BulkEnrollLearners from "./BulkEnrollLearners";
+import CulsightPageLoader from "../../components/CulsightPageLoader";
+import BulkInrollLearnersToLiveTest from "./BulkInrollLearnersToLiveTest";
+import AssignLeanersToLiveTest from "./AssignLeanersToLiveTest";
 
-function CourseLearners(props) {
+function LiveTestLearners(props) {
   const { notification } = App.useApp();
   const Navigate = useNavigate();
   const location = useLocation();
-  const course_title =
-    location.state?.title || localStorage.getItem("course_title") || "Course";
+  const { live_test_id } = useParams(); // Encoded ID from URL
+  const { title } = location.state || {};
 
-  const { course_id } = useParams();
+
   const [loader, setLoader] = useState(true);
   const [pagination_loader, set_pagination_loader] = useState(false);
   const [table_data, set_table_data] = useState(false);
@@ -77,8 +76,8 @@ function CourseLearners(props) {
     setIsModalVisible(false);
     setLoader(true);
     const FORM_DATA = new FormData();
-    FORM_DATA.append("course_id", atob(course_id));
-    const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
+    FORM_DATA.append("live_test_id", atob(live_test_id));
+    const API_CALL = await LIST_LIVE_TEST_LEARNERS(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.data);
       set_current_page(API_CALL?.data?.current_page);
@@ -92,8 +91,8 @@ function CourseLearners(props) {
   useEffect(() => {
     const LIST_API = async () => {
       const FORM_DATA = new FormData();
-      FORM_DATA.append("course_id", atob(course_id));
-      const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
+      FORM_DATA.append("live_test_id", atob(live_test_id));
+      const API_CALL = await LIST_LIVE_TEST_LEARNERS(FORM_DATA);
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.data);
         set_current_page(API_CALL?.data?.current_page);
@@ -103,7 +102,7 @@ function CourseLearners(props) {
       setLoader(false);
     };
     LIST_API();
-  }, [course_id]);
+  }, [live_test_id]);
 
 
   const selectBefore = (
@@ -152,29 +151,16 @@ function CourseLearners(props) {
       dataIndex: "email",
       render: (text, record) => <span>{record.email}</span>,
     },
-   
-    {
-      title: "Progress",
-      key: "progress",
-      render: (text, record) => (
-        <div>
-          <span>{record.progress}%</span>
-          {/* <div>{moment(record.joining_on).format("YYYY-MM-DD")}</div>
-          <div style={{ fontSize: "12px", color: "#888" }}>
-            {moment(record.joining_on).format("hh:mm A")}
-          </div> */}
-        </div>
-      ),
-    },
-    {
-      title: "Course Status",
-      key: "status",
-      render: (text, record) => (
-        <span>
-        {record.course_status}
-        </span>
-      ),
-    },
+  
+    // {
+    //   title: "Course Status",
+    //   key: "status",
+    //   render: (text, record) => (
+    //     <span>
+    //     {record.course_status}
+    //     </span>
+    //   ),
+    // },
     {
       title: "Action",
       key: "action",
@@ -194,16 +180,7 @@ function CourseLearners(props) {
         </Space>
       ),
     },
-    {
-      title: "Complete Report",
-      dataIndex: "Report",
-      key: "Report",
-      render: (_, record) => (
-         <Button type="link" onClick={() => Navigate(`/learner-report/${course_id}/${btoa(record.id)}`)}>
-      View Report
-    </Button>
-      ),
-    },
+ 
   ];
 
 
@@ -211,11 +188,10 @@ function CourseLearners(props) {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", page);
-    FORM_DATA.append("token", localStorage.getItem("token"));
     FORM_DATA.append("name", search_query_name);
     FORM_DATA.append("email", search_query_email);
-    FORM_DATA.append("course_id", atob(course_id));
-    const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
+    FORM_DATA.append("live_test_id", atob(live_test_id));
+    const API_CALL = await LIST_LIVE_TEST_LEARNERS(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.data);
       set_current_page(API_CALL?.data?.current_page);
@@ -230,11 +206,10 @@ function CourseLearners(props) {
       set_search_query_name(value);
       set_pagination_loader(true);
       const FORM_DATA = new FormData();
-      FORM_DATA.append("token", localStorage.getItem("token"));
       FORM_DATA.append("name", value);
       FORM_DATA.append("email", "");
-      FORM_DATA.append("course_id", atob(course_id));
-      const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
+      FORM_DATA.append("live_test_id", atob(live_test_id));
+      const API_CALL = await LIST_LIVE_TEST_LEARNERS(FORM_DATA);
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.data);
         set_current_page(API_CALL?.data?.current_page);
@@ -255,8 +230,8 @@ function CourseLearners(props) {
       const FORM_DATA = new FormData();
       FORM_DATA.append("name", "");
       FORM_DATA.append("email", value);
-      FORM_DATA.append("course_id", atob(course_id));
-      const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
+      FORM_DATA.append("live_test_id", atob(live_test_id));
+      const API_CALL = await LIST_LIVE_TEST_LEARNERS(FORM_DATA);
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.data);
         set_current_page(API_CALL?.data?.current_page);
@@ -287,7 +262,7 @@ function CourseLearners(props) {
           <Row>
             <Col span={12}>
               <h2><span  style={{ cursor: "pointer" }}
-              onClick={handleBack}><LeftOutlined /></span> {course_title} - Learners</h2>
+              onClick={handleBack}><LeftOutlined /></span> {title} - Learners</h2>
             </Col>
            
           </Row>
@@ -305,20 +280,8 @@ function CourseLearners(props) {
             />
           </Col>
 
-          {/* Complete Report Button */}
-          <Col xs={24} sm={12} md={4} lg={4}>
-            <Button
-              type="primary"
-              size="large"
-              icon={<ArrowDownOutlined />}
-              style={{ width: "100%" }}
-            >
-              Complete Report
-            </Button>
-          </Col>
-
           {/* Bulk Enroll Button */}
-          <Col xs={24} sm={12} md={4} lg={4}>
+          {/* <Col xs={24} sm={12} md={4} lg={4}>
             <Button
               type="primary"
               size="large"
@@ -328,7 +291,7 @@ function CourseLearners(props) {
             >
               Bulk Enroll
             </Button>
-          </Col>
+          </Col> */}
 
           {/* Assign Learners Button */}
           <Col xs={24} sm={24} md={4} lg={4}>
@@ -370,7 +333,7 @@ function CourseLearners(props) {
               </div>
             </> : <>
               <div style={{ textAlign: "center", color: "red" }}>
-                <h2>No Courses Found</h2>
+                <h2>No Learners Found</h2>
               </div>
             </>}
 
@@ -381,16 +344,16 @@ function CourseLearners(props) {
       </Card>
 
       <Modal
-        title="Assign Course to Learners"
+        title="Assign Live Test to Learners"
         open={isModalVisible}
         onCancel={handleModalCancel}
         footer={null}
         width={800}
       >
-        <AssignLeaners
+        <AssignLeanersToLiveTest
           key={assignKey}
           onClose={handleModalCancel}
-          course_id={course_id}
+          live_test_id={live_test_id}
         />
       </Modal>
 
@@ -405,10 +368,10 @@ function CourseLearners(props) {
             type="primary"
             onClick={async () => {
               const formData = new FormData();
-              formData.append("course_id", atob(course_id));
+              formData.append("live_test_id", atob(live_test_id));
               formData.append("learner_id", selectedLearner?.id);
               try {
-                const res = await LEANERS_COURSE_STATUS(formData);
+                const res = await LIST_LIVE_TEST_LEARNERS_STATUS(formData);
                 if (res?.data?.status) {
                   notification.success({
                     message: "Successful",
@@ -433,7 +396,7 @@ function CourseLearners(props) {
       >
         <p>
           Are you sure you want to unassign{" "}
-          <strong>{selectedLearner?.first_name} {selectedLearner?.last_name}</strong> from this course?
+          <strong>{selectedLearner?.first_name} {selectedLearner?.last_name}</strong> from this live test?
         </p>
       </Modal>
 
@@ -444,11 +407,11 @@ function CourseLearners(props) {
         footer={null}
         width={800}
       >
-        <BulkEnrollLearners course_id={course_id}/>
+        <BulkInrollLearnersToLiveTest live_test_id={live_test_id}/>
       </Modal>
 
     </div>
   );
 }
 
-export default CourseLearners;
+export default LiveTestLearners;

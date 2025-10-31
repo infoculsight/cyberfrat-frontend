@@ -3,15 +3,15 @@ import { Checkbox, Row, Col, Card, Upload, Button, message, Select, Input, DateP
 import { UploadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
-import { BULK_ASSIGN_COURSE } from '../../../apis/apis';
+import { BULK_ASSIGN_LIVE_TEST } from '../../apis/apis';
 
-function BulEnrollLearners({ course_id, isModalOpen }) {
+function BulkInrollLearnersToLiveTest({ live_test_id, isModalOpen }) {
     const [access_type, set_access_type] = useState('LifeTime');
     const [access_value, set_access_value] = useState('');
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
 
-  
+
     useEffect(() => {
         if (isModalOpen) {
             setFile(null);
@@ -42,10 +42,8 @@ function BulEnrollLearners({ course_id, isModalOpen }) {
         message.success(`File selected: ${selectedFile.name}`);
     };
 
-
+  
     const handleSubmit = async () => {
-
-
         if (!file) {
             message.error('Please select an Excel file first.');
             return;
@@ -61,10 +59,12 @@ function BulEnrollLearners({ course_id, isModalOpen }) {
 
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('course_id', atob(course_id));
+            formData.append('live_test_id', atob(live_test_id));
             formData.append('access_type', access_type);
             formData.append('access_value', access_value);
-            const response = await BULK_ASSIGN_COURSE(formData);
+
+            
+            const response = await BULK_ASSIGN_LIVE_TEST(formData);
             if (response?.data?.success) {
                 message.success('Learners enrolled successfully!');
                 setFile(null);
@@ -73,12 +73,13 @@ function BulEnrollLearners({ course_id, isModalOpen }) {
                 message.error(response?.data?.message || 'Enrollment failed!');
             }
         } catch (error) {
-     
+           
             message.error('Server error: Could not enroll learners.');
         } finally {
             setLoading(false);
         }
     };
+
 
     const renderAccessValueInput = () => {
         if (access_type === 'FixedDate') {
@@ -174,4 +175,4 @@ function BulEnrollLearners({ course_id, isModalOpen }) {
     );
 }
 
-export default BulEnrollLearners;
+export default BulkInrollLearnersToLiveTest;

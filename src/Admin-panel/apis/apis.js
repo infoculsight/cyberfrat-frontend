@@ -269,6 +269,15 @@ export const DELETE_COURSE = async (body) => {
     }
 };
 
+export const BULK_ASSIGN_COURSE = async (body) => {
+    try {
+        const response = await Axios.post('bulk-assign-course/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 
 
 //CHAPTER API
@@ -955,6 +964,42 @@ export const LIST_DOWNLOAD_REPORT= async (body) => {
 export const GET_DOWNLOAD_REPORT= async (body) => {
     try {
         const response = await Axios.post('get-download-report/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const ASSIGN_LIVE_TEST_LEARNER= async (body) => {
+    try {
+        const response = await Axios.post('assign-live-test-learner/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const LIST_LIVE_TEST_LEARNERS= async (body) => {
+    try {
+        const response = await Axios.post('list-live-test-learners/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const LIST_LIVE_TEST_LEARNERS_STATUS= async (body) => {
+    try {
+        const response = await Axios.post('live-test-learner-status/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const BULK_ASSIGN_LIVE_TEST= async (body) => {
+    try {
+        const response = await Axios.post('bulk-assign-live-test-learners/', body);
         return response;
     } catch (error) {
         console.error(error);

@@ -41,6 +41,7 @@ import LiveTest from "../Admin-panel/pages/livetest/LiveTest";
 import AddLiveTest from "../Admin-panel/pages/livetest/AddLiveTest";
 import EditLiveTest from "../Admin-panel/pages/livetest/EditLiveTest";
 import LiveTestQuestion from "../Admin-panel/pages/livetest/LiveTestQuestions";
+import LiveTestLearners from "../Admin-panel/pages/livetest/LiveTestLearners";
 
 
 
@@ -66,27 +67,31 @@ function AdminRoutes() {
         <Route path="learner-report/:course_id/:learner_id" element={<LearnerReport />} />
         <Route path="chapters/:course_id" element={<Chapters />} />
         <Route path="add-chapter/:course_id" element={<AddChapter />} />
-        <Route path="edit-chapter/:id" element={<EditChapter />} />
+        <Route path="/edit-chapter/:id" element={<EditChapter />} />
+        <Route path="/edit-chapter/:id/quiz-setting" element={<EditChapter />} />
+        <Route path="/edit-chapter/:id/quiz-questions" element={<EditChapter />} />
+
         <Route path="/packages" element={<Packages />} />
         <Route path="add-packages" element={<AddPackages />} />
         <Route path="edit-package/:id" element={<EditPackages />} />
-        <Route path="package-learners/:package_id" element={<PackageLeaners />}/>
-        <Route path="package-courses/:package_id" element={<PackageCourses />}/>
+        <Route path="package-learners/:package_id" element={<PackageLeaners />} />
+        <Route path="package-courses/:package_id" element={<PackageCourses />} />
         <Route path="live-test" element={<LiveTest />} />
         <Route path="/add-live-test" element={<AddLiveTest />} />
         <Route path="edit-live-test/:id" element={<EditLiveTest />} />
         <Route path="live-test-questions/:live_test_id" element={<LiveTestQuestion />} />
+        <Route path="/assign-learner-live-test/:live_test_id" element={<LiveTestLearners />} />
 
-         <Route path="report" element={<Reports />}>
-            <Route path="course-report" element={<CourseReport />} />
-            <Route path="package-report" element={<PackageReport />} />
-            <Route path="livetest-report" element={<LiveTestList />} />
-            <Route path="quiz-report" element={<QuizReport />} />
-            <Route path="quiz-report/:learner_id" element={<QuizLearnerReport />} />
-            <Route path="quiz-report-details/:learner_id/:chapter_id" element={<QuizLearnerReportDetails />} />
-         </Route>
-        
-        <Route path="download" element={<Downloads />}/>
+        <Route path="report" element={<Reports />}>
+          <Route path="course-report" element={<CourseReport />} />
+          <Route path="package-report" element={<PackageReport />} />
+          <Route path="livetest-report" element={<LiveTestList />} />
+          <Route path="quiz-report" element={<QuizReport />} />
+          <Route path="quiz-report/:learner_id" element={<QuizLearnerReport />} />
+          <Route path="quiz-report-details/:learner_id/:chapter_id" element={<QuizLearnerReportDetails />} />
+        </Route>
+
+        <Route path="download" element={<Downloads />} />
         <Route path="media" element={<ThemeMedia />} />
         <Route path="report" element={<Reports />} />
         <Route path="notification" element={<AdminNotification />} />

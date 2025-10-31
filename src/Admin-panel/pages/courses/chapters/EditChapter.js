@@ -2,11 +2,7 @@ import { Card, Col, Row, Tabs } from "antd";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import EditChapterDetails from "./components/EditChapterDetails";
-
-import {
-  LeftOutlined,
-} from "@ant-design/icons";
-import LiveTest from "./components/livetest/LiveTest";
+import { LeftOutlined } from "@ant-design/icons";
 import QuizSetting from "./components/quiztest/QuizSetting";
 import { VIEW_CHAPTER } from "../../../apis/apis";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
@@ -14,20 +10,37 @@ import QuizQuestion from "./components/quiztest/QuizQuestion";
 
 const { TabPane } = Tabs;
 
-export default function EditChapter(props) {
+export default function EditChapter() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+
   const course_title =
     location.state?.title ||
     localStorage.getItem("course_title") ||
     "Course";
+
   const [course_id, set_course_id] = useState(null);
-  const [chapter_details, set_chapter_details] = useState('');
+  const [chapter_details, set_chapter_details] = useState("");
   const [chapter_details_loader, set_chapter_details_loader] = useState(true);
   const [page_refresh, set_page_refresh] = useState(true);
 
-  
+  // ✅ Get current tab from URL
+  const getTabKeyFromPath = () => {
+    const path = location.pathname;
+    if (path.includes("/quiz-setting")) return "2";
+    if (path.includes("/quiz-questions")) return "3";
+    return "1"; // default tab = Chapter Details
+  };
+
+  const activeTabKey = getTabKeyFromPath();
+
+  // ✅ Handle tab change (update route)
+  const onTabChange = (key) => {
+    if (key === "1") navigate(`/edit-chapter/${id}`);
+    if (key === "2") navigate(`/edit-chapter/${id}/quiz-setting`);
+    if (key === "3") navigate(`/edit-chapter/${id}/quiz-questions`);
+  };
 
   useEffect(() => {
     const VIEW_API = async () => {
@@ -42,8 +55,7 @@ export default function EditChapter(props) {
     };
 
     VIEW_API();
-  }, [page_refresh, id]); // id bhi dependency me add kiya, because used inside VIEW_API
-
+  }, [page_refresh, id]);
 
   return (
     <div className="lms-body">
@@ -54,43 +66,60 @@ export default function EditChapter(props) {
           <>
             <Row>
               <Col span={12}>
-                <h2> <span  style={{ cursor: "pointer" }}
-                  onClick={() => navigate("/chapters/" + btoa(course_id))}><LeftOutlined /></span>{course_title} - {chapter_details?.title} Details</h2>
+                <h2>
+                  <span
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate("/chapters/" + btoa(course_id))}
+                  >
+                    <LeftOutlined />
+                  </span>{" "}
+                  {course_title} - {chapter_details?.title} Details
+                </h2>
               </Col>
             </Row>
-            <Tabs defaultActiveKey="1">
+
+            {/* ✅ Tab routing implementation */}
+            <Tabs activeKey={activeTabKey} onChange={onTabChange}>
               <TabPane tab="Chapter Details" key="1">
-                <div style={{ backgroundColor: "#141414", padding: "15px", marginTop: "-16px", marginLeft: "1px" }}>
+                <div
+                  style={{
+                    backgroundColor: "#141414",
+                    padding: "15px",
+                    marginTop: "-16px",
+                    marginLeft: "1px",
+                  }}
+                >
                   <EditChapterDetails
                     set_course_id={set_course_id}
                     chapter_details={chapter_details}
                     set_page_refresh={set_page_refresh}
                     page_refresh={page_refresh}
-
                   />
                 </div>
               </TabPane>
-             
-              {/* <TabPane tab="Live Test Setting" key="4">
-                <div style={{ backgroundColor: "#141414", padding: "15px", marginTop: "-16px", marginLeft: "1px" }}>
-                  <LiveTest chapter_id={id} course_id={course_id} />
-                </div>
-              </TabPane>
-              <TabPane tab="Live Test Questions" key="5">
-                <div style={{ backgroundColor: "#141414", padding: "15px", marginTop: "-16px", marginLeft: "1px" }}>
-                  <LiveTestQuestion chapter_id={id} course_id={course_id} />
-                </div>
-              </TabPane> */}
 
-              <TabPane tab="Quiz Setting" key="6">
-                <div style={{ backgroundColor: "#141414", padding: "15px", marginTop: "-16px", marginLeft: "1px" }}>
+              <TabPane tab="Quiz Setting" key="2">
+                <div
+                  style={{
+                    backgroundColor: "#141414",
+                    padding: "15px",
+                    marginTop: "-16px",
+                    marginLeft: "1px",
+                  }}
+                >
                   <QuizSetting chapter_id={id} course_id={course_id} />
                 </div>
               </TabPane>
 
-
-              <TabPane tab="Quiz Questions" key="7">
-                <div style={{ backgroundColor: "#141414", padding: "15px", marginTop: "-16px", marginLeft: "1px" }}>
+              <TabPane tab="Quiz Questions" key="3">
+                <div
+                  style={{
+                    backgroundColor: "#141414",
+                    padding: "15px",
+                    marginTop: "-16px",
+                    marginLeft: "1px",
+                  }}
+                >
                   <QuizQuestion chapter_id={id} course_id={course_id} />
                 </div>
               </TabPane>
