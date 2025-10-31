@@ -421,28 +421,28 @@ export default function Chapters() {
                 <Card>
                   <Row>
                     <Col span={12}>
-                      <h3 style={{fontSize:"24px"}}>{currentChapter.title}</h3>
+                      <h3 style={{ fontSize: "24px" }}>{currentChapter.title}</h3>
                     </Col>
                     <Col span={12}>
                       <div style={{ float: "right" }}>
                         {/* ✅ Completion Tag */}
-                          {!currentChapter?.quiz_row && <>
-                        <Button
-                          size="small"
-                          disabled={!(single_progress >= 90 || !currentChapter.video_id)}
-                        >
-                         
-                          {single_progress >= 90 || !currentChapter.video_id ? (
-                            <>
-                              <CheckCircleFilled /> Completed
-                            </>
-                          ) : (
-                            "Incomplete"
-                          )}
-                        </Button>
+                        {!currentChapter?.quiz_row && <>
+                          <Button
+                            size="small"
+                            disabled={!(single_progress >= 90 || !currentChapter.video_id)}
+                          >
+
+                            {single_progress >= 90 || !currentChapter.video_id ? (
+                              <>
+                                <CheckCircleFilled /> Completed
+                              </>
+                            ) : (
+                              "Incomplete"
+                            )}
+                          </Button>
                         </>}
 
-                      
+
 
                         {/* ✅ Quiz Buttons (All Conditions Preserved) */}
                         {(single_progress >= 90 || !currentChapter.video_id) && (
@@ -476,63 +476,64 @@ export default function Chapters() {
                   </Row>
                   <br />
                   {currentChapter?.quiz_row && currentChapter?.title?.toLowerCase().includes("quiz") ? <>
-                        {currentChapter?.quiz_row?.time_limit > 0 ? (
-            <div
-              className="section-details section-details-right-padding"
-              style={{ minHeight: "auto" }}
-            >
-              <Row>
-                <Col span={12}>
+                    {currentChapter?.quiz_row?.time_limit > 0 ? (
+                      <div
+                        className="section-details section-details-right-padding"
+                        style={{ minHeight: "auto" }}
+                      >
+                        <Row>
+                          <Col span={12}>
 
-                  <p>
-                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Time Limit :-{" "}
-                    </span>
-                    {currentChapter?.quiz_row?.time_limit} min
-                    <br />
-                  
-                  </p>
-                </Col>
+                            <p>
+                              <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                                Time Limit :-{" "}
+                              </span>
+                              {currentChapter?.quiz_row?.time_limit} min
+                              <br />
+                              <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                                Passing percentage :-{" "}
+                              </span>
+                              {currentChapter?.quiz_row?.passing_percentage}%  <br />
 
-                <Col span={12}>
-                  <div style={{ float: "right" }}>
-                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Passing percentage :-{" "}
-                    </span>
-                    {currentChapter?.quiz_row?.passing_percentage}%  <br />
+                            </p>
+                          </Col>
 
-                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Number of retake :-{" "}
-                    </span>
-                    {currentChapter?.quiz_row?.no_of_retake} <br />
+                          <Col span={12}>
+                            <div style={{ float: "right" }}>
 
-                     <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Number of questions :-{" "}
-                    </span>
-                    {currentChapter?.quiz_row?.display_question}
-                    <br />
-                   
 
-                  </div>
-                </Col>
-               <p style={{textAlign:"center", margin:"30px"}}>You can attempt this test a maximum of {currentChapter?.quiz_row?.number_of_retake} times. Currently, you are on your {currentChapter?.quiz_row?.current_attempt} attempt. The time limit for the test is {currentChapter?.quiz_row?.time_limit} minutes, and you must score at least {currentChapter?.quiz_row?.passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
-              </Row>
-              
-             
-            </div>
-          ) : (
-            <h3
-              style={{
-                padding: "50px",
-                textAlign: "center",
-                color: "red",
-                fontSize: "42px",
-              }}
-            >
-              Data Empty
-           
-            </h3>
-          )}
+                              <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                                Number of retake :-{" "}
+                              </span>
+                              {currentChapter?.quiz_row?.no_of_retake} <br />
+
+                              <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                                Number of questions :-{" "}
+                              </span>
+                              {currentChapter?.quiz_row?.display_question}
+                              <br />
+
+
+                            </div>
+                          </Col>
+                          <p style={{ textAlign: "center", margin: "30px" }}>You can attempt this test a maximum of {currentChapter?.quiz_row?.number_of_retake} times. Currently, you are on your {currentChapter?.quiz_row?.current_attempt} attempt. The time limit for the test is {currentChapter?.quiz_row?.time_limit} minutes, and you must score at least {currentChapter?.quiz_row?.passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
+                        </Row>
+
+
+                      </div>
+                    ) : (
+                      <h3
+                        style={{
+                          padding: "50px",
+                          textAlign: "center",
+                          color: "red",
+                          fontSize: "42px",
+                        }}
+                      >
+                        Data Empty
+
+                      </h3>
+                    )}
 
 
 
@@ -549,64 +550,64 @@ export default function Chapters() {
 
 
                   </> : <>
-                  <SectionVideos
-                    set_next_view={() => { }}
-                    chapter_id={btoa(currentChapter.id)}
-                    single_progress={single_progress}
-                    video_row={currentChapter.video_row}
-                    set_single_progress={set_single_progress}
-                  />
-
-                  {currentChapter.introduction &&
-                    currentChapter.introduction !== "null" && (
-                      <FixTruncatedHTMLList html={currentChapter.introduction} />
-                    )}
-
-                  {/* ✅ Comments Section */}
-                  <div style={{ marginTop: "30px" }}>
-                    <CustomRichTextEditor
-                      editorLabel="Course Discussions"
-                      value={description}
-                      onChange={(val) => set_description(val)}
-                      placeholder="Write something..."
+                    <SectionVideos
+                      set_next_view={() => { }}
+                      chapter_id={btoa(currentChapter.id)}
+                      single_progress={single_progress}
+                      video_row={currentChapter.video_row}
+                      set_single_progress={set_single_progress}
                     />
-                    <Button
-                      type="primary"
-                      style={{ marginTop: "-20px", marginBottom: "20px" }}
-                      onClick={onFinish}
-                    >
-                      Add Comment
-                    </Button>
 
-                    <List
-                      itemLayout="horizontal"
-                      dataSource={comments}
-                      style={{ marginTop: "20px" }}
-                      locale={{ emptyText: "No discussions yet." }}
-                      renderItem={(item) => (
-                        <List.Item>
-                          <List.Item.Meta
-                            avatar={<Avatar>{item.first_name?.[0]}</Avatar>}
-                            title={<b>{item.first_name + " " + item.last_name}</b>}
-                            description={
-                              <>
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: item.description,
-                                  }}
-                                />
-                                <small style={{ color: "#888" }}>
-                                  {formatTime(item.created_at)}
-                                </small>
-                              </>
-                            }
-                          />
-                        </List.Item>
+                    {currentChapter.introduction &&
+                      currentChapter.introduction !== "null" && (
+                        <FixTruncatedHTMLList html={currentChapter.introduction} />
                       )}
-                    />
-                  </div>
+
+                    {/* ✅ Comments Section */}
+                    <div style={{ marginTop: "30px" }}>
+                      <CustomRichTextEditor
+                        editorLabel="Course Discussions"
+                        value={description}
+                        onChange={(val) => set_description(val)}
+                        placeholder="Write something..."
+                      />
+                      <Button
+                        type="primary"
+                        style={{ marginTop: "-20px", marginBottom: "20px" }}
+                        onClick={onFinish}
+                      >
+                        Add Comment
+                      </Button>
+
+                      <List
+                        itemLayout="horizontal"
+                        dataSource={comments}
+                        style={{ marginTop: "20px" }}
+                        locale={{ emptyText: "No discussions yet." }}
+                        renderItem={(item) => (
+                          <List.Item>
+                            <List.Item.Meta
+                              avatar={<Avatar>{item.first_name?.[0]}</Avatar>}
+                              title={<b>{item.first_name + " " + item.last_name}</b>}
+                              description={
+                                <>
+                                  <div
+                                    dangerouslySetInnerHTML={{
+                                      __html: item.description,
+                                    }}
+                                  />
+                                  <small style={{ color: "#888" }}>
+                                    {formatTime(item.created_at)}
+                                  </small>
+                                </>
+                              }
+                            />
+                          </List.Item>
+                        )}
+                      />
+                    </div>
                   </>}
-                  
+
                 </Card>
               ) : (
                 <p>No chapters found.</p>
