@@ -50,7 +50,7 @@ const MasterTemplate = () => {
       "/packages": { selected: "3",open:"3" },
       "/all-packages": {selected:"4",open:"4"},
       "/account": { selected: "7",oepn:"7" },
-      "/live-test":{selected:"8",open:"8"},
+      "/list-live-test":{selected:"8",open:"8"},
      
     };
 
@@ -75,7 +75,7 @@ const MasterTemplate = () => {
       3: "packages",
       4:"all-packages",
       7: "/account",
-      8:"/live-test"
+      8:"/list-live-test"
     };
 
     const route = keyToPath[key];

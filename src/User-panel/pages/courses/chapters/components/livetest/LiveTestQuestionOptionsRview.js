@@ -5,7 +5,7 @@ import { ADD_QUIZ_ANSWER } from '../../../../../apis/apis';
 
 const { Text } = Typography;
 
-const LiveTestQuestionOptions = (props) => {
+const LiveTestQuestionOptionsRview = (props) => {
   const { options, setOptions, optionChoice, chapter_id, question_id } = props;
 
   // Clean incoming options: convert 'selected' to 'value'
@@ -87,7 +87,7 @@ const LiveTestQuestionOptions = (props) => {
         <Radio.Group
           style={{ width: "100%" }}
           value={selectedIndex}
-          onChange={(e) => handleRadioSelect(e.target.value)}
+        //   onChange={(e) => handleRadioSelect(e.target.value)}
         >
           <List
             bordered
@@ -106,4 +106,4 @@ const LiveTestQuestionOptions = (props) => {
   );
 };
 
-export default LiveTestQuestionOptions;
+export default LiveTestQuestionOptionsRview;

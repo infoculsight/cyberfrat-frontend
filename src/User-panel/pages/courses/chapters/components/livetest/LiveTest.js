@@ -1,107 +1,79 @@
-import { Card, Divider, Button } from "antd";
-import React, { useState } from "react";
+import { Card, Divider, Button, Spin } from "antd";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import LiveTestDetails from "./LiveTestDetails";
-import LiveTestQuestionView from "./LiveTestQuestionView";
+import LiveTestDetails from "./LiveTestDetails"
+import LiveTestQuestionView from "./LiveTestQuestionView"
+import { ADD_LIVE_TEST_SUBMISSION, START_QUIZ_QUESTION } from "../../../../../apis/apis";
+import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 
 export default function LiveTest() {
-  const { chapter_id } = useParams();
-  const [show_options, set_show_options] = useState(false);
-  const [live_test_id, set_live_test_id] = useState("");
+  const { live_test_id } = useParams();
+  const [show_options, set_show_options] = useState(true);
+  const [quiz_test_id, set_quiz_test_id] = useState("");
   const [time_spend, set_time_spend] = useState("");
   const [submit_true, set_submit_true] = useState(false);
-
-  const enableSecurity = () => {
-    const elem = document.documentElement;
-    try {
-      if (elem.requestFullscreen) elem.requestFullscreen();
-      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-      else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
-    } catch (err) {
-      console.warn("Fullscreen failed:", err);
-    }
-
-    // Disable right-click
-    const disableRightClick = (e) => e.preventDefault();
-    document.addEventListener("contextmenu", disableRightClick);
-
-    // Disable dangerous keys
-    const disableKeys = (e) => {
-      if (
-        e.key === "F11" ||
-        e.key === "Escape" ||
-        e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey && ["I", "C", "J"].includes(e.key.toUpperCase())) ||
-        (e.ctrlKey && ["U", "S", "P"].includes(e.key.toUpperCase()))
-      ) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log("Blocked:", e.key);
-      }
-    };
-    document.addEventListener("keydown", disableKeys);
-
-    // Disable copy/paste/select
-    const disableCopy = (e) => e.preventDefault();
-    document.addEventListener("copy", disableCopy);
-    document.addEventListener("cut", disableCopy);
-    document.addEventListener("paste", disableCopy);
-    document.addEventListener("selectstart", disableCopy);
-  };
-
-  const handleStartTest = () => {
-    enableSecurity();
-    set_show_options(true);
-  };
+  const [button_loader, set_button_loader] = useState(false);
+  const [quiz_title, set_quiz_title] = useState("");
 
   return (
     <div
       className="lms-body"
       style={{
-        maxWidth: "800px",
+        width: "100%",
         margin: "0 auto",
-        marginTop: "60px",
+        marginTop: "0px",
+        height:"100%",
+        position:"absolute",
+        boxSizing:"border-box"
+        
       }}
     >
-      <Card
-        style={{
-          padding: "0px 25px 20px 25px",
-          border: 0,
-          boxShadow: "0 0 20px rgba(134, 134, 134, 0.3)",
-        }}
-      >
-        <Divider
-          variant="dotted"
+      {button_loader ? <>
+        <CulsightPageLoader />
+      </> : <>
+        <Card
           style={{
-            borderColor: "rgb(125 246 253)",
-            color: "rgb(125 246 253)",
-            fontSize: "30px",
+            padding: "0px 25px 20px 25px",
+            border: 0,
+            boxShadow: "0 0 20px rgba(134, 134, 134, 0.3)",
+            minHeight:"96vh"
           }}
         >
-          Live Test
-        </Divider>
+          <Divider
+            variant="dotted"
+            style={{
+              borderColor: "rgb(125 246 253)",
+              color: "rgb(125 246 253)",
+              fontSize: "30px",
+            }}
+          >
+            {quiz_title}
+          </Divider>
 
-        <LiveTestDetails
-          show_options={show_options}
-          set_show_options={set_show_options}
-          set_live_test_id={set_live_test_id}
-          chapter_id={chapter_id}
-          set_time_spend={set_time_spend}
-          submit_true={submit_true}
-        />
+          <LiveTestDetails
+            show_options={show_options}
+            set_show_options={set_show_options}
+            set_quiz_test_id={set_quiz_test_id}
+            live_test_id={live_test_id}
+            set_time_spend={set_time_spend}
+            time_spend={time_spend}
+            submit_true={submit_true}
+            set_quiz_title={set_quiz_title}
+          />
+          {quiz_test_id && 
 
-        {!show_options && live_test_id ? (
-          <div style={{ textAlign: "center" }}>
-            <Button onClick={handleStartTest} type="primary">
-              Start Test
-            </Button>
-          </div>
-        ) : (
-          live_test_id && (
-            <LiveTestQuestionView set_submit_true={set_submit_true} time_spend={time_spend} chapter_id={chapter_id} live_test_id={live_test_id} />
-          )
-        )}
-      </Card>
+          <LiveTestQuestionView
+            set_submit_true={set_submit_true}
+            time_spend={time_spend}
+            live_test_id={live_test_id}
+          />
+          
+          }
+          
+        </Card>
+
+      </>}
+
     </div>
   );
 }

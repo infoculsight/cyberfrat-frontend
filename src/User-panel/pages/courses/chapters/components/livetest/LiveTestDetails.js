@@ -1,118 +1,107 @@
-import { Col, Row, Card } from "antd";
-import moment from "moment";
-import React, { useEffect, useState } from "react";
-import { VIEW_LIVE_TEST } from "../../../../../apis/apis";
+import { Button, Col, Row } from "antd";
+import { useEffect, useState, useRef } from "react";
+import { VIEW_LIVE_TEST_DETAILS, VIEW_QUIZ_SETTING } from "../../../../../apis/apis";
 import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 
+
 export default function LiveTestDetails({
-  set_live_test_id,
+  set_quiz_test_id,
   show_options,
-  set_show_options,
   chapter_id,
   set_time_spend,
-  submit_true
+  time_spend,
+  submit_true,
+  set_quiz_title,
+  live_test_id
 }) {
+
   const [loading, setLoading] = useState(false);
   const [title, set_title] = useState("");
-  const [time_limit, set_time_limit] = useState("");
-  const [available_from, set_available_from] = useState("");
-  const [available_till, set_available_till] = useState("");
-  const [show_advance_options, set_show_advance_options] = useState("");
+  const [time_limit, set_time_limit] = useState(null);
+  const [passing_percentage, set_passing_percentage] = useState("");
+  const [number_of_retake, set_number_of_retake] = useState("");
+  const [display_question, set_display_question] = useState("");
   const [remainingTime, setRemainingTime] = useState(null);
   const [expired, set_expired] = useState(false);
   const [submitted, set_submitted] = useState(false);
 
+  const timerRef = useRef(null);
+
+  // 🔹 Fetch Quiz Settings
   useEffect(() => {
     const VIEW_API = async () => {
       setLoading(true);
       const FORM_DATA = new FormData();
-      FORM_DATA.append("chapter_id", atob(chapter_id));
-      const response = await VIEW_LIVE_TEST(FORM_DATA);
+      FORM_DATA.append("live_test_id", atob(live_test_id));
+      const response = await VIEW_LIVE_TEST_DETAILS(FORM_DATA);
+
       if (response?.data?.status) {
         const data = response.data.data;
         set_title(data?.title);
-        set_time_limit(data?.time_limit);
+        set_quiz_title(data?.title);
+        set_time_limit(parseInt(data?.time_limit));
+        set_display_question(data?.display_question);
+
         if (!data?.expired && !data?.test_submitted) {
-          set_live_test_id(data?.id);
+          set_quiz_test_id(data?.id);
         }
+
         set_expired(data?.expired);
         set_submitted(data?.test_submitted);
-        set_available_from(moment(data?.available_from).format("DD-MM-YYYY"));
-        set_available_till(moment(data?.available_till).format("DD-MM-YYYY"));
-        set_show_advance_options(data?.show_advance_options);
-        setRemainingTime(parseInt(data?.time_limit) * 60);
+        set_passing_percentage(data?.passing_percentage);
+        set_number_of_retake(data?.no_of_retake);
+
+        if (data?.time_limit) {
+          const seconds = parseInt(data.time_limit) * 60;
+          console.log("⏳ Initial time:", seconds);
+          setRemainingTime(seconds);
+        }
       }
       setLoading(false);
     };
+
     VIEW_API();
-  }, [chapter_id,set_live_test_id]);
+  }, [live_test_id]);
 
-  // Countdown with time_spend tracking in seconds
-useEffect(() => {
-  let interval;
-  let timeout;
+  // 🔹 Countdown Logic
+  useEffect(() => {
+    if (!show_options) return;
+    if (!time_limit) return;
+    if (submit_true || expired) return;
+    if (remainingTime === null) return;
 
-  if (show_options && remainingTime && remainingTime > 0) {
-    interval = setInterval(() => {
+    console.log("✅ Timer started with", remainingTime, "seconds");
+
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
       setRemainingTime((prev) => {
+        if (prev === null) return null;
         if (prev <= 1) {
-          clearInterval(interval);
-          set_time_spend(parseInt(time_limit) * 60);
+          clearInterval(timerRef.current);
+          set_expired(true);
+          alert("⏰ Time is over!");
+          window.close();
           return 0;
         }
-        const timeSpent = parseInt(time_limit) * 60 - (prev - 1);
-        set_time_spend(timeSpent);
+        const total = time_limit * 60;
+        const spent = total - (prev - 1);
+        set_time_spend(spent);
+        console.log("⌛ Remaining:", prev - 1, " | Spent:", spent);
         return prev - 1;
       });
     }, 1000);
 
-    timeout = setTimeout(() => {
-      alert("⏰ Time is over!");
-      window.close();
-    }, remainingTime * 1000);
-  }
+    return () => clearInterval(timerRef.current);
+  }, [show_options, time_limit, submit_true, expired, remainingTime]);
 
-  // ✅ Stop countdown if test is submitted
-  if (submit_true && interval) {
-    clearInterval(interval);
-    clearTimeout(timeout);
-  }
-
-  return () => {
-    clearInterval(interval);
-    clearTimeout(timeout);
-  };
-}, [remainingTime, show_options, time_limit, set_time_spend, submit_true]);
-
-  const optionsMap = {
-    a: {
-      title: "Neet UG Pattern 2025 - Single Subject",
-      marks: "180",
-      rule: "+4 for correct, -1 for incorrect",
-      note: "No marks for unanswered",
-      sections: "4 predefined sections",
-    },
-    b: {
-      title: "CAT Pattern 2023",
-      marks: "198",
-      rule: "Time limit: 120 mins",
-      note: "",
-      sections: "3 predefined sections",
-    },
-    c: {
-      title: "Neet UG Pattern 2025",
-      marks: "721",
-      rule: "Time limit: 180 mins",
-      note: "+4 / -1 for incorrect",
-      sections: "4 predefined sections",
-    },
-    d: {
-      title: "JEE MAINS Pattern 2025",
-      marks: "300",
-      rule: "Time limit: 180 mins",
-      note: "+4 / -1 for incorrect",
-      sections: "6 predefined sections",
-    },
+  // 🔹 Format time helper
+  const formatTime = (seconds) => {
+    if (seconds === null) return "--:--";
+    const m = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = (seconds % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
   };
 
   return (
@@ -121,43 +110,40 @@ useEffect(() => {
         <CulsightPageLoader />
       ) : (
         <>
-          {time_limit > 0 ? (
+          {time_limit ? (
             <div
               className="section-details section-details-right-padding"
               style={{ minHeight: "auto" }}
             >
               <Row>
                 <Col span={12}>
-                  <h3>{title}</h3>
                   <p>
                     <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Time Limit :-{" "}
+                      Time Limit:{" "}
                     </span>
                     {time_limit} min
                     <br />
                     {remainingTime !== null && (
                       <span style={{ color: "orange", fontWeight: "bold" }}>
-                        <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                          Remaining Time:{" "}
-                        </span>
-                        {Math.floor(remainingTime / 60)}m {remainingTime % 60}s
+                        Remaining Time: {formatTime(remainingTime)}
                       </span>
                     )}
                   </p>
                 </Col>
-
                 <Col span={12}>
                   <div style={{ float: "right" }}>
                     <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Available From :-{" "}
+                      Passing Percentage:{" "}
                     </span>
-                    {available_from}
-                    <p>
-                      <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                        Available Till :-{" "}
-                      </span>
-                      {available_till}
-                    </p>
+                    {passing_percentage}% <br />
+                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                      Retake Allowed:{" "}
+                    </span>
+                    {number_of_retake} <br />
+                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                      Total Questions:{" "}
+                    </span>
+                    {display_question}
                   </div>
                 </Col>
               </Row>
@@ -172,7 +158,17 @@ useEffect(() => {
                     fontSize: "42px",
                   }}
                 >
-                  Test submitted
+                  Quiz submitted
+                  <br />
+                  <Button
+                    type="primary"
+                    size="small"
+                    onClick={() => window.close()}
+                  >
+                    Close
+                  </Button>
+                 
+                  ;
                 </h3>
               ) : expired ? (
                 <h3
@@ -184,57 +180,17 @@ useEffect(() => {
                     fontSize: "42px",
                   }}
                 >
-                  Test Expired
-                </h3>
-              ) : (
-                !show_options &&
-                optionsMap[show_advance_options] && (
-                  <Card
-                    style={{
-                      borderRadius: 8,
-                      border: 0,
-                      boxShadow: "0 0 10px rgba(87, 87, 87, 0.3)",
-                      height: "auto",
-                      textAlign: "center",
-                      maxWidth: "500px",
-                      margin: "50px auto",
-                    }}
+                  Quiz Test Expired
+                  <br />
+                  <Button
+                    type="primary"
+                    size="small"
+                    onClick={() => window.close()}
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 4,
-                      }}
-                    >
-                      <p style={{ marginBottom: "0px" }}>
-                        <strong style={{ color: "#6ca9ff" }}>Pattern: </strong>
-                        {optionsMap[show_advance_options].title}
-                      </p>
-                      <p style={{ marginBottom: "0px" }}>
-                        <strong style={{ color: "#6ca9ff" }}>
-                          Maximum Marks:
-                        </strong>{" "}
-                        {optionsMap[show_advance_options].marks}
-                      </p>
-                      <p style={{ marginBottom: "0px" }}>
-                        <strong style={{ color: "#6ca9ff" }}>Rules: </strong>
-                        {optionsMap[show_advance_options].rule}
-                        {optionsMap[show_advance_options].note && (
-                          <span>
-                            {" "}
-                            | Note: {optionsMap[show_advance_options].note}
-                          </span>
-                        )}
-                      </p>
-                      <p style={{ marginBottom: "0px" }}>
-                        <strong style={{ color: "#6ca9ff" }}>Sections: </strong>
-                        {optionsMap[show_advance_options].sections}
-                      </p>
-                    </div>
-                  </Card>
-                )
-              )}
+                    Close
+                  </Button>
+                </h3>
+              ) : null}
             </div>
           ) : (
             <h3
@@ -246,6 +202,14 @@ useEffect(() => {
               }}
             >
               Data Empty
+              <br />
+              <Button
+                type="primary"
+                size="small"
+                onClick={() => window.close()}
+              >
+                Close
+              </Button>
             </h3>
           )}
         </>

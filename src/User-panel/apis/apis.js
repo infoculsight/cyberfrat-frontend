@@ -512,6 +512,15 @@ export const VIEW_LIVE_TEST_RESULT = async (body) => {
     }
 };
 
+export const  VIEW_LIVE_TEST_DETAILS = async (body) => {
+    try {
+        const response = await Axios.post('view-live-test/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 
 
 
@@ -692,6 +701,15 @@ export const EMAIL_VERIFY= async (body) => {
 export const SET_TEMP_NEW_PASSWORD= async (body) => {
     try {
         const response = await Axios.post('set-temp-new-password/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const LIST_LIVE_TESTS= async (body) => {
+    try {
+        const response = await Axios.post('list-live-tests/', body);
         return response;
     } catch (error) {
         console.error(error);
