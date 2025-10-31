@@ -6,12 +6,10 @@ import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 export default function QuizTestDetails({
   set_quiz_test_id,
   show_options,
-  set_show_options,
   chapter_id,
   set_time_spend,
   submit_true,
   set_quiz_title,
-  para_show
 }) {
   const [loading, setLoading] = useState(false);
   const [title, set_title] = useState("");
@@ -141,12 +139,7 @@ export default function QuizTestDetails({
 
                   </div>
                 </Col>
-                {para_show && <>
-                   <Col span={24}>
-                 <p style={{textAlign:"center", margin:"30px"}}>You can attempt this test a maximum of {number_of_retake} times. Currently, you are on your {current_attempt} attempt. The time limit for the test is {time_limit} minutes, and you must score at least {passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
-                </Col>
               
-                </>}
              
               </Row>
               

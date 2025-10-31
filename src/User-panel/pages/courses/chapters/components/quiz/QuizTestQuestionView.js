@@ -79,11 +79,7 @@ const QuizTestQuestionView = (props) => {
 
   return (
     <div style={{ marginTop: "20px" }}>
-      {page_loader ? (
-        <CulsightPageLoader />
-      ) : (
-        <>
-          {test_submitted ? (
+            {test_submitted ? (
             <h3
               style={{
                 padding: "50px",
@@ -201,8 +197,6 @@ const QuizTestQuestionView = (props) => {
               </Card>
             </>
           )}
-        </>
-      )}
     </div>
   );
 };
