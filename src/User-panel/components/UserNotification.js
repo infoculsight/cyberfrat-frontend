@@ -123,7 +123,7 @@ function UserNotification() {
                       />
                     </div>
                   }
-                  description={item.notification_text}
+                  description={item?.meta?.text}
                 />
               </List.Item>
             )}
