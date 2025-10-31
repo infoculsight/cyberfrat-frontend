@@ -421,7 +421,7 @@ export default function Chapters() {
                 <Card>
                   <Row>
                     <Col span={12}>
-                      <h3>{currentChapter.title}</h3>
+                      <h3 style={{fontSize:"24px"}}>{currentChapter.title}</h3>
                     </Col>
                     <Col span={12}>
                       <div style={{ float: "right" }}>
