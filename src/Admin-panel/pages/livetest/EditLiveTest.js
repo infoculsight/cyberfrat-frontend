@@ -23,7 +23,7 @@ function EditLiveTest() {
 
     const { notification } = App.useApp();
     const navigate = useNavigate();
-    const {id} = useParams()
+    const { id } = useParams()
     const [loading, setLoading] = useState(false);
     const [title, set_title] = useState("");
     const [form] = Form.useForm();
@@ -214,21 +214,14 @@ function EditLiveTest() {
                                         )}
                                     </Form.Item>
 
-                                    <Form.Item label="Time Limit">
-                                        <TimePicker
-                                            style={{ width: "100%" }}
-                                            format="HH:mm"
-                                            value={time_limit ? dayjs().startOf("day").add(time_limit, "minute") : null}
-                                            onChange={(time) => {
-                                                if (time) {
-                                                    set_time_limit(time.diff(dayjs().startOf("day"), "minute"));
-                                                } else {
-                                                    set_time_limit("");
-                                                }
-                                            }}
+                                    <Form.Item label="Time Limit (in Minutes)">
+                                        <Input
+                                            placeholder="Enter Time Limit"
+                                            value={time_limit}
+                                            onChange={(e) => set_time_limit(e.target.value)}
                                         />
                                         {errors?.time_limit && (
-                                            <span style={{ color: "red" }}>{errors?.time_limit}</span>
+                                            <span style={{ color: "red" }}>{errors.time_limit}</span>
                                         )}
                                     </Form.Item>
 

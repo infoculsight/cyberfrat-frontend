@@ -271,7 +271,7 @@ function LiveTestLearners(props) {
 
         <Row gutter={[16, 16]}>
           {/* Search Input */}
-          <Col xs={24} sm={24} md={12} lg={12}>
+          <Col span={12}>
             <Input
               addonBefore={selectBefore}
               placeholder={search_paceholder}
@@ -294,11 +294,11 @@ function LiveTestLearners(props) {
           </Col> */}
 
           {/* Assign Learners Button */}
-          <Col xs={24} sm={24} md={4} lg={4}>
+          <Col span={12}>
             <Button
               type="primary"
               size="large"
-              style={{ width: "100%" }}
+              style={{float:"right" }}
               onClick={showModal}
             >
               Assign Learners
