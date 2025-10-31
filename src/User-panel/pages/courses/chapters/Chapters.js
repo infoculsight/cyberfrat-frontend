@@ -516,7 +516,7 @@ export default function Chapters() {
 
                             </div>
                           </Col>
-                          <p style={{ textAlign: "center", margin: "30px" }}>You can attempt this test a maximum of {currentChapter?.quiz_row?.number_of_retake} times. Currently, you are on your {currentChapter?.quiz_row?.current_attempt} attempt. The time limit for the test is {currentChapter?.quiz_row?.time_limit} minutes, and you must score at least {currentChapter?.quiz_row?.passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
+                          <p style={{ textAlign: "center", margin: "30px" }}>You can attempt this test a maximum of {currentChapter?.quiz_row?.number_of_retake} times. Currently, you are on your <b>{currentChapter?.quiz_row?.current_attempt} attempt</b>. The time limit for the test is {currentChapter?.quiz_row?.time_limit} minutes, and you must score at least {currentChapter?.quiz_row?.passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
                         </Row>
 
 
