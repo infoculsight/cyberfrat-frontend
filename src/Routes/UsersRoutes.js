@@ -14,6 +14,7 @@ import PackageCourses from "../User-panel/pages/package/package-courses/PackageC
 import VideoPage from "../User-panel/pages/courses/chapters/components/sectionmedia/VideoPage";
 import QuizTest from "../User-panel/pages/courses/chapters/components/quiz/QuizTest";
 import AllPackages from "../User-panel/pages/all-packages/AllPackages";
+import QuizResult from "../User-panel/pages/courses/chapters/components/quiz/QuizResult";
 
 function UsersRoutes() {
   return (
@@ -33,7 +34,7 @@ function UsersRoutes() {
         <Route path="/video/:video_id" element={<VideoPage />} />
         <Route path="/account" element={<Settings />} />
         <Route path="live-test" element ={<LiveTest />} />
-
+        <Route path="/quiz-result/:chapter_id" element={<QuizResult />} />
 
 
 

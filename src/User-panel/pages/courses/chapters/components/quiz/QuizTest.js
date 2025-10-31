@@ -65,10 +65,12 @@ export default function QuizTest() {
           set_first_attempt(false); // Pehle attempt hua hai
           // enableSecurity();
           set_button_loader(false)
+          set_show_options(true)
 
         } else {
           set_first_attempt(true); // Pehle attempt hua hai
           set_button_loader(false)
+          set_show_options(true)
           // enableSecurity();
         }
 
@@ -105,7 +107,7 @@ export default function QuizTest() {
             padding: "0px 25px 20px 25px",
             border: 0,
             boxShadow: "0 0 20px rgba(134, 134, 134, 0.3)",
-            height:"96vh"
+            minHeight:"96vh"
           }}
         >
           <Divider
@@ -125,9 +127,11 @@ export default function QuizTest() {
             set_quiz_test_id={set_quiz_test_id}
             chapter_id={chapter_id}
             set_time_spend={set_time_spend}
+            time_spend={time_spend}
             submit_true={submit_true}
             set_quiz_title={set_quiz_title}
           />
+          {quiz_test_id && 
           <QuizTestQuestionView
 
             set_submit_true={set_submit_true}
@@ -135,6 +139,9 @@ export default function QuizTest() {
             chapter_id={chapter_id}
             quiz_test_id={quiz_test_id}
           />
+          
+          }
+          
         </Card>
 
       </>}

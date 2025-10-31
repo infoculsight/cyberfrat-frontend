@@ -6,6 +6,7 @@ import {
   ADD_COMMENT,
   LIST_COMMENT,
   LIST_ENABLED_CHAPTER,
+  START_QUIZ_QUESTION,
   UPDATE_CURRENT_CHAPTER,
 } from "../../../apis/apis";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
@@ -212,7 +213,22 @@ export default function Chapters() {
     link.download = `${course_status}_Certificate.pdf`;
     link.click();
   };
-
+  const check_quiz_status = async (chapter_id) => {
+      const FORM_DATA = new FormData();
+      FORM_DATA.append("chapter_id", chapter_id);
+      try {
+        const API_CALL = await START_QUIZ_QUESTION(FORM_DATA);
+  
+        if (API_CALL?.data?.status) {
+         openFullscreenWindow("/quiz-test/" + btoa(chapter_id))
+        } else {
+           console.log('dd')
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    };
+  
   return (
     <div
       className="lms-body"
@@ -462,7 +478,7 @@ export default function Chapters() {
                                   }}
                                   size="small"
                                   onClick={() =>
-                                    openFullscreenWindow("/quiz-test/" + btoa(currentChapter.id))
+                                   check_quiz_status(currentChapter.id)
                                   }
                                 >
                                   Quiz Test
