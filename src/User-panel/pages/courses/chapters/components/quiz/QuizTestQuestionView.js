@@ -113,16 +113,14 @@ const QuizTestQuestionView = (props) => {
                   <Col span={24}>
                     {review_questions?.length > 0 && review_questions.map((item, index) => (
                       <>
-                        <h3 style={{ marginBottom: "20px", marginTop: "20px" }}>{`Ques ${index + 1}. ${items?.question_text}`}</h3>
+                        <h3 style={{ marginBottom: "20px", marginTop: "20px" }}>{`Ques ${index + 1}. ${item?.question_text}`}</h3>
                         <QuizTestQuestionOptionsRview
                           chapter_id={chapter_id_new}
                           question_id={question_id}
-                          options={option_details}
+                          options={JSON.parse(item.option_details)}
                           setOptions={set_option_details}
                           optionChoice={question_type}
-                          onAnswerSubmitted={() =>
-                            set_attempted_questions((prev) => [...new Set([...prev, current_page])])
-                          }
+                       
                         />
                       </>
                     ))}

@@ -1,9 +1,9 @@
-import { Card,Typography } from "antd";
+import { App, Card,Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 export default function PackageBox(props) {
- 
+   const { notification, message } = App.useApp();
    const Navigate = useNavigate();
 
   return (
@@ -17,7 +17,7 @@ export default function PackageBox(props) {
             src={props.package_image}
             //style={{ height: 250 }}
              onClick={() => {
-                Navigate("/package-courses/" + props.id);
+              props.assign ? Navigate("/package-courses/" + props.id) : message.error("You don't have access to this package. Please contact with admin")
               }}
             style={{
               width: "100%",

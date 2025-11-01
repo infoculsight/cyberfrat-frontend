@@ -114,7 +114,29 @@ function ListLiveTest() {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button
+          {record?.test_submitted ? <>
+            <Button
+            type="primary"
+            size="small"
+            disabled={true}
+          >
+            Test Submitted
+          </Button>
+
+          
+          </>: <>
+           {record?.expired ? <>
+           
+             <Button
+            type="primary"
+            size="small"
+            disabled={true}
+          >
+            Test Expired
+          </Button>
+           
+           </>:<>
+               <Button
             type="primary"
             size="small"
             onClick={() =>
@@ -130,6 +152,10 @@ function ListLiveTest() {
             <EyeFilled />
           </Button>
 
+           </>}
+        
+          </>}
+        
         </Space>
       ),
     },

@@ -105,11 +105,11 @@ const LiveTestQuestionView = (props) => {
                 <Col span={24}>
                   {review_questions?.length > 0 && review_questions.map((item, index) => (
                     <>
-                      <h3 style={{ marginBottom: "20px", marginTop: "20px" }}>{`Ques ${index + 1}. ${items?.question_title}`}</h3>
+                      <h3 style={{ marginBottom: "20px", marginTop: "20px" }}>{`Ques ${index + 1}. ${item?.question_text}`}</h3>
                       <LiveTestQuestionOptionsRview
                         live_test_id={live_test_id_new}
                         question_id={question_id}
-                        options={option_details}
+                        options={JSON.parse(item.option_details)}
                         setOptions={set_option_details}
                         optionChoice={question_type}
                         submit_question={submit_question}
@@ -120,6 +120,7 @@ const LiveTestQuestionView = (props) => {
                   <div style={{ textAlign: "center", marginTop: "20px", marginBottom: "15px" }}>
                     <Popconfirm
                       title="Submit Test"
+                      okText="Cancel"
                       description={
                         <div>
                           <p>Are you sure you want to submit the test?</p>
@@ -131,14 +132,7 @@ const LiveTestQuestionView = (props) => {
                             >
                               Yes
                             </Button>
-                            <Button
-                              danger
-                              size="small"
-                              onClick={(e) => e.stopPropagation()} // just closes popconfirm
-                            >
-                              No
-                            </Button>
-
+                           
                           </div>
                         </div>
                       }
@@ -257,6 +251,7 @@ const LiveTestQuestionView = (props) => {
                 ) : (
                   <Popconfirm
                     title="Submit Quiz Test"
+                    okText="Cancel"
                     description={
                       <div>
                         <p>Are you sure you want to submit the test?</p>
@@ -271,6 +266,8 @@ const LiveTestQuestionView = (props) => {
                          
                           <Button
                             size="small"
+                            variant="solid"
+                            color="green"
                             onClick={(e) => {
                               e.stopPropagation();
                               set_review_view(true)
@@ -278,14 +275,7 @@ const LiveTestQuestionView = (props) => {
                           >
                             Review
                           </Button>
-                           <Button
-                           type="primary"
-                            danger
-                            size="small"
-                            onClick={(e) => e.stopPropagation()} // just closes popconfirm
-                          >
-                            No
-                          </Button>
+                        
                         </div>
                       </div>
                     }

@@ -3,11 +3,13 @@ import { useEffect, useState } from 'react';
 import { BellFilled, CloseOutlined } from "@ant-design/icons";
 import { VIEW_NOTIFICATION, REMOVE_NOTIFICATION, ALL_REMOVE_NOTIFICATION } from '../apis/apis';
 import CulsightPageLoader from './CulsightPageLoader';
+import { useNavigate } from 'react-router-dom';
  
 function UserNotification() {
   const [open, set_open] = useState(false);
   const [notifications, set_notifications] = useState([]);
   const [loading, set_loading] = useState(false);
+  const navigator = useNavigate()
  
   const show_drawer = () => {
     set_open(true);
@@ -123,7 +125,13 @@ function UserNotification() {
                       />
                     </div>
                   }
-                  description={item?.meta?.text}
+                  description={<>
+                  {item?.meta?.text}
+                  {item?.notification_type === 'course_assign' && <>
+                    <Button onClick={() => navigator('view-course/'+btoa(item?.meta?.id))} >View</Button>
+                  </>}
+                  
+                  </>}
                 />
               </List.Item>
             )}
