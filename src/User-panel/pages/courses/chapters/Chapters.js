@@ -221,7 +221,13 @@ export default function Chapters() {
       const API_CALL = await START_QUIZ_QUESTION(FORM_DATA);
 
       if (API_CALL?.data?.status) {
-        openFullscreenWindow("/quiz-test/" + btoa(chapter_id))
+         if (API_CALL?.data?.quiz_submit){
+             message.error("Quiz already submitted! Please refresh the page.");
+             //window.location.reload()
+         }else{
+           openFullscreenWindow("/quiz-test/" + btoa(chapter_id))
+         }
+       
       } else {
         console.log('dd')
       }
@@ -535,8 +541,8 @@ export default function Chapters() {
                           </Col>
                           <p style={{ textAlign: "center", margin: "30px" }}>You can attempt this test a maximum of {currentChapter?.quiz_row?.number_of_retake} times. Currently, you are on your <b>{currentChapter?.quiz_row?.current_attempt} attempt</b>. The time limit for the test is {currentChapter?.quiz_row?.time_limit} minutes, and you must score at least {currentChapter?.quiz_row?.passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
                         </Row>
-
-                        <QuizLearnerReportDeatils chapter_id={currentChapter.id} />
+                        {course_status && <QuizLearnerReportDeatils chapter_id={currentChapter.id} />}
+                        
                       </div>
                     ) : (
                       <h3

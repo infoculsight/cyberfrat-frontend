@@ -2,13 +2,17 @@ import React, { useEffect, useState } from "react";
 import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 import { QUIZ_ANSWER_DETAILS } from "../../../../../apis/apis";
-import { Col, Row, Card, List, Tag, Empty } from "antd";
+import { Col, Row, List, Tag, Collapse, Empty } from "antd";
+
+const { Panel } = Collapse;
 
 function QuizLearnerReportDetails(props) {
   const [loader, setLoader] = useState(true);
   const [learner, setLearner] = useState("");
   const [chapterData, setChapterData] = useState({});
   const [quizData, setQuizData] = useState({});
+  
+  
 
   useEffect(() => {
     const LIST_API = async () => {
@@ -28,84 +32,99 @@ function QuizLearnerReportDetails(props) {
     LIST_API();
   }, [props.chapter_id]);
 
+
+  const right_label = (option_details) => {
+    const correctOption = option_details.find(opt => opt.value === true);
+    return correctOption?.label
+  }
   return (
     <>
       {loader ? (
         <CulsightPageLoader />
       ) : (
         <>
-          {/* Show card only if quizData exists */}
           {quizData && Object.keys(quizData).length > 0 ? (
-            <Card>
+            <>
               <Row style={{ marginBottom: "20px" }}>
                 <Col span={24}>
-                  <h3>Chapter Title : {chapterData?.title}</h3>
+                  <h3>Quiz Results</h3>
                 </Col>
               </Row>
 
-              {/* Attempts List */}
-              {Object.keys(quizData).map((attemptKey, index) => (
-                <Card
-                  key={attemptKey}
-                  title={`Attempt ${index + 1}`}
-                  style={{ marginBottom: "20px", borderRadius: "12px" }}
-                  bordered={true}
-                >
-                  <List
-                    itemLayout="vertical"
-                    dataSource={quizData[attemptKey]}
-                    renderItem={(item, idx) => (
-                      <List.Item
-                        key={item.question_id}
-                        style={{
-                          border: "1px solid #f0f0f0",
-                          borderRadius: "8px",
-                          marginBottom: "12px",
-                          padding: "12px",
-                        }}
-                      >
-                        <Row>
-                          <Col span={22}>
-                            <b>Q{idx + 1}:</b> {item.question}
-                          </Col>
-                          <Col span={2} style={{ textAlign: "right", fontSize: "24px" }}>
-                            {item.is_correct ? (
-                              <CheckCircleTwoTone twoToneColor="#52c41a" />
-                            ) : (
-                              <CloseCircleTwoTone twoToneColor="#ff4d4f" />
-                            )}
-                          </Col>
-                        </Row>
-
-                        <div style={{ marginTop: 10 }}>
-                          {item.option_details?.map((opt, i) => (
-                            <Tag
-                              key={i}
-                              color={
-                                opt.value
-                                  ? "green"
-                                  : item.submitted && !opt.value
-                                  ? "red"
-                                  : "default"
-                              }
-                              style={{ marginBottom: "6px" }}
+              {/* Accordion (Collapse) for Attempts */}
+              <Collapse accordion bordered style={{ borderRadius: "10px" }}>
+                {Object.keys(quizData).map((attemptKey, index) => (
+                  <Panel
+                    header={`Attempt ${index + 1}`}
+                    key={attemptKey}
+                  >
+                    <List
+                      itemLayout="vertical"
+                      dataSource={quizData[attemptKey]}
+                      renderItem={(item, idx) => (
+                        <List.Item
+                          key={item.question_id}
+                         
+                        >
+                          <Row>
+                            <Col span={22}>
+                              <b>Q{idx + 1}:</b> {item.question}
+                            </Col>
+                            <Col
+                              span={2}
+                              style={{
+                                textAlign: "right",
+                                fontSize: "24px",
+                              }}
                             >
-                              {opt.label}
-                            </Tag>
-                          ))}
-                        </div>
+                              {item.is_correct ? (
+                                <CheckCircleTwoTone twoToneColor="#52c41a" />
+                              ) : (
+                                <CloseCircleTwoTone twoToneColor="#ff4d4f" />
+                              )}
+                            </Col>
+                          </Row>
 
-                        <div style={{ marginTop: 8, fontSize: "12px", color: "#888" }}>
-                          ⏱ Time Spent: {item.time_spend}s
-                        </div>
-                      </List.Item>
-                    )}
-                  />
-                </Card>
-              ))}
-            </Card>
+                          <div style={{ marginTop: 10 }}>
+                            {item.option_details?.map((opt, i) => (
+                              <Tag
+                                key={i}
+                                color={
+                                  opt.value
+                                    ? "gold"
+                                    : item.submitted && !opt.value
+                                    ? "red"
+                                    : "red"
+                                }
+                                style={{
+                                  marginBottom: "6px",
+                                  fontSize: "13px",
+                                }}
+                              >
+                                {opt.label}
+                              </Tag>
+                            ))}
+                          </div>
+
+                          <div
+                            style={{
+                              marginTop: 8,
+                              fontSize: "12px",
+                              color: "#888",
+                            }}
+                          >
+                            ⏱ Time Spent: {item.time_spend}s
+                          </div>
+                        {!item?.is_correct &&   <span style={{color:"green"}}><b>Right Answer:</b> {right_label(item.right_option_details)}</span>}
+                        </List.Item>
+                      )}
+                    />
+                  </Panel>
+                ))}
+              </Collapse>
+            </>
           ) : (
-           ""
+            <Empty description="No Quiz Data Found" />
           )}
         </>
       )}

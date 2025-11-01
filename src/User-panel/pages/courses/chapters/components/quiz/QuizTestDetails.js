@@ -1,6 +1,6 @@
 import { Button, Col, Row } from "antd";
 import { useEffect, useState, useRef } from "react";
-import { VIEW_QUIZ_SETTING } from "../../../../../apis/apis";
+import { ADD_QUIZ_ANSWER, VIEW_QUIZ_SETTING } from "../../../../../apis/apis";
 import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 
 
@@ -72,20 +72,19 @@ export default function QuizTestDetails({
     console.log("✅ Timer started with", remainingTime, "seconds");
 
     clearInterval(timerRef.current);
+    if(remainingTime === 0){
+      submit_question()
+    }
     timerRef.current = setInterval(() => {
       setRemainingTime((prev) => {
         if (prev === null) return null;
         if (prev <= 1) {
           clearInterval(timerRef.current);
-          set_expired(true);
-          alert("⏰ Time is over!");
-          window.close();
           return 0;
         }
         const total = time_limit * 60;
         const spent = total - (prev - 1);
         set_time_spend(spent);
-        console.log("⌛ Remaining:", prev - 1, " | Spent:", spent);
         return prev - 1;
       });
     }, 1000);
@@ -101,6 +100,21 @@ export default function QuizTestDetails({
       .padStart(2, "0");
     const s = (seconds % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
+  };
+  const submit_question = async () => {
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("chapter_id", atob(chapter_id));
+    FORM_DATA.append("submitted", 1);
+    FORM_DATA.append("time_spend", time_limit * 60);
+    try {
+      const API_RESPONSE = await ADD_QUIZ_ANSWER(FORM_DATA);
+      if (API_RESPONSE?.data?.status) {
+        alert("⏰ Time is over!");
+        window.close()
+      }
+    } catch (error) {
+      console.error("Answer submit failed:", error);
+    }
   };
 
   return (

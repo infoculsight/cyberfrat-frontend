@@ -6,7 +6,7 @@ import QuizTestQuestionView from "./QuizTestQuestionView";
 
 export default function QuizTest() {
   const { chapter_id } = useParams();
-  const [show_options, set_show_options] = useState(false);
+  const [show_options, set_show_options] = useState(true);
   const [quiz_test_id, set_quiz_test_id] = useState("");
   const [time_spend, set_time_spend] = useState("");
   const [submit_true, set_submit_true] = useState(false);
@@ -56,7 +56,6 @@ export default function QuizTest() {
         />
         {quiz_test_id &&
           <QuizTestQuestionView
-
             set_submit_true={set_submit_true}
             time_spend={time_spend}
             chapter_id={chapter_id}
