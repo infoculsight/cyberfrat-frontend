@@ -65,7 +65,7 @@ const MasterTemplate = () => {
       }
     }
     const local_theme = localStorage.getItem("dark_theme")
-    parseInt(local_theme) === 0 ? set_balck_theme(false) : set_balck_theme(true)
+    local_theme === 'dark' ? set_balck_theme(1) : set_balck_theme(0)
   }, [location.pathname]);
 
   const handleMenuClick = ({ key }) => {

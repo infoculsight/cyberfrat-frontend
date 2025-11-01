@@ -14,6 +14,7 @@ import { FixTruncatedHTMLList } from "../../../components/TruncatedHTML";
 import { CheckCircleFilled, DownloadOutlined, LeftOutlined } from "@ant-design/icons";
 import SectionVideos from "./components/sectionmedia/sectionVideos";
 import CustomRichTextEditor from "../../../components/CustomTextEditor";
+import QuizLearnerReportDeatils from "../chapters/components/quiz/QuizLearnerReportDetails"
 
 export default function Chapters() {
   const { message } = App.useApp();
@@ -214,21 +215,21 @@ export default function Chapters() {
     link.click();
   };
   const check_quiz_status = async (chapter_id) => {
-      const FORM_DATA = new FormData();
-      FORM_DATA.append("chapter_id", chapter_id);
-      try {
-        const API_CALL = await START_QUIZ_QUESTION(FORM_DATA);
-  
-        if (API_CALL?.data?.status) {
-         openFullscreenWindow("/quiz-test/" + btoa(chapter_id))
-        } else {
-           console.log('dd')
-        }
-      } catch (error) {
-        console.log(error)
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("chapter_id", chapter_id);
+    try {
+      const API_CALL = await START_QUIZ_QUESTION(FORM_DATA);
+
+      if (API_CALL?.data?.status) {
+        openFullscreenWindow("/quiz-test/" + btoa(chapter_id))
+      } else {
+        console.log('dd')
       }
-    };
-  
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
   return (
     <div
       className="lms-body"
@@ -478,7 +479,7 @@ export default function Chapters() {
                                   }}
                                   size="small"
                                   onClick={() =>
-                                   check_quiz_status(currentChapter.id)
+                                    check_quiz_status(currentChapter.id)
                                   }
                                 >
                                   Quiz Test
@@ -535,7 +536,7 @@ export default function Chapters() {
                           <p style={{ textAlign: "center", margin: "30px" }}>You can attempt this test a maximum of {currentChapter?.quiz_row?.number_of_retake} times. Currently, you are on your <b>{currentChapter?.quiz_row?.current_attempt} attempt</b>. The time limit for the test is {currentChapter?.quiz_row?.time_limit} minutes, and you must score at least {currentChapter?.quiz_row?.passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
                         </Row>
 
-
+                        <QuizLearnerReportDeatils chapter_id={currentChapter.id} />
                       </div>
                     ) : (
                       <h3
@@ -551,26 +552,13 @@ export default function Chapters() {
                       </h3>
                     )}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                   </> : <>
                     <SectionVideos
                       set_next_view={() => { }}
                       chapter_id={btoa(currentChapter.id)}
                       single_progress={single_progress}
                       video_row={currentChapter.video_row}
+                      set_course_watch_percent={set_course_watch_percent}
                       set_single_progress={set_single_progress}
                     />
 

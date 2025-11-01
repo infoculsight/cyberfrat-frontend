@@ -140,7 +140,7 @@ function Dashboard() {
       title: "Name",
       dataIndex: "name",
       render: (text, record) => (
-        <span>
+        <span style={{textTransform:"capitalize"}}>
           {record.first_name} {record.last_name}
         </span>
       ),
@@ -220,15 +220,7 @@ function Dashboard() {
                   </Col>
 
                   <Col span={24}>
-                    {/* <Table
-                      columns={currentcolumns}
-                      pagination={false}
-                      dataSource={
-                        current_course_chapter
-                          ? [current_course_chapter]
-                          : []
-                      }
-                    /> */}
+                   
                     <Table
                       columns={currentcolumns}
                       pagination={false}
@@ -243,7 +235,7 @@ function Dashboard() {
                  <Card>
                    <h2 style={{ marginTop: "-20px" }}>Your Rank</h2>
                    <p>Rank: <b>{single_learner_data?.rank}</b></p>
-                   <p>Name: <b>{single_learner_data?.first_name} {single_learner_data?.last_name}</b></p>
+                   <p>Name: <b style={{textTransform:"capitalize"}}>{single_learner_data?.first_name} {single_learner_data?.last_name}</b></p>
                    <p>Time Spent : <b> {formatTime(single_learner_data?.total_max_watched)}</b></p>
                    </Card>
                   </>}

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Popconfirm, Row, Tag } from "antd";
 import {
-  ADD_QUIZ_ANSWER,
-  List_QUIZ_QUESTION,
+  ADD_LIVE_TEST_ANSWERS,
+  LIST_LIVE_TEST_QUESTION,
 } from "../../../../../apis/apis";
 import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 import LiveTestQuestionOptions from "./LiveTestQuestionOptions";
@@ -10,7 +10,7 @@ import LiveTestQuestionOptionsRview from "./LiveTestQuestionOptionsRview";
 
 
 const LiveTestQuestionView = (props) => {
-  const { live_test_id, time_spend, set_submit_true } = props;
+  const { live_test_id, time_spend, set_submit_true, set_display_question } = props;
   const live_test_id_new = atob(live_test_id);
   const [items, setItems] = useState([]);
   const [show_result, set_show_result] = useState(false);
@@ -32,17 +32,17 @@ const LiveTestQuestionView = (props) => {
     const fetchData = async () => {
       const FORM_DATA = new FormData();
       FORM_DATA.append("live_test_id", atob(props.live_test_id));
-      FORM_DATA.append("quiz_test_id", props.quiz_test_id);
       FORM_DATA.append("page", current_page);
 
-      const LIST_API_RESPONSE = await List_QUIZ_QUESTION(FORM_DATA);
+      const LIST_API_RESPONSE = await LIST_LIVE_TEST_QUESTION(FORM_DATA);
       if (LIST_API_RESPONSE?.data?.status) {
         const response_data = LIST_API_RESPONSE?.data;
         setItems(response_data?.data[0]);
         set_current_page(response_data?.current_page);
         set_question_id(response_data?.data[0]?.id);
         set_total_questions(response_data?.total_questions);
-        set_question_type(response_data?.data[0]?.type);
+        set_display_question(response_data?.total_questions)
+        set_question_type(response_data?.data[0]?.question_type);
         set_review_questions(response_data?.review_questions)
         const options = response_data?.data[0]?.option_details
           ? JSON.parse(response_data?.data[0]?.option_details).map((opt) => ({
@@ -67,9 +67,9 @@ const LiveTestQuestionView = (props) => {
     FORM_DATA.append("submitted", 1);
     FORM_DATA.append("time_spend", time_spend);
     try {
-      const API_RESPONSE = await ADD_QUIZ_ANSWER(FORM_DATA);
+      const API_RESPONSE = await ADD_LIVE_TEST_ANSWERS(FORM_DATA);
       if (API_RESPONSE?.data?.status) {
-        set_attempted_questions((prev) => [...new Set([...prev, current_page])]);
+       
         set_test_submitted(true);
         set_current_page(1);
         set_submit_true(true)
@@ -83,8 +83,7 @@ const LiveTestQuestionView = (props) => {
 
   return (
     <div style={{ marginTop: "20px" }}>
-      {show_result ? <> {""}</> : <>
-      {test_submitted ? (
+       {test_submitted ? (
         <h3
           style={{
             padding: "50px",
@@ -94,44 +93,36 @@ const LiveTestQuestionView = (props) => {
             fontSize: "42px",
           }}
         >
-          Quiz Test submitted <br></br>
+          Test submitted <br></br>
           <Button type="primary" size="small" onClick={() => window.close()}>Close</Button>
-           <Button
-                    type="primary"
-                    size="small"
-                    onClick={() => set_show_result(true)}
-                  >
-                    View Result
-                  </Button>
         </h3>
       ) : (
         <>
           <Card>
             {rview_view ? <>
-              <h2 style={{ textAlign: "center", marginBottom: "15px" }}>Review All Quiz Answer</h2>
+              <h2 style={{ textAlign: "center", marginBottom: "15px" }}>Review All Test Answer</h2>
               <Row gutter={20}>
                 <Col span={24}>
                   {review_questions?.length > 0 && review_questions.map((item, index) => (
                     <>
-                      <h3 style={{ marginBottom: "20px", marginTop: "20px" }}>{`Ques ${index + 1}. ${items?.question_text}`}</h3>
+                      <h3 style={{ marginBottom: "20px", marginTop: "20px" }}>{`Ques ${index + 1}. ${items?.question_title}`}</h3>
                       <LiveTestQuestionOptionsRview
                         live_test_id={live_test_id_new}
                         question_id={question_id}
                         options={option_details}
                         setOptions={set_option_details}
                         optionChoice={question_type}
-                        onAnswerSubmitted={() =>
-                          set_attempted_questions((prev) => [...new Set([...prev, current_page])])
-                        }
+                        submit_question={submit_question}
+                      
                       />
                     </>
                   ))}
                   <div style={{ textAlign: "center", marginTop: "20px", marginBottom: "15px" }}>
                     <Popconfirm
-                      title="Submit Quiz Test"
+                      title="Submit Test"
                       description={
                         <div>
-                          <p>Are you sure you want to submit the Quiz test?</p>
+                          <p>Are you sure you want to submit the test?</p>
                           <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "10px" }}>
                             <Button
                               type="primary"
@@ -166,7 +157,7 @@ const LiveTestQuestionView = (props) => {
                         set_review_view(false)
                       }}
                     >
-                      Back To Quiz
+                      Back To Test
                     </Button>
 
                   </div>
@@ -175,16 +166,14 @@ const LiveTestQuestionView = (props) => {
             </> : <>
               <Row gutter={20}>
                 <Col span={18}>
-                  <h3 style={{ marginBottom: "20px" }}>{`Ques ${current_page}. ${items?.question_text}`}</h3>
+                  <h3 style={{ marginBottom: "20px" }}>{`Ques ${current_page}. ${items?.question_title}`}</h3>
                   <LiveTestQuestionOptions
                     live_test_id={live_test_id_new}
                     question_id={question_id}
                     options={option_details}
                     setOptions={set_option_details}
                     optionChoice={question_type}
-                    onAnswerSubmitted={() =>
-                      set_attempted_questions((prev) => [...new Set([...prev, current_page])])
-                    }
+                    submit_question={submit_question}
                   />
                 </Col>
                 <Col span={6}>
@@ -270,7 +259,7 @@ const LiveTestQuestionView = (props) => {
                     title="Submit Quiz Test"
                     description={
                       <div>
-                        <p>Are you sure you want to submit the Quiz test?</p>
+                        <p>Are you sure you want to submit the test?</p>
                         <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "10px" }}>
                           <Button
                             type="primary"
@@ -313,7 +302,6 @@ const LiveTestQuestionView = (props) => {
           </Card>
         </>
       )}
-      </>}
     </div>
   );
 };

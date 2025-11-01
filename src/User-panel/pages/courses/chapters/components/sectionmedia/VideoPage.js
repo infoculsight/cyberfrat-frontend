@@ -15,6 +15,7 @@ const VideoPage = ({
  last_progress,
   chapter_id,
   video_row,
+  set_course_watch_percent
 }) => {
   const videoRef = useRef(null);
   const apiDisabledRef = useRef(false);
@@ -80,7 +81,11 @@ const VideoPage = ({
     form.append("chapter_id", atob(chapter_id));
     form.append("watched_seconds", parseFloat(lastWatchedTime.current.toFixed(1)));
     form.append("total_seconds", parseFloat(video.duration?.toFixed(1)) || 0);
-    await VIDEO_TRACK_PROGRESS(form);
+    const apirs = await VIDEO_TRACK_PROGRESS(form);
+    if(apirs?.data?.course_watch_percent){
+       set_course_watch_percent(apirs?.data?.course_watch_percent)
+    }
+   
     set_video_api_refresh(!video_api_refresh)
   };
 

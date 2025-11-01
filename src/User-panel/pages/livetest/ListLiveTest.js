@@ -12,7 +12,7 @@ function ListLiveTest() {
   const [table_data, set_table_data] = useState([]);
   const [current_page, set_current_page] = useState(1);
   const [total_pages, set_total_pages] = useState(0);
-  const [total_live_test, set_total_live_test] = useState(0);
+  const [total_items, set_total_items] = useState(0);
   const [pagination_loader, set_pagination_loader] = useState(false);
   const [search_query_value, set_search_query_value] = useState("");
 
@@ -23,10 +23,11 @@ function ListLiveTest() {
       const FORM_DATA = new FormData();
       const API_CALL = await LIST_LIVE_TESTS(FORM_DATA);
       if (API_CALL?.data?.status) {
+        set_current_page(API_CALL.data.page);
         set_table_data(API_CALL.data.data);
-        set_current_page(API_CALL.data.current_page);
+        set_total_items(API_CALL.data.total_items);
         set_total_pages(API_CALL.data.total_pages);
-        set_total_live_test(API_CALL.data.total_live_test);
+
       }
     } catch (err) {
       console.error("Error fetching live tests:", err);
@@ -174,16 +175,18 @@ function ListLiveTest() {
           style={{ marginTop: "15px" }}
           loading={loader || pagination_loader}
           pagination={false}
-          rowKey="id"
+          rowKey="assign_id"
+
         />
 
         <div style={{ float: "right", marginTop: "20px" }}>
           <Pagination
             current={current_page}
-            total={total_pages}
+            total={total_items}
             pageSize={10}
             onChange={pagination_on_change}
           />
+
         </div>
       </Card>
     </div>

@@ -13,19 +13,6 @@ const UserDropdown = ({ user }) => {
     logout();
   };
 
-
-  // const menu = (
-  //   <Menu>
-  //     <Menu.Item key="username" icon={<UserOutlined />}>
-  //        <span style={{textTransform:"capitalize"}} onClick={() => navigate("/setting/personal-info")}> Profile </span>
-  //     </Menu.Item>
-  //     <Menu.Divider />
-  //     <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
-  //       Logout
-  //     </Menu.Item>
-  //   </Menu>
-  // );
-
   const menuItems = [
     {
       key: 'username',
@@ -50,7 +37,7 @@ const UserDropdown = ({ user }) => {
   return (
     <div style={{ float: "right" }}>
       <div style={{ marginRight: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span>Welcome, <b>{user?.user_info?.name}</b></span>
+        <span>Welcome, <b style={{textTransform:"capitalize"}}>{user?.user_info?.name}</b></span>
         <Dropdown menu={{ items: menuItems }} trigger={['click']}>
           <Avatar style={{ backgroundColor: '#e9c70ada', cursor: 'pointer' }} icon={<UserOutlined />} />
         </Dropdown>
