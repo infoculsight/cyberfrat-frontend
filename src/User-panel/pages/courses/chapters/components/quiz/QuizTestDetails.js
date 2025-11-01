@@ -59,7 +59,7 @@ export default function QuizTestDetails({
       setLoading(false);
     };
 
-    VIEW_API();
+    VIEW_API();   
   }, [chapter_id]);
 
   // 🔹 Countdown Logic
