@@ -16,16 +16,17 @@ function App() {
   const [user, setUser] = useState(null);
   const [user_role, set_user_role] = useState(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [black_theme, set_black_theme] = useState(true);
+  const [black_theme, set_black_theme] = useState(1);
 
   // ✅ Theme load from localStorage
   useEffect(() => {
-    const local_theme = localStorage.getItem("dark_theme");
-    if (local_theme !== null) {
-      set_black_theme(parseInt(local_theme) === 1);
+    
+    if (localStorage.getItem("dark_theme")) {
+      const local_theme = localStorage.getItem("dark_theme");
+      set_black_theme(local_theme);
     } else {
-      set_black_theme(true);
-      localStorage.setItem("dark_theme", 1);
+      set_black_theme('dark');
+      localStorage.setItem("dark_theme", 'dark');
     }
   }, []);
 
@@ -48,7 +49,7 @@ function App() {
   return (
     <ConfigProvider
       theme={{
-        algorithm: black_theme ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        algorithm: black_theme == 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm,
         token: { colorPrimary: "#e9c70ada" },
       }}
     >
