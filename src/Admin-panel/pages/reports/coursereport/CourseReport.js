@@ -120,6 +120,10 @@ const DOWNLOAD_REPORT_ACTION = async (course_id) => {
       dataIndex: "course_name",
       render: (text, record) => <span>{record.course_name}</span>,
     },
+        {
+      title: "Completion Rate",
+      render: (text, record) => <span>{record.completion_rate}</span>,
+    },
     {
       title: "Total Learners",
       dataIndex: "total_learners",

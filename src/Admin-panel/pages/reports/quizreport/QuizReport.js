@@ -101,6 +101,7 @@ const QuizReport = () => {
       title: "Total Quiz",
       render: (text, record) => <span>{record.chapter_count}</span>,
     },
+  
     {
       title: "Action",
       key: "action",

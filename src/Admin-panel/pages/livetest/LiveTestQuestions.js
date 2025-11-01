@@ -150,12 +150,12 @@ const LiveTestQuestion = (props) => {
   );
 
   const handleInput = (e) => {
-    fetchResults("topic", e.target.value);
+    fetchResults("question_title", e.target.value);
   };
 
   const selectBefore = (
-    <Select defaultValue="topic">
-      <Option value="topic">Topic</Option>
+    <Select defaultValue="question_title">
+      <Option value="question_title">Topic</Option>
     </Select>
   );
 

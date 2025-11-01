@@ -33,8 +33,8 @@ export default function AddLearners() {
   const [email, setEmail] = useState("");
   const [country_code, set_country_code] = useState("IN");
   const [contact_no, set_contact_no] = useState("");
-  const [password, set_password] = useState("");
-  const [confirm_password, set_confirm_password] = useState("");
+  // const [password, set_password] = useState("");
+  // const [confirm_password, set_confirm_password] = useState("");
   const [address_line_1, set_address_line1] = useState("");
   const [address_line_2, set_address_line2] = useState("");
   const [pin_code, set_pin_code] = useState("");
@@ -92,8 +92,8 @@ export default function AddLearners() {
     FORM_DATA.append("contact_no", contact_no);
     FORM_DATA.append("organization", organization);
     FORM_DATA.append("designation", designation);
-    FORM_DATA.append("password", password);
-    FORM_DATA.append("confirm_password", confirm_password);
+    // FORM_DATA.append("password", password);
+    // FORM_DATA.append("confirm_password", confirm_password);
     FORM_DATA.append("address_line_1", address_line_1);
     FORM_DATA.append("address_line_2", address_line_2);
     FORM_DATA.append("pin_code", pin_code);
@@ -381,7 +381,7 @@ export default function AddLearners() {
                 </Form.Item>
 
                 <h3>Security Information</h3>
-
+{/* 
                 <Form.Item label="Password">
                   <Input.Password
                     value={password}
@@ -412,7 +412,7 @@ export default function AddLearners() {
                   ) : (
                     <></>
                   )}
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item>
                   <Checkbox
