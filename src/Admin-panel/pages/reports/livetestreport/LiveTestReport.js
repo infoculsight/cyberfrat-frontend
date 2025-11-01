@@ -95,7 +95,7 @@ const formatDuration = (seconds) => {
 
                 const formData = new FormData();
                 formData.append("learner_id", record?.learner_id);
-                formData.append("chapter_id", model_row?.chapter_id);
+                formData.append("id", model_row?.id);
                 formData.append("total_question", submission?.total_question ?? 0);
                 formData.append("total_time", submission?.time_spend ?? 0);
                 formData.append("total_marks", submission?.total_marks ?? 0);

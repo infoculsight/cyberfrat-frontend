@@ -24,7 +24,7 @@ function EditLiveTest() {
     const { notification } = App.useApp();
     const navigate = useNavigate();
     const { id } = useParams()
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [title, set_title] = useState("");
     const [form] = Form.useForm();
     const [time_limit, set_time_limit] = useState("");
