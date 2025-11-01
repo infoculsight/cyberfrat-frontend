@@ -5,7 +5,7 @@ import {
   Card,
   Col,
   List,
-  message,
+
   Pagination,
   Row,
 } from "antd";
@@ -18,7 +18,7 @@ import CustomRichTextEditor from "../../components/CustomTextEditor";
 
 function CourseDetails(props) {
   const { id } = useParams();
-  const { notification } = App.useApp();
+  const { notification, message } = App.useApp();
   const Navigate = useNavigate();
 
   const [page_loader, set_page_loader] = useState(true);

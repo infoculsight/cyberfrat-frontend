@@ -571,6 +571,7 @@ export default function Chapters() {
                       chapter_id={btoa(currentChapter.id)}
                       single_progress={single_progress}
                       video_row={currentChapter.video_row}
+                      set_course_watch_percent={set_course_watch_percent}
                       set_single_progress={set_single_progress}
                     />
 

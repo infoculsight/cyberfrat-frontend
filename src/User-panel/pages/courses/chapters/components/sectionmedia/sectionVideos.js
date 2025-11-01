@@ -7,7 +7,7 @@ import VideoPage from './VideoPage';
 import { PlayCircleFilled } from "@ant-design/icons";
 
 function SectionVideos(props) {
-  const { chapter_id, section_id, set_next_view, single_progress, set_single_progress, video_row } = props;
+  const { chapter_id, section_id, set_next_view, single_progress, set_single_progress, video_row, set_course_watch_percent } = props;
 
   const [video_loader, set_video_loader] = useState(true);
   const [video_data, set_video_data] = useState([]);
@@ -73,6 +73,7 @@ function SectionVideos(props) {
                             set_video_api_refresh={set_video_api_refresh}
                             set_current_video_id={set_current_video_id}
                             row_id={item?.id}
+                            set_course_watch_percent={set_course_watch_percent}
                             video_row={video_row}
                           />
                           <div style={{ marginTop: 8 }}>
