@@ -12,7 +12,7 @@ const QuizReport = () => {
   const [pagination_loader, set_pagination_loader] = useState(false);
   const [table_data, set_table_data] = useState([]);
   const [current_page, set_current_page] = useState(1);
-  const [total_records, set_total_records] = useState(0);
+  const [total_pages, set_total_pages] = useState(0);
   const [page_size, set_page_size] = useState(10);
   const [search_query_title, set_search_query_title] = useState("");
 
@@ -25,7 +25,7 @@ const QuizReport = () => {
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.data?.results || []);
         set_current_page(Number(API_CALL?.data?.data?.current_page || 1));
-        set_total_records(Number(API_CALL?.data?.data?.total_records || 0)); // ✅ total_records
+        set_total_pages(Number(API_CALL?.data?.data?.total_pages || 0)); // ✅ total_records
         set_page_size(Number(API_CALL?.data?.data?.page_size || 10));
         setLoader(false);
       } else {
@@ -47,7 +47,7 @@ const QuizReport = () => {
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.data?.results || []);
       set_current_page(Number(API_CALL?.data?.data?.current_page || page));
-      set_total_records(Number(API_CALL?.data?.data?.total_records || 0));
+      set_total_pages(Number(API_CALL?.data?.data?.total_pages || 0));
       set_page_size(Number(API_CALL?.data?.data?.page_size || 10));
     }
     set_pagination_loader(false);
@@ -67,7 +67,7 @@ const QuizReport = () => {
         if (API_CALL?.data?.status) {
           set_table_data(API_CALL?.data?.data?.results || []);
           set_current_page(Number(API_CALL?.data?.data?.current_page || 1));
-          set_total_records(Number(API_CALL?.data?.data?.total_records || 0));
+          set_total_pages(Number(API_CALL?.data?.data?.total_pages || 0));
           set_page_size(Number(API_CALL?.data?.data?.page_size || 10));
         }
         set_pagination_loader(false);
@@ -146,16 +146,16 @@ const QuizReport = () => {
             rowKey={(record, index) => index}
           />
 
-          {total_records > 0 && (
+         
             <div style={{ float: "right", marginTop: "20px" }}>
               <Pagination
                 current={current_page}
-                total={total_records}
-                pageSize={page_size}
+                total={total_pages}
+                pageSize={10}
                 onChange={pagination_on_change}
               />
             </div>
-          )}
+          
         </>
       )}
     </div>
