@@ -485,7 +485,7 @@ export const VIEW_QUIZ_RESULT = async (body) => {
 
 export const QUIZ_ANSWER_DETAILS = async (body) => {
     try {
-        const response = await Axios.post('quiz-answer-details/', body);
+        const response = await Axios.post('quiz-answer-details-after-pass/', body);
         return response;
     } catch (error) {
         console.error(error);
