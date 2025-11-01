@@ -12,7 +12,8 @@ export default function LiveTestDetails({
   time_spend,
   submit_true,
   set_quiz_title,
-  live_test_id
+  live_test_id,
+  display_question,
 }) {
 
   const [loading, setLoading] = useState(false);
@@ -20,7 +21,6 @@ export default function LiveTestDetails({
   const [time_limit, set_time_limit] = useState(null);
   const [passing_percentage, set_passing_percentage] = useState("");
   const [number_of_retake, set_number_of_retake] = useState("");
-  const [display_question, set_display_question] = useState("");
   const [remainingTime, setRemainingTime] = useState(null);
   const [expired, set_expired] = useState(false);
   const [submitted, set_submitted] = useState(false);
@@ -40,7 +40,7 @@ export default function LiveTestDetails({
         set_title(data?.title);
         set_quiz_title(data?.title);
         set_time_limit(parseInt(data?.time_limit));
-        set_display_question(data?.display_question);
+        
 
         if (!data?.expired && !data?.test_submitted) {
           set_quiz_test_id(data?.id);
@@ -132,14 +132,7 @@ export default function LiveTestDetails({
                 </Col>
                 <Col span={12}>
                   <div style={{ float: "right" }}>
-                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Passing Percentage:{" "}
-                    </span>
-                    {passing_percentage}% <br />
-                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Retake Allowed:{" "}
-                    </span>
-                    {number_of_retake} <br />
+                   
                     <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
                       Total Questions:{" "}
                     </span>
@@ -158,7 +151,7 @@ export default function LiveTestDetails({
                     fontSize: "42px",
                   }}
                 >
-                  Quiz submitted
+                  Text submitted
                   <br />
                   <Button
                     type="primary"
@@ -168,7 +161,6 @@ export default function LiveTestDetails({
                     Close
                   </Button>
                  
-                  ;
                 </h3>
               ) : expired ? (
                 <h3
@@ -180,7 +172,7 @@ export default function LiveTestDetails({
                     fontSize: "42px",
                   }}
                 >
-                  Quiz Test Expired
+                  Test Expired
                   <br />
                   <Button
                     type="primary"

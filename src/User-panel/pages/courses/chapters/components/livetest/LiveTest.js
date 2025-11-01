@@ -14,7 +14,8 @@ export default function LiveTest() {
   const [submit_true, set_submit_true] = useState(false);
   const [button_loader, set_button_loader] = useState(false);
   const [quiz_title, set_quiz_title] = useState("");
-
+  const [display_question, set_display_question] = useState(0);
+ 
   return (
     <div
       className="lms-body"
@@ -58,6 +59,7 @@ export default function LiveTest() {
             set_time_spend={set_time_spend}
             time_spend={time_spend}
             submit_true={submit_true}
+            display_question={display_question}
             set_quiz_title={set_quiz_title}
           />
           {quiz_test_id && 
@@ -66,6 +68,7 @@ export default function LiveTest() {
             set_submit_true={set_submit_true}
             time_spend={time_spend}
             live_test_id={live_test_id}
+            set_display_question={set_display_question}
           />
           
           }
