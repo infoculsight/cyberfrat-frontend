@@ -72,7 +72,7 @@ const formatDuration = (seconds) => {
     useEffect(() => {
         const LIST_API = async () => {
             const FORM_DATA = new FormData();
-            FORM_DATA.append('chapter_id', model_row?.chapter_id);
+            FORM_DATA.append('id', model_row?.id);
             const API_CALL = await LIST_LIVE_SUBMISSION(FORM_DATA);
             if (API_CALL?.data?.status) {
                 set_dataSource(API_CALL?.data?.data);
