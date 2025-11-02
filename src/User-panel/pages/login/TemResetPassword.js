@@ -97,7 +97,7 @@ const TemResetPassword = (props) => {
                     <img alt="logo" src={Logo} style={{ maxWidth: "300px" }} />
 
                     <h2 style={{ marginBottom: "35px" }}>Reset Password</h2>
-                        <p>You’re using a temporary password. Please set a new password to proceed.</p>
+                        <p style={{fontSize:"12px"}}>You’re using a temporary password. Please set a new password to proceed.</p>
                         <div style={{ position: "relative" }}>
                             <input
                                 type={showPassword ? "text" : "password"}
