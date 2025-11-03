@@ -15,6 +15,7 @@ import { CheckCircleFilled, DownloadOutlined, LeftOutlined } from "@ant-design/i
 import SectionVideos from "./components/sectionmedia/sectionVideos";
 import CustomRichTextEditor from "../../../components/CustomTextEditor";
 import QuizLearnerReportDeatils from "../chapters/components/quiz/QuizLearnerReportDetails"
+import PdfIframeViewer from "../../../components/PdfIframeViewer";
 
 export default function Chapters() {
   const { message } = App.useApp();
@@ -572,6 +573,13 @@ export default function Chapters() {
                       currentChapter.introduction !== "null" && (
                         <FixTruncatedHTMLList html={currentChapter.introduction} />
                       )}
+
+                          {currentChapter.scorm && (
+                    <>
+                      <br />
+                      <PdfIframeViewer pdfUrl={currentChapter.scorm} />
+                    </>
+                  )}
 
                     {/* ✅ Comments Section */}
                     <div style={{ marginTop: "30px" }}>
