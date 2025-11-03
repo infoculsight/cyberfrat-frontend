@@ -1,52 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { Checkbox, Row, Col, Card, Upload, Button, message, Select, Input, DatePicker } from 'antd';
+import { Checkbox, Row, Col, Card, Upload, Button, message, Select, Input, DatePicker, Typography } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 import { BULK_ASSIGN_COURSE } from '../../../apis/apis';
 
-function BulEnrollLearners({ course_id, isModalOpen }) {
+
+const { Text } = Typography;
+function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
     const [access_type, set_access_type] = useState('LifeTime');
     const [access_value, set_access_value] = useState('');
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [fileError, setFileError] = useState('');
 
-  
+
     useEffect(() => {
         if (isModalOpen) {
             setFile(null);
             set_access_value('');
             set_access_type('LifeTime');
+            setFileError('');
         }
     }, [isModalOpen]);
 
 
-    const handleFileChange = ({ fileList }) => {
-        const selectedFile = fileList[0]?.originFileObj;
-        if (!selectedFile) {
-            setFile(null);
-            return;
+    const handleFileChange = (file) => {
+        const isCSV = file.type === 'text/csv';
+        if (!isCSV) {
+
+            return Upload.LIST_IGNORE;
         }
 
-        const isExcel =
-            selectedFile.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-            selectedFile.type === 'application/vnd.ms-excel';
-
-        if (!isExcel) {
-            message.error('Sirf Excel file (.xls, .xlsx) upload kar sakte hain!');
-            setFile(null);
-            return;
-        }
-
-        setFile(selectedFile);
-        message.success(`File selected: ${selectedFile.name}`);
+        setFile([file]);
+        setFileError('');
+        message.success(` ${file.name}`);
+        return false;
     };
 
 
     const handleSubmit = async () => {
-
-
+     
         if (!file) {
+            setFileError('Please select a CSV file before submitting.');
             message.error('Please select an Excel file first.');
             return;
         }
@@ -58,9 +54,8 @@ function BulEnrollLearners({ course_id, isModalOpen }) {
 
         try {
             setLoading(true);
-
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append('file', file[0]);
             formData.append('course_id', atob(course_id));
             formData.append('access_type', access_type);
             formData.append('access_value', access_value);
@@ -69,11 +64,13 @@ function BulEnrollLearners({ course_id, isModalOpen }) {
                 message.success('Learners enrolled successfully!');
                 setFile(null);
                 set_access_value('');
+                if (onSuccess) onSuccess();
+                
             } else {
                 message.error(response?.data?.message || 'Enrollment failed!');
             }
         } catch (error) {
-     
+
             message.error('Server error: Could not enroll learners.');
         } finally {
             setLoading(false);
@@ -139,24 +136,29 @@ function BulEnrollLearners({ course_id, isModalOpen }) {
                         {/* Conditionally show access_value field */}
                         {renderAccessValueInput()}
 
-                        <Row gutter={[16, 16]}>
+                        {/* <Row gutter={[16, 16]}>
                             <Col span={12}>
                                 <Checkbox defaultChecked disabled>Email</Checkbox>
                             </Col>
-                        </Row>
+                        </Row> */}
                     </Card>
                 </div>
 
                 {/* Excel Upload */}
                 <Upload
-                    beforeUpload={() => false} // Prevent auto upload
-                    onChange={handleFileChange}
-                    fileList={file ? [{ uid: '-1', name: file.name }] : []}
-                    accept=".xls,.xlsx"
-                    maxCount={1}
+                    beforeUpload={handleFileChange}
+                    file={file}
+                    onRemove={() => setFile([])}
+                    accept=".csv"
+                    style={{ width: "100%" }} // optional
                 >
                     <Button icon={<UploadOutlined />}>Select Excel File</Button>
                 </Upload>
+                    {fileError && (
+                    <Text type="danger" style={{ display: 'block', marginTop: 8 }}>
+                        {fileError}
+                    </Text>
+                )}
 
                 {/* Submit */}
                 <div style={{ marginTop: 20 }}>

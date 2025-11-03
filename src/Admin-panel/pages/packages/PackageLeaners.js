@@ -11,21 +11,22 @@ import {
   Table,
   Tag,
   Modal,
+  Upload,
   message,
   App,
 } from "antd";
 import { Option } from "antd/es/mentions";
-import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
+import { LeftOutlined, LoadingOutlined, UploadOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { LIST_PACKAGE_LEARNERS, LEARNER_PACKAGE_STATUS } from "../../apis/apis";
+import { LIST_PACKAGE_LEARNERS, LEARNER_PACKAGE_STATUS, BULK_ASSIGN_PACKAGE } from "../../apis/apis";
 import moment from "moment";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import AssignPackageLearners from "./AssignPackageLearners";
 
 function PackageLeaners(props) {
-  
+
   const { notification } = App.useApp();
   const { package_id } = useParams();
   const navigate = useNavigate();
@@ -43,11 +44,38 @@ function PackageLeaners(props) {
   const [assignKey, setAssignKey] = useState(0);
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
+  const [file, set_file] = useState([]);
+  const [is_model_open, set_is_model_open] = useState(false);
+  const [errors, set_errors] = useState("");
 
   const showModal = () => {
     setAssignKey((prev) => prev + 1);
     setIsModalVisible(true);
   };
+
+  const showbulkModal = () => {
+    set_is_model_open(true);
+  };
+
+
+  const handleCancel = () => {
+    set_is_model_open(false);
+  };
+
+  const beforeUpload = (file) => {
+    const isCSV = file.type === 'text/csv';
+    if (!isCSV) {
+      set_errors({ file: "Only CSV files are allowed!" });
+      message.error("Please upload a valid CSV file.");
+      return Upload.LIST_IGNORE;
+    }
+
+    set_file([file]);
+    set_errors("");
+    message.success(` ${file.name}`);
+    return false;
+  };
+
 
   const handleModalCancel = async () => {
     setIsModalVisible(false);
@@ -209,7 +237,6 @@ function PackageLeaners(props) {
       set_search_query_name(value);
       set_pagination_loader(true);
       const FORM_DATA = new FormData();
-      FORM_DATA.append("token", localStorage.getItem("token"));
       FORM_DATA.append("name", value);
       FORM_DATA.append("email", "");
       FORM_DATA.append("package_id", atob(package_id));
@@ -260,6 +287,29 @@ function PackageLeaners(props) {
     }
   };
 
+  const handleBulkUpload = async () => {
+    setLoader(true)
+    const formData = new FormData();
+    formData.append("package_id", atob(package_id));
+    formData.append("file", file[0]);
+
+    try {
+      const response = await BULK_ASSIGN_PACKAGE(formData);
+      if (response?.data?.status) {
+        set_is_model_open(false);
+        setLoader(false)
+      } else {
+        set_errors(response?.data?.errors);
+      }
+    } catch (error) {
+      message.error(
+        "Server Error: " + (error?.response?.data?.message || "Unknown error")
+      );
+    }
+  };
+
+
+
 
   return (
     <div className="lms-body">
@@ -267,13 +317,13 @@ function PackageLeaners(props) {
 
         <Row>
           <Col span={12}>
-            <h2><span    style={{ cursor: "pointer" }}
+            <h2><span style={{ cursor: "pointer" }}
               onClick={() => navigate("/packages")}><LeftOutlined /></span> Package Learners</h2>
           </Col>
         </Row>
 
         <Row gutter={[16, 16]}>
-          <Col xs={24} sm={24} md={18} lg={18} xl={18}>
+          <Col xs={24} sm={24} md={16} lg={16} xl={16}>
             <Input
               addonBefore={selectBefore}
               placeholder={search_paceholder}
@@ -281,8 +331,17 @@ function PackageLeaners(props) {
               size="large"
             />
           </Col>
+          <Col xs={24} sm={24} md={4} lg={4} xl={4}>
+            <Button
+              type="primary"
+              style={{ width: "100%" }}
+              size="large"
+              onClick={showbulkModal} onCancel={handleCancel}
+            >
+              Bulk Assign Learners
+            </Button></Col>
 
-          <Col xs={24} sm={24} md={6} lg={6} xl={6}>
+          <Col xs={24} sm={24} md={4} lg={4} xl={4}>
             <Button
               type="primary"
               style={{ width: "100%" }} // Full width on small screens
@@ -391,6 +450,44 @@ function PackageLeaners(props) {
           </strong>{" "}
           from this package?
         </p>
+      </Modal>
+
+
+      <Modal
+        title={<span>Bulk Assign Learners</span>}
+        open={is_model_open}
+        onCancel={handleCancel}
+        footer={[
+          <Button color="green" variant="solid" onClick={handleBulkUpload} style={{ width: "100%" }}>
+            Add
+          </Button>,
+        ]}
+        width={400}
+      >
+        <div style={{ width: "100%" }}>
+          <Upload
+            beforeUpload={beforeUpload}
+            file={file}
+            onRemove={() => set_file([])}
+            accept=".csv"
+            style={{ width: "100%" }} // optional
+          >
+            <div style={{ width: "100%" }}>
+              <Button type="primary" icon={<UploadOutlined />} block>
+                Upload File
+              </Button>
+            </div>
+          </Upload>
+          {errors?.file ? (
+            <>
+              <span style={{ color: "red" }}>
+                {errors?.file}
+              </span>
+            </>
+          ) : (
+            <></>
+          )}
+        </div>
       </Modal>
     </div>
   );

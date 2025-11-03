@@ -444,7 +444,23 @@ function CourseLearners(props) {
         footer={null}
         width={800}
       >
-        <BulkEnrollLearners course_id={course_id}/>
+        <BulkEnrollLearners course_id={course_id}
+          onSuccess={async () => {
+          setisModalOpen(false); // close modal
+          setLoader(true); // show loader while refreshing
+          
+          // Refresh table data
+          const FORM_DATA = new FormData();
+          FORM_DATA.append("course_id", atob(course_id));
+          const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
+          if (API_CALL?.data?.status) {
+              set_table_data(API_CALL?.data?.data);
+              set_current_page(API_CALL?.data?.current_page);
+              set_total_pages(API_CALL?.data?.total_pages);
+              set_total_learners(API_CALL?.data?.total_learners);
+          }
+          setLoader(false);
+      }}/>
       </Modal>
 
     </div>

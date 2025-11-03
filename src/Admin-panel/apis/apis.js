@@ -649,6 +649,15 @@ export const VIEW_PACKAGE = async (body) => {
     }
 };
 
+export const BULK_ASSIGN_PACKAGE = async (body) => {
+    try {
+        const response = await Axios.post('bulk-assign-package/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 export const ASSIGN_COURSE = async (body) => {
     try {
         const response = await Axios.post('assign-course/', body);

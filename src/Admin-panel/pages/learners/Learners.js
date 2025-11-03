@@ -40,11 +40,13 @@ function Learners() {
   const beforeUpload = (file) => {
     const isCSV = file.type === 'text/csv';
     if (!isCSV) {
-
+      set_errors({ file: "Only CSV files are allowed!" });
+      message.error("Please upload a valid CSV file.");
       return Upload.LIST_IGNORE;
     }
 
     set_file([file]);
+    set_errors("");
     message.success(` ${file.name}`);
     return false;
   };
@@ -253,7 +255,7 @@ function Learners() {
 
 
   const handleBulkUpload = async () => {
-
+    setLoader(true)
     const formData = new FormData();
     formData.append("file", file[0]);
 
@@ -261,6 +263,8 @@ function Learners() {
       const response = await BULD_ADD_LEARNERS(formData);
       if (response?.data?.status) {
         set_is_model_open(false);
+        setLoader(false)
+
       } else {
         set_errors(response?.data?.errors);
       }
@@ -367,7 +371,7 @@ function Learners() {
 
 
         <Modal
-          title={<span style={{color:"#FFC93F"}}>Import Learners</span>}
+          title={<span>Import Learners</span>}
           open={is_model_open}
           onCancel={handleCancel}
           footer={[
