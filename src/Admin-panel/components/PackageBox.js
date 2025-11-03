@@ -1,33 +1,57 @@
-import { Button, Card, Popover } from "antd";
-import React from "react";
+import { Button, Card, Popover, Spin } from "antd";
+import React, { useState } from "react";
 import {
   EditOutlined,
   DeleteFilled,
   UserOutlined,
   SnippetsOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
 export default function PackageBox(props) {
   const Navigate = useNavigate();
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
     <div>
       <Card
-        //style={{ width: 300 }}
         style={{ width: "100%", borderRadius: 8 }}
         cover={
-          <img
-            alt="example"
-            src={props.package_image}
-            //style={{ height: 250 }}
-            style={{
-              display: "block",
-              width: "100%",
-              borderRadius: "8px 8px 0 0",
-              minHeight:"26vh"
-            }}
-          />
+
+          <div style={{ width: "100%", position: "relative" }}>
+            {!imgLoaded && (
+              <div
+                style={{
+                  width: "100%",
+                  height: 200,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  borderRadius: "8px 8px 0 0",
+                }}
+              >
+                <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+              </div>
+            )}
+
+            <div style={{ position: "relative", overflow: "hidden", borderRadius: "8px 8px 0px 0px", minHeight: "26vh" }}>
+              <img
+                src={props.package_image}
+                alt="course"
+                onLoad={() => setImgLoaded(true)}
+                onError={() => setImgLoaded(false)}
+                style={{
+                  width: "100%",
+                  display: imgLoaded ? "block" : "none",
+                }}
+              />
+            </div>
+          </div>
+
         }
         actions={[
           <Popover content={"Edit Package details"}>

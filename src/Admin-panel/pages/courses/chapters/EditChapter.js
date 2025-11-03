@@ -25,6 +25,14 @@ export default function EditChapter() {
   const [chapter_details_loader, set_chapter_details_loader] = useState(true);
   const [page_refresh, set_page_refresh] = useState(true);
 
+
+   const handleBack = () => {
+    if (location.state?.from) {
+      navigate(location.state.from);
+    } else {
+      navigate(-1);
+    }
+  };
   // ✅ Get current tab from URL
   const getTabKeyFromPath = () => {
     const path = location.pathname;
@@ -69,7 +77,7 @@ export default function EditChapter() {
                 <h2>
                   <span
                     style={{ cursor: "pointer" }}
-                    onClick={() => navigate("/chapters/" + btoa(course_id))}
+                    onClick={handleBack}
                   >
                     <LeftOutlined />
                   </span>{" "}

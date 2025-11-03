@@ -91,6 +91,7 @@ export default function Chapters() {
       <Option value="Title">Title</Option>
     </Select>
   );
+
  const change_status = async (id) => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("id", id);
@@ -110,6 +111,7 @@ export default function Chapters() {
         console.log(error)
     }
   };
+
   return (
     <div className="lms-body">
       <Card>
@@ -182,6 +184,7 @@ export default function Chapters() {
                             localStorage.setItem("course_title", course_title);
                             Navigate("/edit-chapter/" + btoa(item?.id), {
                               state: { title: course_title },
+                              from: window.location.pathname,
                             });
                           }}
                         >
