@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getUser } from '../../authService';
 export const TINY_KEY ="e6h4bto2malup58th41859aqxqq2xv42tys9byuuk1cpbjed";
 const Axios = axios.create({
-baseURL: 'https://development.culsight.com/api/organization',
+baseURL: 'https://api.cfgold.in/api/organization',
 });
 
 // Async interceptor
