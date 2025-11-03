@@ -72,7 +72,6 @@ export default function CourseBox(props) {
                 onError={() => setImgLoaded(false)}
                 style={{
                   width: "100%",
-                  
                   display: imgLoaded ? "block" : "none",
                 }}
               />
