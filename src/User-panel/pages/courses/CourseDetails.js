@@ -250,11 +250,9 @@ function CourseDetails(props) {
             </Row>
 
             <h3 style={{ color: "#e9c70ada" }}>Description</h3>
-            <p>                         <FixTruncatedHTMLList html={course_data.description} />
-            </p>
-
+             <div dangerouslySetInnerHTML={{ __html: course_data.description }} />
             <h3 style={{ color: "#e9c70ada" }}>How to use</h3>
-            <p>{course_data.how_to_use}</p>
+             <div dangerouslySetInnerHTML={{ __html: course_data.how_to_use }} />
 
             {/* 🔹 Comment Section */}
             <div style={{ marginTop: "30px" }} >

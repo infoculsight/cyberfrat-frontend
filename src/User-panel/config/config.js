@@ -4,7 +4,7 @@ export const AxiosFirst = axios.create({
   withCredentials: true,
 });
 const Axios = axios.create({
-  baseURL: 'tps://api.cfgold.in/api/learner/',
+  baseURL: 'https://api.cfgold.in/api/learner/',
   withCredentials: true,
 });
 

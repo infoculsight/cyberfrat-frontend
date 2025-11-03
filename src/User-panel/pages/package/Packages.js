@@ -118,7 +118,7 @@ function Packages() {
                             package_name={items?.name}
                             package_image={items?.thumbnail}
                             package_tag_line={items?.tag_line}
-      
+                            assign={true}
                           />
                         </Col>
                       ))

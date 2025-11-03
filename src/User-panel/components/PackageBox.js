@@ -41,7 +41,7 @@ export default function PackageBox(props) {
                 onLoad={() => set_image_loader(true)}
                 onError={() => set_image_loader(false)}
                 onClick={() => {
-                  props.assign ? Navigate("/package-courses/" + props.id) : message.error("You don't have access to this package. Please contact with admin")
+                  props?.assign ? Navigate("/package-courses/" + props.id) : message.error("You don't have access to this package. Please contact with admin")
                 }}
                 style={{
                   width: "100%",

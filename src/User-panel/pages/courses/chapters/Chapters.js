@@ -571,7 +571,7 @@ export default function Chapters() {
 
                     {currentChapter.introduction &&
                       currentChapter.introduction !== "null" && (
-                        <FixTruncatedHTMLList html={currentChapter.introduction} />
+                        <div dangerouslySetInnerHTML={{ __html: currentChapter.introduction }} />
                       )}
 
                           {currentChapter.scorm && (
