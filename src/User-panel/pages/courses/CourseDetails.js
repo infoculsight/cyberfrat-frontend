@@ -8,13 +8,15 @@ import {
 
   Pagination,
   Row,
+  Spin,
 } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LIST_COMMENT, ADD_COMMENT, VIEW_COURSE } from "../../apis/apis";
-import { LeftOutlined } from "@ant-design/icons";
+import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import CustomRichTextEditor from "../../components/CustomTextEditor";
+import { FixTruncatedHTMLList } from "../../components/TruncatedHTML"
 
 function CourseDetails(props) {
   const { id } = useParams();
@@ -23,7 +25,7 @@ function CourseDetails(props) {
 
   const [page_loader, set_page_loader] = useState(true);
   const [card_loader, set_card_loader] = useState(true);
-
+  const [image_loader, set_image_loader] = useState(false)
   const [course_data, set_course_data] = useState({});
   const [description, set_description] = useState("");
   const [comments, set_comments] = useState([]);
@@ -193,11 +195,40 @@ function CourseDetails(props) {
             </Row>
             <Row>
               <Col span={14} style={{ paddingRight: "30px" }}>
-                <img
-                  src={course_data.thumbnail}
-                  alt="cyberfrat"
-                  style={{ width: "100%", }}
-                />
+                <div style={{ width: "100%", position: "relative", borderRadius: 8, overflow: "hidden" }}>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: 400,
+                      position: "relative",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 8,
+                    }}
+                  >
+                    {!image_loader && (
+                      <Spin
+                        indicator={<LoadingOutlined style={{ fontSize: 28, color: "#e9c70a" }} spin />}
+                      />
+                    )}
+
+                    <img
+                      src={course_data.thumbnail}
+                      alt="Course Thumbnail"
+                      onLoad={() => set_image_loader(true)}
+                      onError={() => set_image_loader(false)}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        borderRadius: 8,
+                        display: image_loader ? "block" : "none",
+                      }}
+                    />
+                  </div>
+                </div>
+
               </Col>
               <Col span={10}>
                 <h2>{course_data.title}</h2>
@@ -219,7 +250,8 @@ function CourseDetails(props) {
             </Row>
 
             <h3 style={{ color: "#e9c70ada" }}>Description</h3>
-            <p>{course_data.description}</p>
+            <p>                         <FixTruncatedHTMLList html={course_data.description} />
+            </p>
 
             <h3 style={{ color: "#e9c70ada" }}>How to use</h3>
             <p>{course_data.how_to_use}</p>

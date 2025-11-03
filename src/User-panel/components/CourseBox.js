@@ -1,12 +1,13 @@
-import { Card, Progress, Tag, Button,Typography } from "antd";
-import { DownloadOutlined, } from "@ant-design/icons";
+import { Card, Progress, Tag, Button, Typography, Spin } from "antd";
+import { DownloadOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-
+import { useState } from "react";
 
 const { Text } = Typography;
+
 export default function CourseBox(props) {
   const Navigate = useNavigate();
-  // const { notification } = App.useApp();
+  const [image_loader, set_image_loader] = useState(false);
 
   const handleDownload = () => {
     const url = props.certificate;
@@ -16,29 +17,48 @@ export default function CourseBox(props) {
     link.click();
   };
 
-
   return (
     <div style={{ position: "relative" }}>
-
-
       <Card
         style={{ width: "100%", borderRadius: 8 }}
         cover={
-          <div style={{ position: "relative" }}>
-            <img
-              alt="example"
-              src={props.course_image}
-              onClick={() => Navigate("/view-course/" + props.id)}
-              style={{
-                width: "100%",
-                objectFit: "cover",
-                borderTopLeftRadius: 8,
-                borderTopRightRadius: 8,
-                cursor: "pointer",
-                display: "block",
-              }}
-            />
-            {props.course_ribbon ? <>
+          <div style={{ width: "100%", position: "relative" }}>
+
+            {!image_loader && (
+              <div
+                style={{
+                  width: "100%",
+                  height: 200,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  borderRadius: "8px 8px 0 0",
+                }}
+              >
+                <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+              </div>
+            )}
+            <div style={{ position: "relative", overflow: "hidden", borderRadius: "8px 8px 0px 0px", minHeight: "26vh" }}>
+              <img
+                alt="course"
+                src={props.course_image}
+                onLoad={() => set_image_loader(true)}
+                onError={() => set_image_loader(false)}
+                onClick={() => Navigate("/view-course/" + props.id)}
+                style={{
+                  width: "100%",
+                  objectFit: "cover",
+                  borderTopLeftRadius: 8,
+                  borderTopRightRadius: 8,
+                  cursor: "pointer",
+                  display: image_loader ? "block" : "none",
+                }}
+              />
+            </div>
+            {props.course_ribbon && (
               <Tag
                 color="#f7d40add"
                 style={{
@@ -51,10 +71,7 @@ export default function CourseBox(props) {
               >
                 In Package
               </Tag>
-            </> : <>
-              {""}
-            </>}
-
+            )}
           </div>
         }
       >
@@ -68,16 +85,17 @@ export default function CourseBox(props) {
               }}
             >
               <Text
-            ellipsis={{ tooltip: props.course_title }}
-            style={{
-              fontSize: 14,
-              maxWidth: "calc(100% - 40px)", // adjust based on checkbox width
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-              <span>{props.course_title}</span></Text>
+                ellipsis={{ tooltip: props.course_title }}
+                style={{
+                  fontSize: 14,
+                  maxWidth: "calc(100% - 120px)",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                <span>{props.course_title}</span>
+              </Text>
 
               <Button
                 type="primary"
@@ -85,25 +103,19 @@ export default function CourseBox(props) {
                 disabled={!props.certificate}
                 onClick={handleDownload}
               >
-
                 Certificate <DownloadOutlined />
               </Button>
             </div>
           }
         />
 
-        <Progress strokeColor="#FFD700" percent={props.progress} status="active" style={{ marginTop: "10px" }} />
+        <Progress
+          strokeColor="#FFD700"
+          percent={props.progress}
+          status="active"
+          style={{ marginTop: 10 }}
+        />
       </Card>
-
-
     </div>
   );
 }
-
-
-{/* <span
-                  style={{ cursor: "pointer", color: "#f5222d", fontSize: 16 }}
-                  onClick={handleWishlist}
-                >
-                  {isWishlisted ? <HeartFilled /> : <HeartOutlined />}
-                </span> */}
