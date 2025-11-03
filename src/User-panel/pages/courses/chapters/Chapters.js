@@ -576,7 +576,7 @@ export default function Chapters() {
                     {/* ✅ Comments Section */}
                     <div style={{ marginTop: "30px" }}>
                       <CustomRichTextEditor
-                        editorLabel="Course Discussions"
+                        editorLabel="Chapter Discussions"
                         value={description}
                         onChange={(val) => set_description(val)}
                         placeholder="Write something..."

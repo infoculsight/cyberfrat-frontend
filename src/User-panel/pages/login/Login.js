@@ -67,7 +67,7 @@ const Login = () => {
                             <img alt="logo" src={Logo} style={{ maxWidth: "300px" }} />
                             <p>Enter your details to sign in to your account</p>
                             <div style={{ position: "relative", width: "100%", display: "block" }}>{error ? <><p style={{ color: "red", fontWeight: "bold" }}>{error}</p></> : ''}</div>
-                            <input className="black-input" placeholder="Employee ID" value={email} onChange={e => setEmail(e.target.value)} />
+                            <input className="black-input" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} />
                             <div style={{ position: "relative" }}>
                                 <input
                                     type={showPassword ? "text" : "password"}
