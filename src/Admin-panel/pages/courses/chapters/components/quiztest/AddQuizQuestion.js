@@ -18,11 +18,8 @@ import QuizQuestionOptions from "./QuizQuestionOptions";
 import CustomRichTextEditor from "../../../../../components/CustomTextEditor";
 
 export default function AddQuizQuestion({
-  course_id,
   chapter_id,
-  onClose,
   onSuccess,
-  quiz_setting_id,
 }) {
   const { notification } = App.useApp();
   const [loading, setLoading] = useState(false);

@@ -26,7 +26,6 @@ export default function EditLearner() {
   const [form] = Form.useForm();
   const [image, set_image] = useState("");
   const [image_api, set_image_api] = useState("");
-
   const [organization, set_organization] = useState("");
   const [designation, set_designation] = useState("");
   const [first_name, set_first_name] = useState("");
@@ -40,15 +39,11 @@ export default function EditLearner() {
   const [errors, set_errors] = useState("");
   const [imageError, setimageError] = useState("");
 
-
-
   const getBase64 = (img, callback) => {
     const reader = new FileReader();
     reader.addEventListener("load", () => callback(reader.result));
     reader.readAsDataURL(img);
   };
-
-
 
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
@@ -56,8 +51,6 @@ export default function EditLearner() {
       <div style={{ marginTop: 8 }}>Upload</div>
     </button>
   );
-
-
 
   useEffect(() => {
     const VIEW_API = async () => {
@@ -135,6 +128,7 @@ export default function EditLearner() {
               onClick={() => navigate("/learners")} ><LeftOutlined /></span> Edit Learner</h2>
             </Col>
           </Row>
+          
           {page_loader ? (
             <CulsightPageLoader />
           ) : (

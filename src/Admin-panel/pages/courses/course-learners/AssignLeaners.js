@@ -33,7 +33,6 @@ function AssignLeaners(props) {
   const [search_query_name, set_search_query_name] = useState("");
   const [search_query_email, set_search_query_email] = useState("");
   const [search_query_select, set_search_query_select] = useState("Name");
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
 

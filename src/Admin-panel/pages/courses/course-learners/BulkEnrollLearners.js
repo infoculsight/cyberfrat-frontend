@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Checkbox, Row, Col, Card, Upload, Button, message, Select, Input, DatePicker, Typography } from 'antd';
+import { Card, Upload, Button, message, Select, Input, DatePicker, Typography, App } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 import { BULK_ASSIGN_COURSE } from '../../../apis/apis';
-
-
 const { Text } = Typography;
+
 function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
+
+    const { notification } = App.useApp();
     const [access_type, set_access_type] = useState('LifeTime');
     const [access_value, set_access_value] = useState('');
     const [file, setFile] = useState(null);
@@ -60,8 +61,11 @@ function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
             formData.append('access_type', access_type);
             formData.append('access_value', access_value);
             const response = await BULK_ASSIGN_COURSE(formData);
-            if (response?.data?.success) {
-                message.success('Learners enrolled successfully!');
+            if (response?.data?.status) {
+                  notification.success({
+                  message: "Learner Enrolled Successfully",
+                  placement: "topRight",
+                });
                 setFile(null);
                 set_access_value('');
                 if (onSuccess) onSuccess();
@@ -166,7 +170,6 @@ function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
                         type="primary"
                         onClick={handleSubmit}
                         loading={loading}
-                        disabled={!file}
                     >
                         Submit
                     </Button>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Collapse, Button, Divider, message, Popconfirm, Card, Select, Row, Col, Input, Pagination } from 'antd';
-import { ArrowRightOutlined, LeftOutlined } from "@ant-design/icons";
+import { LeftOutlined } from "@ant-design/icons";
 import {
   LIST_LIVE_TEST_QUESTION,
   DELETE_LIVE_TEST_QUESTION
@@ -25,6 +25,7 @@ const LiveTestQuestion = (props) => {
   const [questionToDelete, setQuestionToDelete] = useState(null);
   const [current_page, set_current_page] = useState("");
   const [total_pages, set_total_pages] = useState("");
+  const [total_questions,set_total_questions] = useState("")
   const showModal = () => setAddQuestionModal(true);
   const handleCancel = () => setAddQuestionModal(false);
 
@@ -36,6 +37,9 @@ const LiveTestQuestion = (props) => {
     const LIST_API_RESPONSE = await LIST_LIVE_TEST_QUESTION(FORM_DATA);
     if (LIST_API_RESPONSE?.data?.status) {
       const response_data = LIST_API_RESPONSE?.data?.data;
+      set_current_page(LIST_API_RESPONSE?.data?.current_page || 1);
+      set_total_pages(LIST_API_RESPONSE?.data?.total_pages || 0);
+      set_total_questions(LIST_API_RESPONSE?.data?.total_questions || 0)
       setItems(response_data);
       if (expandLatest && response_data.length > 0) {
         setActivePanelKey(response_data[response_data.length - 1]?.id);
@@ -51,8 +55,10 @@ const LiveTestQuestion = (props) => {
       const LIST_API_RESPONSE = await LIST_LIVE_TEST_QUESTION(FORM_DATA);
       if (LIST_API_RESPONSE?.data?.status) {
         const response_data = LIST_API_RESPONSE?.data?.data;
-        set_current_page(LIST_API_RESPONSE?.data?.current_page);
-        set_total_pages(LIST_API_RESPONSE?.data?.total_questions);
+        set_current_page(LIST_API_RESPONSE?.data?.current_page || 1);
+        set_total_pages(LIST_API_RESPONSE?.data?.total_pages || 0);
+        set_total_questions(LIST_API_RESPONSE?.data?.total_questions || 0)
+
         setItems(response_data);
         if (response_data.length > 0) {
           setActivePanelKey(response_data[response_data.length - 1]?.id);
@@ -114,8 +120,9 @@ const LiveTestQuestion = (props) => {
     const LIST_API_RESPONSE = await LIST_LIVE_TEST_QUESTION(FORM_DATA);
     if (LIST_API_RESPONSE?.data?.status) {
       const response_data = LIST_API_RESPONSE?.data?.data;
-      set_current_page(LIST_API_RESPONSE?.data?.current_page);
-      set_total_pages(LIST_API_RESPONSE?.data?.total_questions);
+        set_current_page(LIST_API_RESPONSE?.data?.current_page || 1);
+        set_total_pages(LIST_API_RESPONSE?.data?.total_pages || 0);
+        set_total_questions(LIST_API_RESPONSE?.data?.total_questions || 0)
       setItems(response_data);
       // if (response_data.length > 0) {
       //   setActivePanelKey(response_data[response_data.length - 1]?.id);
@@ -134,8 +141,9 @@ const LiveTestQuestion = (props) => {
           const LIST_API_RESPONSE = await LIST_LIVE_TEST_QUESTION(FORM_DATA);
           if (LIST_API_RESPONSE?.data?.status) {
             const response_data = LIST_API_RESPONSE?.data?.data;
-            set_current_page(LIST_API_RESPONSE?.data?.current_page);
-            set_total_pages(LIST_API_RESPONSE?.data?.total_pages);
+           set_current_page(LIST_API_RESPONSE?.data?.current_page || 1);
+           set_total_pages(LIST_API_RESPONSE?.data?.total_pages || 0);
+           set_total_questions(LIST_API_RESPONSE?.data?.total_questions || 0)
             setItems(response_data);
             // if (response_data.length > 0) {
             //   setActivePanelKey(response_data[response_data.length - 1]?.id);
@@ -146,7 +154,7 @@ const LiveTestQuestion = (props) => {
         }
       }, 500)(); // Call debounce immediately
     },
-    [props.chapter_id]
+    [live_test_id]
   );
 
   const handleInput = (e) => {
@@ -243,8 +251,8 @@ const LiveTestQuestion = (props) => {
               <Pagination
                 style={{ marginTop: "15px", float: "right" }}
                 onChange={pagination_on_change}
-                defaultCurrent={current_page}
-                total={total_pages}
+                current={current_page}
+                total={total_questions}
                 pageSize={5}
               />
             </>}

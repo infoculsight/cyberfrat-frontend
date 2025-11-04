@@ -64,7 +64,7 @@ function QuizSetting({ course_id, chapter_id }) {
         set_quiz_setting_id(data?.id);
         set_title(data?.title);
         set_tag(
-          Array.isArray(data?.tags) ? data.tags : data?.tags?.split(",") || []
+          Array.isArray(data?.tags) ? data.tags : data?.tags?.split(',') || []
         );
         set_time_limit(data?.time_limit);
         set_no_of_retake(data?.no_of_retake);

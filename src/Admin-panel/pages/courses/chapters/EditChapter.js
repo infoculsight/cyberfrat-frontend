@@ -73,7 +73,7 @@ export default function EditChapter() {
         ) : (
           <>
             <Row>
-              <Col span={12}>
+              <Col span={24}>
                 <h2>
                   <span
                     style={{ cursor: "pointer" }}

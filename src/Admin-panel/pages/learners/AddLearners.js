@@ -76,7 +76,6 @@ export default function AddLearners() {
     </button>
   );
 
-
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 300);
     return () => clearTimeout(timer);

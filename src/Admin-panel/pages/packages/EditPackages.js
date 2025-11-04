@@ -139,7 +139,7 @@ export default function Packages() {
               </Form.Item>
 
               <Form.Item label="Validity (In days)">
-                <InputNumber style={{width:"100%"}} min={1} max={10}  value={validity} onChange={(value) => set_validity(value)} />
+                <InputNumber style={{width:"100%"}} value={validity} onChange={(value) => set_validity(value)} />
                 {errors?.validity && (
                   <span style={{ color: "red" }}>{errors.validity}</span>
                 )}

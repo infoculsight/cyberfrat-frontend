@@ -19,7 +19,7 @@ function ThemeMedia() {
   return (
     <div className="lms-body">
       <Card>
-        <h2>Culsight Media</h2>
+        <h2>Cyberfrat Media</h2>
         <Row style={{ marginTop: 24 }}>
           <Col span={24}>
             <Tabs defaultActiveKey="user-Videos" items={tabItems} />

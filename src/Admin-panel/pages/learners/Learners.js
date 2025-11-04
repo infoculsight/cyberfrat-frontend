@@ -8,7 +8,6 @@ import CulsightPageLoader from "../../components/CulsightPageLoader";
 import { formatToIST } from "../../../helper/CommonHelper";
 
 
-
 function Learners() {
   const { notification } = App.useApp();
   //USE STATE FOR PAGINATION AND LOADER
@@ -32,7 +31,6 @@ function Learners() {
     set_is_model_open(true);
   };
 
-
   const handleCancel = () => {
     set_is_model_open(false);
   };
@@ -50,7 +48,6 @@ function Learners() {
     message.success(` ${file.name}`);
     return false;
   };
-
 
   const fetchResults = useCallback((search_key, search_value) => {
     debounce(async () => {
@@ -72,7 +69,6 @@ function Learners() {
       }
     }, 500)(); // Call debounce immediately
   }, []);
-
 
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
@@ -253,7 +249,6 @@ function Learners() {
     }
   };
 
-
   const handleBulkUpload = async () => {
     setLoader(true)
     const formData = new FormData();
@@ -367,7 +362,6 @@ function Learners() {
             )}
           </>
         )}
-
 
 
         <Modal

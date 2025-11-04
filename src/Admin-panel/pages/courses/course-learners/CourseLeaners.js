@@ -9,7 +9,6 @@ import {
   Space,
   Spin,
   Table,
-  Tag,
   Modal,
   message,
   App,
@@ -19,7 +18,6 @@ import { ArrowDownOutlined, ArrowUpOutlined, LeftOutlined, LoadingOutlined } fro
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { LIST_COURSE_LEANERS, LEANERS_COURSE_STATUS } from "../../../apis/apis";
-import moment from "moment";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
 import AssignLeaners from "./AssignLeaners";
@@ -49,7 +47,6 @@ function CourseLearners(props) {
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
 
-  // const from = location.state?.from || "/courses";
 
   const handleBack = () => {
     if (location.state?.from) {
@@ -59,9 +56,7 @@ function CourseLearners(props) {
     }
   };
 
-  // const handleBack = () => {
-  //   Navigate(from);
-  // };
+  
 
 
   const showModal = () => {
@@ -70,7 +65,21 @@ function CourseLearners(props) {
   };
 
   const showEnrollModal = () => setisModalOpen(true);
-  const CancelEnrollModal = () => setisModalOpen(false);
+
+  const CancelEnrollModal = async () => {
+    setisModalOpen(false);
+    setLoader(true);
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("course_id", atob(course_id));
+    const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
+    if (API_CALL?.data?.status) {
+      set_table_data(API_CALL?.data?.data);
+      set_current_page(API_CALL?.data?.current_page);
+      set_total_pages(API_CALL?.data?.total_pages);
+      set_total_learners(API_CALL?.data?.total_learners);
+    }
+    setLoader(false);
+  };
 
 
   const handleModalCancel = async () => {
@@ -445,22 +454,7 @@ function CourseLearners(props) {
         width={800}
       >
         <BulkEnrollLearners course_id={course_id}
-          onSuccess={async () => {
-          setisModalOpen(false); // close modal
-          setLoader(true); // show loader while refreshing
-          
-          // Refresh table data
-          const FORM_DATA = new FormData();
-          FORM_DATA.append("course_id", atob(course_id));
-          const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
-          if (API_CALL?.data?.status) {
-              set_table_data(API_CALL?.data?.data);
-              set_current_page(API_CALL?.data?.current_page);
-              set_total_pages(API_CALL?.data?.total_pages);
-              set_total_learners(API_CALL?.data?.total_learners);
-          }
-          setLoader(false);
-      }}/>
+          onClose={CancelEnrollModal}/>
       </Modal>
 
     </div>
