@@ -46,6 +46,7 @@ function CourseLearners(props) {
   const [assignKey, setAssignKey] = useState(0);
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
+  const [bulkKey, setBulkKey] = useState(0);
 
 
   const handleBack = () => {
@@ -64,7 +65,10 @@ function CourseLearners(props) {
     setIsModalVisible(true);
   };
 
-  const showEnrollModal = () => setisModalOpen(true);
+ const showEnrollModal = () => {
+  setBulkKey(prev => prev + 1); // force re-mount
+  setisModalOpen(true);
+};
 
   const CancelEnrollModal = async () => {
     setisModalOpen(false);
@@ -294,7 +298,7 @@ function CourseLearners(props) {
     <div className="lms-body">
       <Card>
           <Row>
-            <Col span={12}>
+            <Col span={24}>
               <h2><span  style={{ cursor: "pointer" }}
               onClick={handleBack}><LeftOutlined /></span> {course_title} - Learners</h2>
             </Col>
@@ -454,7 +458,7 @@ function CourseLearners(props) {
         width={800}
       >
         <BulkEnrollLearners course_id={course_id}
-          onClose={CancelEnrollModal}/>
+          onClose={CancelEnrollModal}   key={bulkKey}/>
       </Modal>
 
     </div>

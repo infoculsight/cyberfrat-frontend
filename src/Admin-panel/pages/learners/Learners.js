@@ -257,6 +257,10 @@ function Learners() {
     try {
       const response = await BULD_ADD_LEARNERS(formData);
       if (response?.data?.status) {
+            notification.success({
+                          message: "Successful",
+                          description: response?.data?.message,
+                        });
         set_is_model_open(false);
         setLoader(false)
 
@@ -374,6 +378,7 @@ function Learners() {
             </Button>,
           ]}
           width={400}
+          destroyOnClose
         >
           <div style={{ width: "100%" }}>
             <Upload

@@ -72,7 +72,6 @@ const refreshList = () => {
 };
 
 
-
   //SEARCH INPUT
   const selectBefore = (
     <Select

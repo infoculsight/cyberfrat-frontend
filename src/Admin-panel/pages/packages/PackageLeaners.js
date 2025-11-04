@@ -296,6 +296,10 @@ function PackageLeaners(props) {
     try {
       const response = await BULK_ASSIGN_PACKAGE(formData);
       if (response?.data?.status) {
+          notification.success({
+                          message: "Successful",
+                          description: response?.data?.message,
+                        });
         set_is_model_open(false);
         setLoader(false)
       } else {
@@ -316,7 +320,7 @@ function PackageLeaners(props) {
       <Card>
 
         <Row>
-          <Col span={12}>
+          <Col span={24}>
             <h2><span style={{ cursor: "pointer" }}
               onClick={() => navigate("/packages")}><LeftOutlined /></span> Package Learners</h2>
           </Col>
@@ -463,6 +467,7 @@ function PackageLeaners(props) {
           </Button>,
         ]}
         width={400}
+        destroyOnClose
       >
         <div style={{ width: "100%" }}>
           <Upload

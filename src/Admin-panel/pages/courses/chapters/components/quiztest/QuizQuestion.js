@@ -11,7 +11,8 @@ import {
   Input,
   Select,
   Upload,
-  Modal
+  Modal,
+  App
 } from "antd";
 import {
   List_QUIZ_QUESTION,
@@ -27,6 +28,7 @@ import debounce from "lodash.debounce";
 const { Panel } = Collapse;
 
 const QuizQuestion = (props) => {
+  const { notification } = App.useApp();
   const { Option } = Select;
   const [items, setItems] = useState([]);
   const [page_loader, set_page_loader] = useState(true);
@@ -205,12 +207,16 @@ const QuizQuestion = (props) => {
 
     const handleBulkUpload = async () => {
       set_page_loader(true)
-      const formData = new FormData();
-      formData.append("chatper_id", atob(props.chatper_id));
-      formData.append("file", file[0]);
+   const formData = new FormData();
+  formData.append("chatper_id", atob(props.chapter_id));
+  formData.append("file", file[0]);
       try {
         const response = await BULK_QUIZ_QUESTION(formData);
         if (response?.data?.status) {
+            notification.success({
+                          message: "Successful",
+                          description: response?.data?.message,
+                        });
           set_is_model_open(false);
           set_page_loader(false)
   

@@ -120,16 +120,8 @@ export default function Chapters() {
             <LeftOutlined />
           </span>
           {course_title} - Chapters
-          <Button
-            variant="solid"
-            color="green"
-            size="large"
-            style={{ marginLeft: "10px", float: "right" }}
-            onClick={() => Navigate("/add-chapter/" + course_id)}
-          >
-            Create Chapter
-          </Button>
         </h2>
+      
         <br />
 
         <Row gutter={[16, 16]} align="middle">
@@ -142,6 +134,17 @@ export default function Chapters() {
               style={{ width: "100%" }}
               value={search_query_title}
             />
+          </Col>
+          <Col xs={24} sm={24} md={4} lg={4}>
+             <Button
+            variant="solid"
+            color="green"
+            size="large"
+            style={{ marginLeft: "10px", float: "right" }}
+            onClick={() => Navigate("/add-chapter/" + course_id)}
+          >
+            Create Chapter
+          </Button>
           </Col>
         </Row>
 

@@ -614,7 +614,7 @@ export const DELETE_QUIZ_QUESTION = async (body) => {
 
 export const BULK_QUIZ_QUESTION = async (body) => {
     try {
-        const response = await Axios.post('bulk-quiz-question/', body);
+        const response = await Axios.post('bulk-add-quiz-questions/', body);
         return response;
     } catch (error) {
         console.error(error);

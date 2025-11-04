@@ -14,6 +14,17 @@ function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
     const [fileError, setFileError] = useState('');
+    
+
+    useEffect(() => {
+  if (isModalOpen) {
+    setFile(null);
+    set_access_value('');
+    set_access_type('LifeTime');
+    setFileError('');
+  }
+}, [isModalOpen]);
+
 
 
     useEffect(() => {
@@ -58,14 +69,19 @@ function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
             const formData = new FormData();
             formData.append('file', file[0]);
             formData.append('course_id', atob(course_id));
-            formData.append('access_type', access_type);
+             formData.append('access_type', access_type);
+
+        // Only append access_value if access_type is not LifeTime
+        if (access_type === 'FixedDate' || access_type === 'MaxViewingHours') {
             formData.append('access_value', access_value);
+        }
+
             const response = await BULK_ASSIGN_COURSE(formData);
             if (response?.data?.status) {
                   notification.success({
-                  message: "Learner Enrolled Successfully",
-                  placement: "topRight",
-                });
+                          message: "Successful",
+                          description: response?.data?.message,
+                        });
                 setFile(null);
                 set_access_value('');
                 if (onSuccess) onSuccess();
@@ -136,7 +152,7 @@ function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
                                 { value: 'MaxViewingHours', label: 'Max Viewing Hours' },
                             ]}
                         />
-
+                          <br/>
                         {/* Conditionally show access_value field */}
                         {renderAccessValueInput()}
 

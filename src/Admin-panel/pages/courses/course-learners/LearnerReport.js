@@ -104,7 +104,7 @@ function LearnerReport() {
           <CulsightPageLoader />  </> : <>
 
           <Row>
-            <Col span={12}>
+            <Col span={24}>
               <h2><span style={{ cursor: "pointer" }}
                 onClick={() => Navigate("/course-learners/" + course_id)}><LeftOutlined /></span><span style={{ color: "gold" }}>{course_name}</span> - Learner Report </h2>
             </Col>
