@@ -208,7 +208,7 @@ const QuizQuestion = (props) => {
     const handleBulkUpload = async () => {
       set_page_loader(true)
    const formData = new FormData();
-  formData.append("chatper_id", atob(props.chapter_id));
+  formData.append("chapter_id", atob(props.chapter_id));
   formData.append("file", file[0]);
       try {
         const response = await BULK_QUIZ_QUESTION(formData);
