@@ -251,8 +251,8 @@ function CourseDetails(props) {
 
             <h3 style={{ color: "#e9c70ada" }}>Description</h3>
              <div dangerouslySetInnerHTML={{ __html: course_data.description }} />
-            <h3 style={{ color: "#e9c70ada" }}>How to use</h3>
-             <div dangerouslySetInnerHTML={{ __html: course_data.how_to_use }} />
+            {/* <h3 style={{ color: "#e9c70ada" }}>How to use</h3>
+             <div dangerouslySetInnerHTML={{ __html: course_data.how_to_use }} /> */}
 
             {/* 🔹 Comment Section */}
             <div style={{ marginTop: "30px" }} >

@@ -1,10 +1,10 @@
 import axios from 'axios';
 export const AxiosFirst = axios.create({
-  baseURL: 'https://api.cfgold.in/api/learner/',
+  baseURL: 'https://development.culsight.com/api/learner/',
   withCredentials: true,
 });
 const Axios = axios.create({
-  baseURL: 'https://api.cfgold.in/api/learner/',
+  baseURL: 'https://development.culsight.com/api/learner/',
   withCredentials: true,
 });
 
