@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Icon, {
+import {
   AccountBookOutlined,
   DashboardOutlined,
   HomeOutlined,
@@ -145,7 +145,6 @@ const MasterTemplate = () => {
         <CulsightPageLoader />
       ) : (
         <Layout style={{ minHeight: "100vh" }}>
-          {/* ---------- SIDER / DRAWER ---------- */}
           {isMobile ? (
             <Drawer
               placement="left"
@@ -197,7 +196,6 @@ const MasterTemplate = () => {
             </Sider>
           )}
 
-          {/* ---------- MAIN LAYOUT ---------- */}
           <Layout>
            <Header
   style={
@@ -218,14 +216,14 @@ const MasterTemplate = () => {
         }
   }
 >
-  {/* LEFT SIDE (Menu toggle + Title) */}
+  
   <div style={{ display: "flex", alignItems: "center" }}>
     <Button
       type="text"
       icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
       onClick={() => setCollapsed(!collapsed)}
       style={{
-        fontSize: "16px",
+        fontSize: "16px",  
         width: 48,
         height: 48,
         color: balck_theme ? "#fff" : "#141414",
@@ -236,18 +234,16 @@ const MasterTemplate = () => {
     )}
   </div>
 
-  {/* RIGHT SIDE (Notification + User + Theme) */}
   <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-    {/* 👇 Theme toggle desktop only */}
+
     {!isMobile && <ThemeSetting set_theme_style={set_balck_theme} />}
 
-    {/* 👇 Notification always visible */}
+ 
     <UserNotification />
 
-    {/* 👇 Desktop user dropdown */}
+
     {!isMobile && <UserDropdown user={user} />}
 
-    {/* 👇 Mobile user dropdown (⚙️ button) */}
     {isMobile && (
       <Dropdown
         placement="bottomRight"

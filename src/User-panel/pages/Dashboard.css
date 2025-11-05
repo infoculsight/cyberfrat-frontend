@@ -1,0 +1,121 @@
+/* Main card container */
+.dashboard-card {
+  padding: 10px;
+}
+
+/* Progress Circles */
+.circle-col {
+  text-align: center;
+}
+.circle-col h4 {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Rank & Leaderboard Cards */
+.rank-card,
+.leaderboard-card {
+  margin-top: 10px;
+  border-radius: 8px;
+}
+
+.rank-card h3,
+.leaderboard-card h3 {
+  margin-bottom: 10px;
+}
+
+/* Table tweaks */
+.ant-table {
+  font-size: 14px;
+}
+.ant-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* 🖥️ Desktop (≥1200px) */
+@media (min-width: 1200px) {
+  .progress-card {
+    padding: 20px;
+  }
+}
+
+/* 💻 Tablet (≥768px and <1200px) */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .circle-col h4 {
+    font-size: 13px;
+  }
+  .ant-progress-circle {
+    width: 80px !important;
+    height: 80px !important;
+  }
+}
+
+/* 📱 Mobile (<768px) */
+@media (max-width: 767px) {
+  .lms-body {
+    padding: 8px !important;
+  }
+
+  .dashboard-row {
+    flex-direction: column;
+  }
+
+  .progress-card {
+    padding: 12px;
+  }
+
+  .circle-col {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+
+  .ant-progress-circle {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .ant-table {
+    font-size: 13px;
+  }
+
+  h3, h4 {
+    font-size: 14px;
+  }
+
+  .rank-card,
+  .leaderboard-card {
+    margin-top: 15px;
+  }
+}
+
+
+/* Center only circle progress */
+.ant-progress-circle .ant-progress-inner {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile-friendly adjustments */
+@media (max-width: 767px) {
+  .ant-progress-circle {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  .ant-progress-text {
+    font-size: 14px;
+  }
+}
+
+/* Tablet view adjustments */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .ant-progress-circle {
+    width: 100px !important;
+    height: 100px !important;
+  }
+  .ant-progress-text {
+    font-size: 15px;
+  }
+}
