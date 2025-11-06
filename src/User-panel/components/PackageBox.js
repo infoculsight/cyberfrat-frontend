@@ -59,16 +59,37 @@ export default function PackageBox(props) {
 
         }
       >
-        <Card.Meta title=<Text
-          ellipsis={{ tooltip: props.course_title }}
-          style={{
-            fontSize: 14,
-            maxWidth: "calc(100% - 40px)", // adjust based on checkbox width
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >{props.package_name}</Text> description={props.package_tag_line} />
+     <Card.Meta
+  title={
+    <Text
+      ellipsis={{ tooltip: props.package_name }}
+      style={{
+        fontSize: 14,
+        maxWidth: "calc(100% - 120px)",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+      }}
+    >
+      {props.package_name}
+    </Text>
+  }
+  description={
+    <Text
+      ellipsis={{ tooltip: props.package_tag_line }}
+      style={{
+        fontSize: 12,
+        display: "block",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+      }}
+    >
+      {props.package_tag_line}
+    </Text>
+  }
+/>
+
       </Card>
     </div>
   );
