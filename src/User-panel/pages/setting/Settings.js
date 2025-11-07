@@ -216,7 +216,7 @@ function Settings() {
                     >
                       <h2
                         style={{
-                          marginTop:"-35px",
+                          marginTop:"0px",
                           fontSize: "20px",
                           textAlign: "left",
                           marginLeft:"20px"
