@@ -319,7 +319,7 @@ function CourseLearners(props) {
           </Col>
 
           {/* Complete Report Button */}
-          <Col xs={24} sm={12} md={4} lg={4}>
+          {/* <Col xs={24} sm={12} md={4} lg={4}>
             <Button
               type="primary"
               size="large"
@@ -328,7 +328,7 @@ function CourseLearners(props) {
             >
               Complete Report
             </Button>
-          </Col>
+          </Col> */}
 
           {/* Bulk Enroll Button */}
           <Col xs={24} sm={12} md={4} lg={4}>

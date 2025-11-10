@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Table, Button, Row, Col, Input, Pagination, Spin } from "antd";
+import { Table, Button, Row, Col, Input, Pagination, Spin, App } from "antd";
 import { useNavigate } from "react-router-dom";
 import { DOWNLOAD_PACKAGE_REPORT, PACKAGE_REPORT } from "../../../apis/apis";
 import moment from "moment";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
-import { DownCircleFilled, DownloadOutlined, EyeFilled, LoadingOutlined, } from "@ant-design/icons";
+import { DownloadOutlined, EyeFilled, LoadingOutlined, } from "@ant-design/icons";
 
 
 
 const PackageReport = () => {
 
-
+  const { notification } = App.useApp();
   const navigate = useNavigate();
   const [loader, setLoader] = useState(true);
   const [pagination_loader, set_pagination_loader] = useState(false);
@@ -40,8 +40,6 @@ const PackageReport = () => {
     LIST_API();
   }, []);
 
-
-
   const pagination_on_change = async (data) => {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
@@ -66,7 +64,6 @@ const PackageReport = () => {
         set_search_query_title(value);
         set_pagination_loader(true);
         const FORM_DATA = new FormData();
-
         FORM_DATA.append("name", value);
         const API_CALL = await PACKAGE_REPORT(FORM_DATA);
         if (API_CALL?.data?.status) {
@@ -140,21 +137,39 @@ const PackageReport = () => {
     },
   ];
 
-      const GET_DOWNLOAD_REPORT_ACTION = async (package_id) => {
-      const FORM_DATA = new FormData();
-      FORM_DATA.append("package_id", package_id);
-      const API_CALL = await DOWNLOAD_PACKAGE_REPORT(FORM_DATA);
-      if (API_CALL?.data?.status) {
-            window.location= API_CALL?.data?.url
-      } else {
-        console.log("error");
-        setLoader(false);
-      }
-    };
+    //   const GET_DOWNLOAD_REPORT_ACTION = async (package_id) => {
+    //   const FORM_DATA = new FormData();
+    //   FORM_DATA.append("package_id", package_id);
+    //   const API_CALL = await DOWNLOAD_PACKAGE_REPORT(FORM_DATA);
+    //   if (API_CALL?.data?.status) {
+    //         window.location= API_CALL?.data?.url
+    //   } else {
+    //     console.log("error");
+    //     setLoader(false);
+    //   }
+    // };
   
 
+    const GET_DOWNLOAD_REPORT_ACTION = async (package_id) => {
+          const FORM_DATA = new FormData();
+           FORM_DATA.append("package_id", package_id);
+          
+          const API_CALL = await DOWNLOAD_PACKAGE_REPORT(FORM_DATA);
+          if (API_CALL?.data?.status) {
+            notification.success({
+                     message: "Successful",
+                     description: "Check the Download tab for your report",
+                   });
+          } else {
+            console.log("error");
+            setLoader(false);
+          }
+        };
+    
 
   return (
+
+
     <div style={{ padding: 20 }}>
 
       <Row gutter={[16, 16]} align="middle">

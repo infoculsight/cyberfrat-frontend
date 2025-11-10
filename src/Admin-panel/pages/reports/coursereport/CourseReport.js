@@ -63,7 +63,7 @@ const DOWNLOAD_REPORT_ACTION = async (course_id) => {
       set_pagination_loader(true);
       const FORM_DATA = new FormData();
       FORM_DATA.append("page", data);
-      FORM_DATA.append("name", search_query_title);
+      FORM_DATA.append("title", search_query_title);
       const API_CALL = await COURSE_REPORT(FORM_DATA);
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL.data?.data);
@@ -83,7 +83,7 @@ const DOWNLOAD_REPORT_ACTION = async (course_id) => {
           set_pagination_loader(true);
           const FORM_DATA = new FormData();
        
-          FORM_DATA.append("name", value);
+          FORM_DATA.append("title", value);
           const API_CALL = await COURSE_REPORT(FORM_DATA);
           if (API_CALL?.data?.status) {
             set_table_data(API_CALL.data?.data);
