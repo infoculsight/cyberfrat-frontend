@@ -1,7 +1,7 @@
 import { Card, Col, Row, Table } from 'antd'
 import { CheckCircleOutlined, LeftOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams,useLocation } from 'react-router-dom';
 import { VIEW_LEARNER_REPORT } from '../../../apis/apis';
 import CulsightPageLoader from '../../../components/CulsightPageLoader';
 
@@ -15,8 +15,16 @@ function LearnerReport() {
   const [time_taken, set_time_taken] = useState("")
   const [learner_row, set_learner_row] = useState("")
   const [table_data, set_table_data] = useState(false)
+  const location = useLocation();
 
-
+  const handleBack = () => {
+    if (location.state?.from) {
+      Navigate(location.state.from); // go back to where user came from
+    } else {
+      Navigate(-1); // fallback if no state
+    }
+  };
+  
   const formatDuration = (seconds) => {
     if (!seconds && seconds !== 0) return "";
 
@@ -106,7 +114,7 @@ function LearnerReport() {
           <Row>
             <Col span={24}>
               <h2><span style={{ cursor: "pointer" }}
-                onClick={() => Navigate("/course-learners/" + course_id)}><LeftOutlined /></span><span style={{ color: "gold" }}>{course_name}</span> - Learner Report </h2>
+                onClick={handleBack}><LeftOutlined /></span><span style={{ color: "gold" }}>{course_name}</span> - Learner Report </h2>
             </Col>
           </Row>
 

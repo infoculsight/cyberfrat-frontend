@@ -18,6 +18,7 @@ import { GET_DOWNLOAD_REPORT, LIST_DOWNLOAD_REPORT } from "../../apis/apis";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import debounce from "lodash.debounce";
 import moment from "moment";
+import { formatToIST } from "../../../helper/CommonHelper";
 
 function Downloads() {
   const { notification } = App.useApp();
@@ -66,10 +67,14 @@ function Downloads() {
   dataIndex: "report_view",
   render: (text, record) => {
     try {
-      const titleMatch = record.report_view.match(/'title':\s*'([^']+)'/);
-      const nameMatch = record.report_view.match(/'name':\s*'([^']+)'/);
+      let titleMatch = record.report_view.match(/'title':\s*'([^']+)'/);
+      let nameMatch = record.report_view.match(/'name':\s*'([^']+)'/);
  
-      const value = titleMatch ? titleMatch[1] : nameMatch ? nameMatch[1] : "N/A";
+      let value = titleMatch ? titleMatch[1] : nameMatch ? nameMatch[1] : "N/A";
+
+      if (value && value !== "N/A") {
+       value = value.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+      }
       return <span>{value}</span>;
     } catch (e) {
       return <span>N/A</span>;
@@ -77,19 +82,26 @@ function Downloads() {
   },
 },
      {
-        title: "Created On",
+        title: "Download on",
         dataIndex: "created_at",
         render: (text, record) => (
-          <span>
-            {moment(record.created_at).format("YYYY-MM-DD")}
-          </span>
+          <div>
+                   <div style={{ fontSize: "12px" }}>{formatToIST(record.created_at)}</div>
+         
+                 </div>
         ),
       },
  {
-  title: "Type",
+  title: "Report Type",
   dataIndex: "report_type",
   render: (text, record) => {
-    return <span>{record.report_type}</span>;
+
+     const typeMap = {
+      course_learners: "Course",
+      package_learners: "Package",
+    };
+    const displayType = typeMap[record.report_type] || record.report_type;
+     return <span>{displayType}</span>;
   },
 },
 
@@ -126,6 +138,7 @@ function Downloads() {
     debounce(async () => {
       try {
         set_search_query_title(value);
+        set_current_page(1);
         set_pagination_loader(true);
         const FORM_DATA = new FormData();
 
@@ -155,7 +168,7 @@ function Downloads() {
       <Card>
         <Row>
           <Col span={24}>
-            <h2>Downloads Reports</h2>
+            <h2>Download Reports</h2>
           </Col>
             <Col xs={24} sm={24} md={18} lg={20}>
                     <Input
@@ -189,8 +202,8 @@ function Downloads() {
             {total_pages > 0 ? (
               <div style={{ float: "right", marginTop: "20px" }}>
                 <Pagination
+                current={current_page}
                   onChange={pagination_on_change}
-                  defaultCurrent={current_page}
                   total={total_pages * 10} 
                   pageSize={10}
                 />

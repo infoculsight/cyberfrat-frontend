@@ -26,6 +26,7 @@ function Learners() {
   const [search_query_value, set_search_query_value] = useState('');
   const [file, set_file] = useState([]);
   const [is_model_open, set_is_model_open] = useState(false);
+  const [page_size, set_page_size] = useState(10);
 
   const showModal = () => {
     set_is_model_open(true);
@@ -55,6 +56,7 @@ function Learners() {
         set_pagination_loader(true);
         const FORM_DATA = new FormData();
         FORM_DATA.append(search_key, search_value);
+        FORM_DATA.append("per_page", page_size);
         const API_CALL = await LEARNER_LIST(FORM_DATA);
         if (API_CALL?.data?.status) {
           set_table_data(API_CALL?.data?.data);
@@ -68,10 +70,11 @@ function Learners() {
         set_pagination_loader(false);
       }
     }, 500)(); // Call debounce immediately
-  }, []);
+  }, [page_size]);
 
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
+      FORM_DATA.append("per_page", page_size);
     const API_CALL = await LEARNER_LIST(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.data);
@@ -87,7 +90,7 @@ function Learners() {
 
   useEffect(() => {
     LIST_API();
-  }, [onchange_call]);
+  }, [onchange_call , page_size]);
 
   const change_status = async (id) => {
     setLoader(true);
@@ -217,10 +220,11 @@ function Learners() {
     },
   ];
 
-  const pagination_on_change = async (data) => {
+  const pagination_on_change = async (data ,size) => {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", data);
+    FORM_DATA.append("per_page", size);
     FORM_DATA.append(search_query_key, search_query_value);
     const API_CALL = await LEARNER_LIST(FORM_DATA);
     if (API_CALL?.data?.status) {
@@ -349,11 +353,17 @@ function Learners() {
               <>
                 <div style={{ float: "right", marginTop: "20px" }}>
                   {" "}
-                  <Pagination
-                    onChange={pagination_on_change}
-                    defaultCurrent={current_page}
-                    total={total_learners}
-                    pageSize={10}
+                 <Pagination
+  current={current_page}
+  total={total_learners}
+  pageSize={page_size}
+  showSizeChanger
+  pageSizeOptions={['10', '20', '50', '100']}
+  onChange={pagination_on_change}
+  onShowSizeChange={(current, size) => {
+    set_page_size(size);  
+    pagination_on_change(1, size); 
+  }}
                   />
                 </div>
               </>
