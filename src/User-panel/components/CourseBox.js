@@ -9,13 +9,14 @@ export default function CourseBox(props) {
   const Navigate = useNavigate();
   const [image_loader, set_image_loader] = useState(false);
 
-  const handleDownload = () => {
-    const url = props.certificate;
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${props.course_title}_Certificate.pdf`;
-    link.click();
-  };
+
+
+const handleDownload = () => {
+  if (!props.certificate) return;
+  window.open(props.certificate, "_blank");
+};
+
+
 
   return (
     <div style={{ position: "relative" }}>
@@ -94,7 +95,7 @@ export default function CourseBox(props) {
                   textOverflow: "ellipsis",
                 }}
               >
-                <span>{props.course_title}</span>
+                <span style={{ textTransform: "capitalize" }}>{props.course_title}</span>
               </Text>
 
               <Button

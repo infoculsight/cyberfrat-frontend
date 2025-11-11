@@ -79,7 +79,7 @@ function AllPackages() {
   return (
     <div className="lms-body">
       <Card>
-        <h2>Packages</h2>
+        <h2> All Packages</h2>
 
         <Row gutter={[16, 16]} align="middle">
           <Col xs={24} sm={24} md={18} lg={20}>

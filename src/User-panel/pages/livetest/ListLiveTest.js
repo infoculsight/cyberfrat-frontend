@@ -157,10 +157,9 @@ function ListLiveTest() {
           </>}
 
             {record?.test_result ? <>
-             <Button type="primary">View Result</Button>
+             <Button size="small" type="primary" onClick={() => navigate("/live-test-result/" + btoa(record.live_test_id))}>View Result</Button>
             </>:<></>}
           
-        
         </Space>
       ),
     },

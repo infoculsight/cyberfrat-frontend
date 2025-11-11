@@ -29,7 +29,7 @@ export default function PackageCourseBox(props) {
           />
         }
       >
-          <Card.Meta title={props.course_title} />
+          <Card.Meta title={ <span style={{ textTransform: "capitalize" }}>{props.course_title} </span>} />
        
       </Card>
     </div>

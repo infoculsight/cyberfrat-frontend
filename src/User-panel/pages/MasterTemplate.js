@@ -36,13 +36,19 @@ const MasterTemplate = () => {
   const screens = useBreakpoint();
   const isMobile = !screens.md;
 
-  useEffect(() => {
+useEffect(() => {
+  const localUser = localStorage.getItem("user");
+  if (localUser) {
+    setUser(JSON.parse(localUser));
+    set_master_loder(false);
+  } else {
     getUser().then(usr => {
       setUser(usr);
-      console.log(usr);
       set_master_loder(false);
+      localStorage.setItem("user", JSON.stringify(usr));
     });
-  }, []);
+  }
+}, []);
 
   useEffect(() => {
     const pathToKey = {
@@ -288,7 +294,7 @@ const MasterTemplate = () => {
                   : { backgroundColor: "#e6e6e6ff" }
               }
             >
-              <Outlet />
+              <Outlet context={{ user, setUser }}/>
             </Content>
           </Layout>
         </Layout>

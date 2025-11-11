@@ -231,7 +231,7 @@ function CourseDetails(props) {
 
               </Col>
               <Col span={10}>
-                <h2>{course_data.title}</h2>
+                <h2 style={{textTransform: "capitalize"}}>{course_data.title}</h2>
                 <p>
                   <b style={{ color: "#e9c70ada" }}>Instructor:</b>{" "}
                   {course_data.instructor_display_name}

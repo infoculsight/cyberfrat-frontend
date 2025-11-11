@@ -1,6 +1,6 @@
 import { Card, Col, Input, Pagination, Row, Spin } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { LIST_PACKAGE_COURSES } from "../../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
@@ -9,8 +9,10 @@ import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 
 function PackageCourses() {
   
+  const Navigate = useNavigate();
+  const location = useLocation();
   const { package_id } = useParams();
-  const navigate = useNavigate();
+
   const [courses, set_courses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination_loader, set_pagination_loader] = useState(false);
@@ -18,6 +20,13 @@ function PackageCourses() {
   const [total_pages, set_total_pages] = useState(0);
   const [total_courses, set_total_courses] = useState(0);
   const [search_query_title, set_search_query_title] = useState("");
+
+
+    const handleBack = () => {
+    if (location.state?.from) Navigate(location.state.from);
+    else Navigate(-1);
+  };
+
 
   useEffect(() => {
     const LIST_API = async () => {
@@ -91,7 +100,7 @@ function PackageCourses() {
       <Card>
         <Row>
           <Col span={12}>
-            <h2><span style={{ cursor: "pointer" }} onClick={() => navigate("/packages")}><LeftOutlined /></span>Packages Courses</h2>
+            <h2><span style={{ cursor: "pointer" }} onClick={handleBack}><LeftOutlined /></span>Packages Courses</h2>
           </Col>
         </Row>
 

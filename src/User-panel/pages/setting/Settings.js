@@ -10,12 +10,14 @@ import {
   Upload,
 } from "antd";
 import { useEffect, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import CulsightPageLoader from "../../../User-panel/components/CulsightPageLoader";
 import { EDIT_LEARNER, VIEW_PROFILE } from "../../apis/apis";
 import { UploadOutlined } from "@ant-design/icons";
 import LmsCountryDropdown from "../../../User-panel/components/LmsCountryDropdown";
 
 function Settings() {
+  const { user, setUser } = useOutletContext();
   const { notification } = App.useApp();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
@@ -73,22 +75,46 @@ function Settings() {
     },
   };
 
-  const fetchProfile = async () => {
-    setLoading(true);
-    const FORM_DATA = new FormData();
-    const EDIT_API_RESPONSE = await VIEW_PROFILE(FORM_DATA);
+const fetchProfile = async () => {
+  setLoading(true);
+  const FORM_DATA = new FormData();
+  const EDIT_API_RESPONSE = await VIEW_PROFILE(FORM_DATA);
 
-    if (EDIT_API_RESPONSE?.data?.status) {
-      const response_data = EDIT_API_RESPONSE?.data?.data;
-      set_first_name(response_data?.first_name);
-      set_last_name(response_data?.last_name);
-      set_email(response_data?.email);
-      set_contact_no(parseInt(response_data?.contact_no));
-      set_country_code(response_data?.country_code);
-      set_image(response_data?.image || "");
-    }
-    setLoading(false);
-  };
+  if (EDIT_API_RESPONSE?.data?.status) {
+    const response_data = EDIT_API_RESPONSE?.data?.data;
+    set_first_name(response_data?.first_name);
+    set_last_name(response_data?.last_name);
+    set_email(response_data?.email);
+    set_contact_no(parseInt(response_data?.contact_no));
+    set_country_code(response_data?.country_code);
+    set_image(response_data?.image || "");
+
+
+    setUser((prev) => ({
+      ...prev,
+      user_info: {
+        ...prev?.user_info,
+        name: `${response_data?.first_name} ${response_data?.last_name}`,
+        email: response_data?.email,
+        image: response_data?.image,
+      },
+    }));
+
+    const updatedUser = {
+      ...user,
+      user_info: {
+        ...user?.user_info,
+        name: `${response_data?.first_name} ${response_data?.last_name}`,
+        email: response_data?.email,
+        image: response_data?.image,
+      },
+    };
+
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+  }
+
+  setLoading(false);
+};
 
   useEffect(() => {
     fetchProfile();
@@ -111,6 +137,22 @@ function Settings() {
           description: response?.data?.message,
         });
         await fetchProfile();
+        setUser(prev => ({
+          ...prev,
+          user_info: {
+            ...prev.user_info,
+            name: `${first_name} ${last_name}`
+          }
+        }));
+
+        const updatedUser = {
+          ...user,
+          user_info: {
+            ...user.user_info,
+            name: `${first_name} ${last_name}`
+          }
+        };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
       } else {
         setLoading(false);
       }
@@ -216,10 +258,10 @@ function Settings() {
                     >
                       <h2
                         style={{
-                          marginTop:"0px",   
+                          marginTop: "0px",
                           fontSize: "20px",
                           textAlign: "left",
-                          marginLeft:"20px"
+                          marginLeft: "20px"
                         }}
                       >
                         {first_name} {last_name}

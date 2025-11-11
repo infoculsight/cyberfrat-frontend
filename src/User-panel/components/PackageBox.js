@@ -69,6 +69,7 @@ export default function PackageBox(props) {
         whiteSpace: "nowrap",
         overflow: "hidden",
         textOverflow: "ellipsis",
+        textTransform: "capitalize" 
       }}
     >
       {props.package_name}

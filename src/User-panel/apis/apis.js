@@ -532,6 +532,16 @@ export const  VIEW_LIVE_TEST_DETAILS = async (body) => {
 
 
 
+export const  LIVE_TEST_SCORE = async (body) => {
+    try {
+        const response = await Axios.post('live-test-score/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
 
 //SETTING USER API 
 export const VIEW_PROFILE = async (body) => {
