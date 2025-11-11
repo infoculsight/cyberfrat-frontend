@@ -61,18 +61,21 @@ function Downloads() {
   }, []);
 
   const columns = [
- {
-    title: "Title",
-    dataIndex: "report_view",
-    render: (text, record) => {
-      try {
-        const match = record.report_view.match(/'title':\s*'([^']+)'/);
-        return <span>{match ? match[1] : "N/A"}</span>;
-      } catch (e) {
-        return <span>N/A</span>;
-      }
-    },
+{
+  title: "Title",
+  dataIndex: "report_view",
+  render: (text, record) => {
+    try {
+      const titleMatch = record.report_view.match(/'title':\s*'([^']+)'/);
+      const nameMatch = record.report_view.match(/'name':\s*'([^']+)'/);
+ 
+      const value = titleMatch ? titleMatch[1] : nameMatch ? nameMatch[1] : "N/A";
+      return <span>{value}</span>;
+    } catch (e) {
+      return <span>N/A</span>;
+    }
   },
+},
      {
         title: "Created On",
         dataIndex: "created_at",
