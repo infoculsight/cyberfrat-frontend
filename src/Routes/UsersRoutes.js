@@ -8,7 +8,7 @@ import NotFound from "../User-panel/pages/NotFound";
 import Chapters from "../User-panel/pages/courses/chapters/Chapters";
 import Learners from "../User-panel/pages/learners/Learners";
 import ListLiveTest from "../User-panel/pages/livetest/ListLiveTest";
-import Settings from "../User-panel/pages/setting/Settings";
+import Settings from "../User-panel/pages/setting/Settings"; 
 import Packages from "../User-panel/pages/package/Packages";
 import PackageCourses from "../User-panel/pages/package/package-courses/PackageCourses";
 import VideoPage from "../User-panel/pages/courses/chapters/components/sectionmedia/VideoPage";
