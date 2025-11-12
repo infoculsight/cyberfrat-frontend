@@ -69,36 +69,49 @@ function UserNotification() {
     }
   };
 
-  // Helper to handle View button click
-  const handleNotificationClick = (item) => {
-    set_open(false); // Close drawer
-    set_notifications(prev => prev.filter(n => n.id !== item.id)); // Remove notification
 
-    let path = '';
-    switch(item.notification_type) {
-      case 'course_assign':
-      case 'course_update':
-      case 'course_expire':
-      case 'quiz_uploaded':
-      case 'certificate_issued':
-        path = 'view-course/' + btoa(item?.meta?.id);
-        break;
-      case 'add_course_in_package':
-        path = 'package-courses/' + btoa(item?.meta?.id);
-        break;
-      case 'test_expire':
-      case 'result_declaration':
-      case 'test_submit':
-        path = 'list-live-test/' + btoa(item?.meta?.id);
-        break;
-      case 'course_completion':
-        path = '/courses/complete' + btoa(item?.meta?.id);
-        break;
-      default:
-        path = '/';
+  const handleNotificationClick = async (item) => {
+    try {
+      set_open(false);
+
+
+      await remove_notification(item.id);
+
+
+      set_notifications(prev => prev.filter(n => n.id !== item.id));
+
+
+      let path = '';
+      switch (item.notification_type) {
+        case 'course_assign':
+        case 'course_update':
+        case 'course_expire':
+        case 'quiz_uploaded':
+        case 'certificate_issued':
+          path = 'view-course/' + btoa(item?.meta?.id);
+          break;
+        case 'add_course_in_package':
+          path = 'package-courses/' + btoa(item?.meta?.id);
+          break;
+        case 'test_expire':
+        case 'result_declaration':
+        case 'test_submit':
+          path = 'list-live-test/' + btoa(item?.meta?.id);
+          break;
+        case 'course_completion':
+          path = '/courses/complete' + btoa(item?.meta?.id);
+          break;
+        default:
+          path = '/';
+      }
+
+      navigator(path);
+    } catch (error) {
+      console.error(error);
+      message.error("Error handling notification click");
     }
-    navigator(path);
   };
+
 
   useEffect(() => {
     LIST_API();
@@ -155,10 +168,10 @@ function UserNotification() {
                     <>
                       {item?.meta?.text}
                       {['course_assign', 'course_update', 'course_expire', 'quiz_uploaded', 'certificate_issued', 'add_course_in_package', 'test_expire', 'result_declaration', 'test_submit', 'course_completion'].includes(item.notification_type) && (
-                        <Button 
-                          size='small' 
-                          type="primary" 
-                          style={{ marginLeft: "5px" }} 
+                        <Button
+                          size='small'
+                          type="primary"
+                          style={{ marginLeft: "5px" }}
                           onClick={() => handleNotificationClick(item)}
                         >
                           View
