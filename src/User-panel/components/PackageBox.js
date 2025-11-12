@@ -1,4 +1,4 @@
-import { App, Card, Spin, Typography } from "antd";
+import { App, Button, Card, Spin, Tag, Typography } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DownloadOutlined, LoadingOutlined } from "@ant-design/icons";
@@ -61,6 +61,8 @@ export default function PackageBox(props) {
       >
      <Card.Meta
   title={
+
+    <div style={{textAlign:"center",justifyContent:"space-between",display:"flex"}}>
     <Text
       ellipsis={{ tooltip: props.package_name }}
       style={{
@@ -74,6 +76,16 @@ export default function PackageBox(props) {
     >
       {props.package_name}
     </Text>
+
+
+{props?.assign ? <> <Tag color="gold" size="small">
+        Assigned
+    </Tag></>:<>
+    <Tag color="red" variant="solid" size="small">
+      UnAssigned
+      </Tag></>}
+   
+     </div>
   }
   description={
     <Text
