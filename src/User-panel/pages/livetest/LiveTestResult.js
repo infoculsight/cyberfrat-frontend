@@ -121,7 +121,6 @@ function LiveTestResult(props) {
               </Col>
             </Row>
 
-
             {reviewQuestions.length > 0 ? (
               <List
                 header={<b>Questions</b>}
@@ -167,7 +166,7 @@ function LiveTestResult(props) {
                           )}
                         </Col>
 
-                        {/* Correct Answer (Derived) */}
+                
                         <Col
                           span={24}
                           style={{ marginTop: 4, color: "green" }}
