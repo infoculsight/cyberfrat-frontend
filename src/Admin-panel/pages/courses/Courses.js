@@ -51,7 +51,7 @@ function Courses() {
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", data);
     FORM_DATA.append("title", search_query_title);
-    const API_CALL = await COURSE_LIST(FORM_DATA);
+    const API_CALL = await COURSE_LIST(FORM_DATA);  
     if (API_CALL?.data?.status) {
       set_courses(API_CALL.data?.data);
       set_current_page(API_CALL?.data?.current_page);
