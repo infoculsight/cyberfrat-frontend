@@ -57,15 +57,20 @@ function Dashboard() {
         </span>
       ),
     },
-    {
-      title: "Name",
-      dataIndex: "name",
-      render: (text, record) => (
-        <span>
-          {record.first_name} {record.last_name}
-        </span>
-      ),
-    },
+   {
+  title: "Name",
+  dataIndex: "name",
+  render: (text, record) => {
+    const capitalize = (str) =>
+      str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
+
+    return (
+      <span>
+        {capitalize(record.first_name)} {capitalize(record.last_name)}
+      </span>
+    );
+  },
+},
     {
       title: "Time Spent",
       dataIndex: "name",

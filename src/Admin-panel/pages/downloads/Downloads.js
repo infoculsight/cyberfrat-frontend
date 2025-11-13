@@ -67,6 +67,7 @@ function Downloads() {
   dataIndex: "report_view",
   render: (text, record) => {
     try {
+      
       let titleMatch = record.report_view.match(/'title':\s*'([^']+)'/);
       let nameMatch = record.report_view.match(/'name':\s*'([^']+)'/);
  

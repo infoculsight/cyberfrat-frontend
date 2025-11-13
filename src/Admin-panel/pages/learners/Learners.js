@@ -1,7 +1,7 @@
-import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm, } from "antd";
-import { EyeFilled, LoadingOutlined, UploadOutlined } from "@ant-design/icons";
+import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm,Tooltip } from "antd";
+import { EyeFilled, LoadingOutlined, UploadOutlined, BookOutlined } from "@ant-design/icons";
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { BULD_ADD_LEARNERS, LEARNER_LIST, LEARNER_STATUS } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
@@ -10,6 +10,9 @@ import { formatToIST } from "../../../helper/CommonHelper";
 
 function Learners() {
   const { notification } = App.useApp();
+  const { page } = useParams();
+
+
   //USE STATE FOR PAGINATION AND LOADER
   const navigate = useNavigate();
   const [loader, setLoader] = useState(true);
@@ -54,9 +57,11 @@ function Learners() {
     debounce(async () => {
       try {
         set_pagination_loader(true);
+        navigate("/learners/1");
         const FORM_DATA = new FormData();
         FORM_DATA.append(search_key, search_value);
         FORM_DATA.append("per_page", page_size);
+        FORM_DATA.append("page", 1);
         const API_CALL = await LEARNER_LIST(FORM_DATA);
         if (API_CALL?.data?.status) {
           set_table_data(API_CALL?.data?.data);
@@ -74,7 +79,7 @@ function Learners() {
 
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
-      FORM_DATA.append("per_page", page_size);
+    FORM_DATA.append("per_page", page_size);
     const API_CALL = await LEARNER_LIST(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.data);
@@ -89,8 +94,24 @@ function Learners() {
   };
 
   useEffect(() => {
-    LIST_API();
-  }, [onchange_call , page_size]);
+    const loadData = async () => {
+      setLoader(true);
+      try {
+        if (page) {
+          await pagination_on_change(Number(page), page_size, true);
+        } else {
+          await LIST_API();
+        }
+      } catch (err) {
+        console.error("Error loading data:", err);
+      } finally {
+        setLoader(false);
+      }
+    };
+
+    loadData();
+  }, [page, page_size, onchange_call]);
+
 
   const change_status = async (id) => {
     setLoader(true);
@@ -117,28 +138,29 @@ function Learners() {
   };
 
   const selectBefore = (
-    <Select defaultValue="Name" onChange={(value) => {
+  <Select
+    defaultValue="Name"
+    onChange={(value) => {
       if (value === 'Name') {
-        set_search_query_key('name')
+        set_search_query_key('name');
         set_placeholder("Search by name");
-        fetchResults('name', search_query_value)
       }
       if (value === 'Email') {
-        set_search_query_key('email')
+        set_search_query_key('email');
         set_placeholder("Search by email");
-        fetchResults('email', search_query_value)
       }
       if (value === 'Phone') {
-        set_search_query_key('contact_no')
+        set_search_query_key('contact_no');
         set_placeholder("Search by contact no.");
-        fetchResults('contact_no', search_query_value)
       }
-    }}>
-      <Select.Option value="Name">Name</Select.Option>
-      <Select.Option value="Email">Email</Select.Option>
-      <Select.Option value="Phone">Phone</Select.Option>
-    </Select>
-  );
+    }}
+  >
+    <Select.Option value="Name">Name</Select.Option>
+    <Select.Option value="Email">Email</Select.Option>
+    <Select.Option value="Phone">Phone</Select.Option>
+  </Select>
+);
+
 
   const columns = [
     {
@@ -206,21 +228,26 @@ function Learners() {
       render: (_, record) => (
         <Space size="middle">
           <Button type="primary" size="small" onClick={() => navigate("/edit-learner/" + btoa(record.id))}><EyeFilled /></Button>
-            <Popconfirm
+          <Tooltip title=" Learner Courses">
+          <Button type="primary" size="small" onClick={() => navigate(`/learner-courses/ ${record.id}`)}><BookOutlined /></Button></Tooltip>
+          <Popconfirm
             title="Do you really want to change the status ?"
             onConfirm={() => change_status(record?.id)}
             okText="Yes"
             cancelText="No"
           >
-          <Button variant="solid" color="danger" size="small"> Change Status</Button>
+            <Button variant="solid" color="danger" size="small"> Change Status</Button>
+
           </Popconfirm>
+
 
         </Space>
       ),
     },
   ];
 
-  const pagination_on_change = async (data ,size) => {
+  const pagination_on_change = async (data, size) => {
+    navigate(`/learners/${data}`);
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", data);
@@ -261,10 +288,10 @@ function Learners() {
     try {
       const response = await BULD_ADD_LEARNERS(formData);
       if (response?.data?.status) {
-            notification.success({
-                          message: "Successful",
-                          description: response?.data?.message,
-                        });
+        notification.success({
+          message: "Successful",
+          description: response?.data?.message,
+        });
         set_is_model_open(false);
         setLoader(false)
 
@@ -283,7 +310,7 @@ function Learners() {
       <Card>
         <Row>
           <Col span={12}>
-            <h2>Learners</h2>
+            <h2>Learners {page ? `(Page ${page})` : ""}</h2>
           </Col>
           <Col span={12}>
             <div className="learner-buttons" style={{ float: "right" }}>
@@ -353,18 +380,27 @@ function Learners() {
               <>
                 <div style={{ float: "right", marginTop: "20px" }}>
                   {" "}
-                 <Pagination
-  current={current_page}
-  total={total_learners}
-  pageSize={page_size}
-  showSizeChanger
-  pageSizeOptions={['10', '20', '50', '100']}
-  onChange={pagination_on_change}
-  onShowSizeChange={(current, size) => {
-    set_page_size(size);  
-    pagination_on_change(1, size); 
-  }}
+                  <Pagination
+                    current={current_page}
+                    total={total_learners}
+                    pageSize={page_size}
+                    showSizeChanger
+                    pageSizeOptions={['10', '20', '50', '100']}
+                    onChange={pagination_on_change}
+                    onShowSizeChange={(current, size) => {
+                      set_page_size(size);
+                      pagination_on_change(1, size);
+                    }}
+                    style={{ display: 'inline-block' }}
+                    className="no-search-pagination"
                   />
+                  <style>
+                    {`
+    .no-search-pagination .ant-select-selection-search-input {
+      display: none !important;
+    }
+  `}
+                  </style>
                 </div>
               </>
             ) : (

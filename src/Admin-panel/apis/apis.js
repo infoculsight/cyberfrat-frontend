@@ -95,6 +95,15 @@ export const ADD_LEARNER = async (body, token) => {
     }
 };
 
+export const LIST_LEARNER_ALL_COURSES = async (body) => {
+    try {
+        const response = await Axios.post('list-learner-all-courses/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 
 export const BULD_ADD_LEARNERS = async (body) => {
     try {
@@ -135,6 +144,9 @@ export const LIST_LEARNER_GROUP = async (body) => {
         console.error(error);
     }
 };
+
+
+
 
 export const VIEW_LEARNER_GROUP = async (body) => {
     try {

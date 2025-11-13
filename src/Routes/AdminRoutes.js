@@ -42,6 +42,7 @@ import AddLiveTest from "../Admin-panel/pages/livetest/AddLiveTest";
 import EditLiveTest from "../Admin-panel/pages/livetest/EditLiveTest";
 import LiveTestQuestion from "../Admin-panel/pages/livetest/LiveTestQuestions";
 import LiveTestLearners from "../Admin-panel/pages/livetest/LiveTestLearners";
+import LearnerCourses from "../Admin-panel/pages/learners/LearnerCourses";
 
 
 
@@ -51,9 +52,10 @@ function AdminRoutes() {
     <Routes>
       <Route path="/" element={<MasterTemplate />}>
         <Route index element={<Dashboard />} />
-        <Route path="learners" element={<Learners />} />
+        <Route path="learners/:page?" element={<Learners />} />
         <Route path="add-learner" element={<AddLearners />} />
         <Route path="edit-learner/:id" element={<EditLearner />} />
+        <Route path="learner-courses/:learner_id" element={<LearnerCourses/>}/>
         <Route path="learners-group" element={<LmsLearnersGroup />} />
         <Route path="assign-learner/:id" element={<AssignLmsLearners />} />
         <Route path="instructors" element={<Instructors />} />
