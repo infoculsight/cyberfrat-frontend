@@ -26,6 +26,8 @@ function AssignPackageLearners(props) {
   const [current_page, set_current_page] = useState("");
   const [total_learners, set_total_learners] = useState("");
 
+  const [page_size, set_page_size] = useState(10); 
+
   const [search_paceholder, set_search_paceholder] = useState("Search by name");
   const [search_query_name, set_search_query_name] = useState("");
   const [search_query_email, set_search_query_email] = useState("");
@@ -38,6 +40,8 @@ function AssignPackageLearners(props) {
     const fetchData = async () => {
       const FORM_DATA = new FormData();
       FORM_DATA.append("package_id", atob(props.package_id));
+      FORM_DATA.append("per_page", page_size); 
+
       const API_CALL = await ASSIGN_PACKAGE(FORM_DATA);
 
       if (API_CALL?.data?.status) {
@@ -51,7 +55,7 @@ function AssignPackageLearners(props) {
     };
 
     fetchData();
-  }, [props.package_id]);
+  }, [props.package_id, page_size]);  
 
   const selectBefore = (
     <Select
@@ -115,15 +119,18 @@ function AssignPackageLearners(props) {
     }
   };
 
-  const pagination_on_change = async (page) => {
+  // ✅ UPDATED pagination with page_size
+  const pagination_on_change = async (page, size = page_size) => {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", page);
-    FORM_DATA.append("token", localStorage.getItem("token"));
+    FORM_DATA.append("per_page", size);   // FIXED
     FORM_DATA.append("name", search_query_name);
     FORM_DATA.append("email", search_query_email);
     FORM_DATA.append("package_id", atob(props.package_id));
+
     const API_CALL = await ASSIGN_PACKAGE(FORM_DATA);
+
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.learners);
       set_current_page(API_CALL?.data?.current_page);
@@ -137,11 +144,11 @@ function AssignPackageLearners(props) {
       set_search_query_name(value);
       set_pagination_loader(true);
       const FORM_DATA = new FormData();
-      FORM_DATA.append("token", localStorage.getItem("token"));
       FORM_DATA.append("name", value);
-      FORM_DATA.append("email", "");
+      FORM_DATA.append("per_page", page_size);  
       FORM_DATA.append("package_id", atob(props.package_id));
       const API_CALL = await ASSIGN_PACKAGE(FORM_DATA);
+
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.learners);
         set_current_page(API_CALL?.data?.current_page);
@@ -161,8 +168,10 @@ function AssignPackageLearners(props) {
       const FORM_DATA = new FormData();
       FORM_DATA.append("name", "");
       FORM_DATA.append("email", value);
+      FORM_DATA.append("per_page", page_size);   // ✅ Added
       FORM_DATA.append("package_id", atob(props.package_id));
       const API_CALL = await ASSIGN_PACKAGE(FORM_DATA);
+
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.learners);
         set_current_page(API_CALL?.data?.current_page);
@@ -223,11 +232,19 @@ function AssignPackageLearners(props) {
                 style={{ marginTop: "15px" }}
               />
             )}
+
             <div style={{ float: "right", marginTop: "20px" }}>
               <Pagination
-                onChange={pagination_on_change}
                 current={current_page}
                 total={total_learners}
+                pageSize={page_size}                 // ✅ Added
+                onChange={pagination_on_change}
+                showSizeChanger                       // ✅ Added
+                pageSizeOptions={["10", "20", "50", "100"]} // ✅ Added
+                onShowSizeChange={(current, size) => {
+                  set_page_size(size);
+                  pagination_on_change(1, size);      // FIXED
+                }}
               />
             </div>
           </>
@@ -263,7 +280,6 @@ function AssignPackageLearners(props) {
                   "Something went wrong while assigning the learner.",
                 placement: "topRight",
               });
-              console.error("API error:", error);
             }
             setIsModalVisible(false);
             setSelectedLearner(null);

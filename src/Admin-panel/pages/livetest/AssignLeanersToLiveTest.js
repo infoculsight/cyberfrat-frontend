@@ -17,19 +17,19 @@ import React, { useEffect, useState } from "react";
 import { ASSIGN_LIVE_TEST_LEARNER } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
-import ConfirmationAssignLiveTest from "./ConfirmationAssignLiveTest"
-
 
 function AssignLeanersToLiveTest(props) {
-  //PAGE STATES
   const { notification } = App.useApp();
+
   const [loader, setLoader] = useState(true);
   const [pagination_loader, set_pagination_loader] = useState(false);
   const [table_data, set_table_data] = useState(false);
   const [current_page, set_current_page] = useState("");
   const [total_learners, set_total_learners] = useState("");
 
-  //SEARCH STATES
+  // ⭐ NEW — PER PAGE STATE
+  const [page_size, set_page_size] = useState(10);
+
   const [search_paceholder, set_search_paceholder] = useState("Search by name");
   const [search_query_name, set_search_query_name] = useState("");
   const [search_query_email, set_search_query_email] = useState("");
@@ -40,42 +40,41 @@ function AssignLeanersToLiveTest(props) {
 
   const [accessDetails, setAccessDetails] = useState({});
 
-  // LIST API
-useEffect(() => {
-  const fetchData = async () => {
+  // FIRST LOAD API
+  useEffect(() => {
+    const fetchData = async () => {
+      const FORM_DATA = new FormData();
+      FORM_DATA.append("live_test_id", atob(props.live_test_id));
+      FORM_DATA.append("per_page", page_size); // ⭐ ADD
+
+      const API_CALL = await ASSIGN_LIVE_TEST_LEARNER(FORM_DATA);
+      if (API_CALL?.data?.status) {
+        set_table_data(API_CALL?.data?.learners);
+        set_current_page(API_CALL?.data?.current_page);
+        set_total_learners(API_CALL?.data?.total_learners);
+      }
+      setLoader(false);
+    };
+
+    fetchData();
+  }, []);
+
+  const refreshList = () => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("live_test_id", atob(props.live_test_id));
-    const API_CALL = await ASSIGN_LIVE_TEST_LEARNER(FORM_DATA);
-    if (API_CALL?.data?.status) {
-      set_table_data(API_CALL?.data?.learners);
-      set_current_page(API_CALL?.data?.current_page);
-      set_total_learners(API_CALL?.data?.total_learners);
-    } else {
-      console.log("error");
-    }
-    setLoader(false);
+    FORM_DATA.append("per_page", page_size); // ⭐ ADD
+
+    ASSIGN_LIVE_TEST_LEARNER(FORM_DATA).then((API_CALL) => {
+      if (API_CALL?.data?.status) {
+        set_table_data(API_CALL?.data?.learners);
+        set_current_page(API_CALL?.data?.current_page);
+        set_total_learners(API_CALL?.data?.total_learners);
+      }
+      setLoader(false);
+    });
   };
 
-  fetchData();
-}, []); // ✅ Now no linter warning
-
-
-const refreshList = () => {
-  const FORM_DATA = new FormData();
-  FORM_DATA.append("live_test_id", atob(props.live_test_id));
-  ASSIGN_LIVE_TEST_LEARNER(FORM_DATA).then((API_CALL) => {
-    if (API_CALL?.data?.status) {
-      set_table_data(API_CALL?.data?.learners);
-      set_current_page(API_CALL?.data?.current_page);
-      set_total_learners(API_CALL?.data?.total_learners);
-    }
-    setLoader(false);
-  });
-};
-
-
-
-  //SEARCH INPUT
+  // SEARCH INPUT
   const selectBefore = (
     <Select
       defaultValue="Name"
@@ -107,7 +106,6 @@ const refreshList = () => {
     </Select>
   );
 
-  //TABLE COULMN
   const columns = [
     {
       title: "Add Learner",
@@ -132,77 +130,90 @@ const refreshList = () => {
     },
   ];
 
-  //ADD API
-  const handleCheckboxChange = async (e, record) => {
-    const isChecked = e.target.checked;
-    if (isChecked) {
+  const handleCheckboxChange = (e, record) => {
+    if (e.target.checked) {
       setSelectedLearner(record);
       setIsModalVisible(true);
     }
   };
 
-  // PAGINATION API
+  // ⭐ PAGINATION API (WITH PER PAGE)
   const pagination_on_change = async (page) => {
     set_pagination_loader(true);
+
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", page);
     FORM_DATA.append("name", search_query_name);
     FORM_DATA.append("email", search_query_email);
     FORM_DATA.append("live_test_id", atob(props.live_test_id));
+    FORM_DATA.append("per_page", page_size); // ⭐ ADD
+
     const API_CALL = await ASSIGN_LIVE_TEST_LEARNER(FORM_DATA);
+
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.learners);
       set_current_page(API_CALL?.data?.current_page);
       set_total_learners(API_CALL?.data?.total_learners);
     }
+
     set_pagination_loader(false);
   };
 
-  //SEARCH BY NAME API
+const onShowSizeChange = async (current, size) => {
+  set_page_size(size);
+  pagination_on_change(1);
+};
+
+
+  // SEARCH BY NAME
   const fetchResultsName = debounce(async (value) => {
     try {
       set_search_query_name(value);
       set_pagination_loader(true);
+
       const FORM_DATA = new FormData();
       FORM_DATA.append("name", value);
       FORM_DATA.append("email", "");
       FORM_DATA.append("live_test_id", atob(props.live_test_id));
+      FORM_DATA.append("per_page", page_size); // ⭐ ADD
+
       const API_CALL = await ASSIGN_LIVE_TEST_LEARNER(FORM_DATA);
+
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.learners);
         set_current_page(API_CALL?.data?.current_page);
         set_total_learners(API_CALL?.data?.total_learners);
       }
-    } catch (err) {
-      console.error("API Error:", err);
     } finally {
       set_pagination_loader(false);
     }
   }, 500);
 
-  // SEARCH BY EMAIL API
+  // SEARCH BY EMAIL
   const fetchResultsEmail = debounce(async (value) => {
     try {
       set_search_query_email(value);
       set_pagination_loader(true);
+
       const FORM_DATA = new FormData();
       FORM_DATA.append("name", "");
       FORM_DATA.append("email", value);
       FORM_DATA.append("live_test_id", atob(props.live_test_id));
+      FORM_DATA.append("per_page", page_size); // ⭐ ADD
+
       const API_CALL = await ASSIGN_LIVE_TEST_LEARNER(FORM_DATA);
+
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.learners);
         set_current_page(API_CALL?.data?.current_page);
         set_total_learners(API_CALL?.data?.total_learners);
       }
-    } catch (err) {
-      console.error("API Error:", err);
     } finally {
       set_pagination_loader(false);
     }
   }, 500);
 
-  // SEARCH INPUTS
+  // SEARCH INPUT HANDLER
   const handleInput = (e) => {
     const value = e.target.value;
     if (search_query_select === "Name") {
@@ -255,8 +266,12 @@ const refreshList = () => {
             <div style={{ float: "right", marginTop: "20px" }}>
               <Pagination
                 onChange={pagination_on_change}
+                onShowSizeChange={onShowSizeChange} 
                 current={current_page}
                 total={total_learners}
+                showSizeChanger={true} 
+                pageSize={page_size} 
+                pageSizeOptions={[10, 20, 50, 100]} 
               />
             </div>
           </>
@@ -279,10 +294,7 @@ const refreshList = () => {
             }
 
             if (accessDetails?.access_type === "MaxViewingHours") {
-              FORM_DATA.append(
-                "access_value",
-                accessDetails.max_viewing_hours
-              );
+              FORM_DATA.append("access_value", accessDetails.max_viewing_hours);
             }
 
             try {
@@ -293,23 +305,15 @@ const refreshList = () => {
                   description: `${selectedLearner.first_name} has been assigned successfully.`,
                   placement: "topRight",
                 });
-                
+
                 refreshList();
-              } else {
-                notification.error({
-                  message: "Assign Failed",
-                  description: `Could not assign ${selectedLearner.first_name}.`,
-                  placement: "topRight",
-                });
               }
             } catch (error) {
               notification.error({
                 message: "API Error",
-                description:
-                  "Something went wrong while assigning the learner.",
+                description: "Something went wrong while assigning the learner.",
                 placement: "topRight",
               });
-              console.error("API error:", error);
             }
 
             setIsModalVisible(false);
@@ -322,11 +326,7 @@ const refreshList = () => {
           }}
           okText="Assign"
           cancelText="Cancel"
-        >
-        
-        </Modal>
-
-        
+        ></Modal>
       </Card>
     </div>
   );

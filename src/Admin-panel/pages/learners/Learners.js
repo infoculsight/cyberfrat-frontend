@@ -1,4 +1,4 @@
-import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm,Tooltip } from "antd";
+import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm, Tooltip } from "antd";
 import { EyeFilled, LoadingOutlined, UploadOutlined, BookOutlined } from "@ant-design/icons";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -138,28 +138,28 @@ function Learners() {
   };
 
   const selectBefore = (
-  <Select
-    defaultValue="Name"
-    onChange={(value) => {
-      if (value === 'Name') {
-        set_search_query_key('name');
-        set_placeholder("Search by name");
-      }
-      if (value === 'Email') {
-        set_search_query_key('email');
-        set_placeholder("Search by email");
-      }
-      if (value === 'Phone') {
-        set_search_query_key('contact_no');
-        set_placeholder("Search by contact no.");
-      }
-    }}
-  >
-    <Select.Option value="Name">Name</Select.Option>
-    <Select.Option value="Email">Email</Select.Option>
-    <Select.Option value="Phone">Phone</Select.Option>
-  </Select>
-);
+    <Select
+      defaultValue="Name"
+      onChange={(value) => {
+        if (value === 'Name') {
+          set_search_query_key('name');
+          set_placeholder("Search by name");
+        }
+        if (value === 'Email') {
+          set_search_query_key('email');
+          set_placeholder("Search by email");
+        }
+        if (value === 'Phone') {
+          set_search_query_key('contact_no');
+          set_placeholder("Search by contact no.");
+        }
+      }}
+    >
+      <Select.Option value="Name">Name</Select.Option>
+      <Select.Option value="Email">Email</Select.Option>
+      <Select.Option value="Phone">Phone</Select.Option>
+    </Select>
+  );
 
 
   const columns = [
@@ -229,7 +229,7 @@ function Learners() {
         <Space size="middle">
           <Button type="primary" size="small" onClick={() => navigate("/edit-learner/" + btoa(record.id))}><EyeFilled /></Button>
           <Tooltip title=" Learner Courses">
-          <Button type="primary" size="small" onClick={() => navigate(`/learner-courses/ ${record.id}`)}><BookOutlined /></Button></Tooltip>
+            <Button type="primary" size="small" onClick={() => navigate(`/learner-courses/ ${record.id}`)}><BookOutlined /></Button></Tooltip>
           <Popconfirm
             title="Do you really want to change the status ?"
             onConfirm={() => change_status(record?.id)}

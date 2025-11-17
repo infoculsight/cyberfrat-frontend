@@ -35,42 +35,42 @@ function AssignLeaners(props) {
   const [search_query_select, set_search_query_select] = useState("Name");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
-
+  const [page_size, set_page_size] = useState(10);
   const [accessDetails, setAccessDetails] = useState({});
 
   // LIST API
-useEffect(() => {
-  const fetchData = async () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const FORM_DATA = new FormData();
+      FORM_DATA.append("per_page", page_size);
+      FORM_DATA.append("course_id", atob(props.course_id));
+      const API_CALL = await ASSIGN_COURSE(FORM_DATA);
+      if (API_CALL?.data?.status) {
+        set_table_data(API_CALL?.data?.learners);
+        set_current_page(API_CALL?.data?.current_page);
+        set_total_learners(API_CALL?.data?.total_learners);
+      } else {
+        console.log("error");
+      }
+      setLoader(false);
+    };
+
+    fetchData();
+  }, [props.course_id]);
+
+  const refreshList = () => {
     const FORM_DATA = new FormData();
+    FORM_DATA.append("per_page", page_size);
     FORM_DATA.append("course_id", atob(props.course_id));
-    const API_CALL = await ASSIGN_COURSE(FORM_DATA);
-    if (API_CALL?.data?.status) {
-      set_table_data(API_CALL?.data?.learners);
-      set_current_page(API_CALL?.data?.current_page);
-      set_total_learners(API_CALL?.data?.total_learners);
-    } else {
-      console.log("error");
-    }
-    setLoader(false);
+    ASSIGN_COURSE(FORM_DATA).then((API_CALL) => {
+      if (API_CALL?.data?.status) {
+        set_table_data(API_CALL?.data?.learners);
+        set_current_page(API_CALL?.data?.current_page);
+        set_total_learners(API_CALL?.data?.total_learners);
+      }
+      setLoader(false);
+    });
   };
-
-  fetchData();
-}, [props.course_id]); // ✅ Now no linter warning
-
-
-const refreshList = () => {
-  const FORM_DATA = new FormData();
-  FORM_DATA.append("course_id", atob(props.course_id));
-  ASSIGN_COURSE(FORM_DATA).then((API_CALL) => {
-    if (API_CALL?.data?.status) {
-      set_table_data(API_CALL?.data?.learners);
-      set_current_page(API_CALL?.data?.current_page);
-      set_total_learners(API_CALL?.data?.total_learners);
-    }
-    setLoader(false);
-  });
-};
-
 
   //SEARCH INPUT
   const selectBefore = (
@@ -138,13 +138,12 @@ const refreshList = () => {
     }
   };
 
-  // PAGINATION API
-  const pagination_on_change = async (page) => {
+  // PAGINATION API (✔ UPDATED)
+  const pagination_on_change = async (page, size = page_size) => {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", page);
-    FORM_DATA.append("name", search_query_name);
-    FORM_DATA.append("email", search_query_email);
+    FORM_DATA.append("per_page", size); // FIXED
     FORM_DATA.append("course_id", atob(props.course_id));
     const API_CALL = await ASSIGN_COURSE(FORM_DATA);
     if (API_CALL?.data?.status) {
@@ -161,9 +160,9 @@ const refreshList = () => {
       set_search_query_name(value);
       set_pagination_loader(true);
       const FORM_DATA = new FormData();
-      FORM_DATA.append("token", localStorage.getItem("token"));
       FORM_DATA.append("name", value);
       FORM_DATA.append("email", "");
+      FORM_DATA.append("per_page", page_size);
       FORM_DATA.append("course_id", atob(props.course_id));
       const API_CALL = await ASSIGN_COURSE(FORM_DATA);
       if (API_CALL?.data?.status) {
@@ -186,6 +185,7 @@ const refreshList = () => {
       const FORM_DATA = new FormData();
       FORM_DATA.append("name", "");
       FORM_DATA.append("email", value);
+      FORM_DATA.append("token", localStorage.getItem("token"));
       FORM_DATA.append("course_id", atob(props.course_id));
       const API_CALL = await ASSIGN_COURSE(FORM_DATA);
       if (API_CALL?.data?.status) {
@@ -249,13 +249,28 @@ const refreshList = () => {
                 style={{ marginTop: "15px" }}
               />
             )}
-
             <div style={{ float: "right", marginTop: "20px" }}>
               <Pagination
-                onChange={pagination_on_change}
                 current={current_page}
                 total={total_learners}
+                pageSize={page_size}
+                showSizeChanger
+                pageSizeOptions={["10", "20", "50", "100"]}
+                onChange={pagination_on_change}
+                onShowSizeChange={(current, size) => {
+                  set_page_size(size);
+                  pagination_on_change(1, size); // FIXED
+                }}
+                style={{ display: "inline-block" }}
+                className="no-search-pagination"
               />
+              <style>
+                {`
+                  .no-search-pagination .ant-select-selection-search-input {
+                    display: none !important;
+                  }
+                `}
+              </style>
             </div>
           </>
         )}
@@ -291,7 +306,7 @@ const refreshList = () => {
                   description: `${selectedLearner.first_name} has been assigned successfully.`,
                   placement: "topRight",
                 });
-                
+
                 refreshList();
               } else {
                 notification.error({
@@ -327,8 +342,6 @@ const refreshList = () => {
             onAccessDetailsChange={(data) => setAccessDetails(data)}
           />
         </Modal>
-
-        
       </Card>
     </div>
   );
