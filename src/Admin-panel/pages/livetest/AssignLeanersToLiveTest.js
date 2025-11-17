@@ -138,7 +138,7 @@ function AssignLeanersToLiveTest(props) {
   };
 
   // ⭐ PAGINATION API (WITH PER PAGE)
-  const pagination_on_change = async (page) => {
+  const pagination_on_change = async (page, size = page_size) => {
     set_pagination_loader(true);
 
     const FORM_DATA = new FormData();
@@ -146,7 +146,7 @@ function AssignLeanersToLiveTest(props) {
     FORM_DATA.append("name", search_query_name);
     FORM_DATA.append("email", search_query_email);
     FORM_DATA.append("live_test_id", atob(props.live_test_id));
-    FORM_DATA.append("per_page", page_size); // ⭐ ADD
+    FORM_DATA.append("per_page", size);
 
     const API_CALL = await ASSIGN_LIVE_TEST_LEARNER(FORM_DATA);
 
@@ -159,10 +159,10 @@ function AssignLeanersToLiveTest(props) {
     set_pagination_loader(false);
   };
 
-const onShowSizeChange = async (current, size) => {
-  set_page_size(size);
-  pagination_on_change(1);
-};
+  const onShowSizeChange = async (current, size) => {
+    set_page_size(size);
+    pagination_on_change(1);
+  };
 
 
   // SEARCH BY NAME
@@ -265,14 +265,26 @@ const onShowSizeChange = async (current, size) => {
 
             <div style={{ float: "right", marginTop: "20px" }}>
               <Pagination
-                onChange={pagination_on_change}
-                onShowSizeChange={onShowSizeChange} 
                 current={current_page}
                 total={total_learners}
-                showSizeChanger={true} 
-                pageSize={page_size} 
-                pageSizeOptions={[10, 20, 50, 100]} 
+                pageSize={page_size}
+                showSizeChanger
+                pageSizeOptions={["10", "20", "50", "100"]}
+                onChange={pagination_on_change}
+                onShowSizeChange={(current, size) => {
+                  set_page_size(size);
+                  pagination_on_change(1, size); // FIXED
+                }}
+                style={{ display: "inline-block" }}
+                className="no-search-pagination"
               />
+              <style>
+                {`
+                             .no-search-pagination .ant-select-selection-search-input {
+                               display: none !important;
+                             }
+                           `}
+              </style>
             </div>
           </>
         )}
