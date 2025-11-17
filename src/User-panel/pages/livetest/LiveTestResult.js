@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Card, Row, Col, Tag, List, Empty } from "antd";
-import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
+import { CheckCircleTwoTone, CloseCircleTwoTone, LeftOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import { LIVE_TEST_SCORE } from "../../apis/apis";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function LiveTestResult(props) {
+  const Navigate = useNavigate();
   const { live_test_id } = useParams();
   const [loader, setLoader] = useState(true);
   const [learner, setLearner] = useState({});
@@ -34,16 +35,15 @@ function LiveTestResult(props) {
     fetchLiveTestScore();
   }, [props.chapter_id, live_test_id]);
 
-  // ✅ Safely extract review_questions
+
   const reviewQuestions = Array.isArray(liveTestData?.review_questions)
     ? liveTestData.review_questions
     : [];
 
-  // ✅ Dynamically compute correct/wrong counts
   const correctCount = reviewQuestions.filter((q) => q.is_correct).length;
   const wrongCount = reviewQuestions.length - correctCount;
 
-  // ✅ Helper to safely parse option details
+
   const parseOptions = (optionDetails) => {
     try {
       if (typeof optionDetails === "string") {
@@ -58,12 +58,7 @@ function LiveTestResult(props) {
     }
   };
 
-  // ✅ Helper to find the correct label
-  const rightLabel = (optionDetails) => {
-    if (!Array.isArray(optionDetails)) return "—";
-    const correctOption = optionDetails.find((opt) => opt.value === true);
-    return correctOption?.label || "—";
-  };
+
 
   return (
     <div className="lms-body">
@@ -72,40 +67,63 @@ function LiveTestResult(props) {
           <CulsightPageLoader />
         ) : liveTestData && Object.keys(liveTestData).length > 0 ? (
           <>
-            {/* ✅ Summary section */}
+
+            <Row>
+              <span style={{ cursor: "pointer" }} onClick={() => Navigate("/list-live-test")}> <LeftOutlined /> Go Back</span>
+
+              <Col span={24} style={{ textAlign: "center" }}>
+
+                <h2 style={{ color: "#e9c70ada" }}>
+                  Live Test Result
+                </h2>
+              </Col>
+            </Row>
             <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
-              <Col span={12}>
-                <b>Total Questions:</b> {reviewQuestions.length}
+              <Col span={8}>
+                <b>Total Questions:</b> <Tag color="gold">{reviewQuestions.length}</Tag>
               </Col>
-              <Col span={12}>
-                <b>Total Marks:</b> {liveTestData.total_marks || 0}
-              </Col>
-              <Col span={12}>
+              <Col span={8}>
                 <b>Correct Answers:</b>{" "}
                 <Tag color="green">{correctCount}</Tag>
               </Col>
-              <Col span={12}>
+              <Col span={8}>
                 <b>Wrong Answers:</b>{" "}
                 <Tag color="red">{wrongCount}</Tag>
               </Col>
-              <Col span={12}>
-                <b>Total Score:</b> {liveTestData.total_score || 0}
-              </Col>
-              <Col span={12}>
+              <Col span={8}>
                 <b>Total Time:</b> {liveTestData.total_time || 0}s
               </Col>
-              <Col span={12}>
-                <b>Passing Status:</b>{" "}
-                <Tag color={liveTestData.passing_status ? "green" : "red"}>
-                  {liveTestData.passing_status ? "Passed" : "Failed"}
-                </Tag>
+              <Col span={8}>
+                <b>Total Marks:</b> {liveTestData.total_marks || 0}
+              </Col>
+              <Col span={8}>
+                <b>Total Score:</b> {liveTestData.total_score || 0}
+              </Col>
+
+            </Row>
+            <Row>
+              <Col span={24}>
+                <Card style={{ height: "50px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginTop: "-14px" }}>
+                    <h3>Passing Status :</h3>
+                    <Tag
+                      color={liveTestData.passing_status ? "green" : "red"}
+                      style={{
+                        fontSize: "14px",
+                        padding: "4px 16px",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      {liveTestData.passing_status ? "Passed" : "Failed"}
+                    </Tag>
+                  </div>
+                </Card>
               </Col>
             </Row>
 
-            {/* ✅ Question-wise Details */}
             {reviewQuestions.length > 0 ? (
               <List
-                header={<b>Question-wise Details</b>}
+                header={<b>Questions</b>}
                 dataSource={reviewQuestions}
                 renderItem={(item, idx) => {
                   const optionDetails = parseOptions(item.option_details);
@@ -148,15 +166,15 @@ function LiveTestResult(props) {
                           )}
                         </Col>
 
-                        {/* Correct Answer (Derived) */}
+                
                         <Col
                           span={24}
                           style={{ marginTop: 4, color: "green" }}
                         >
-                          <b>Right Answer:</b> {rightLabel(optionDetails)}
+                          <b>Right Answer:</b> {item.correct_answer}
                         </Col>
 
-                    
+
                       </Row>
                     </List.Item>
                   );

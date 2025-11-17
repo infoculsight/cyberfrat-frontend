@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { DownloadOutlined, LoadingOutlined } from "@ant-design/icons";
 const { Text } = Typography;
 export default function PackageBox(props) {
-  const { notification, message } = App.useApp();
   const Navigate = useNavigate();
   const [image_loader, set_image_loader] = useState(false)
 
@@ -41,7 +40,7 @@ export default function PackageBox(props) {
                 onLoad={() => set_image_loader(true)}
                 onError={() => set_image_loader(false)}
                 onClick={() => {
-                  props?.assign ? Navigate("/package-courses/" + props.id) : message.error("You don't have access to this package. Please contact with admin")
+                  props?.assign ? Navigate("/package-courses/" + props.id) : Navigate("/unassign-courses/" + props.id)
                 }}
                 style={{
                   width: "100%",
@@ -59,49 +58,50 @@ export default function PackageBox(props) {
 
         }
       >
-     <Card.Meta
-  title={
+        <Card.Meta
+          title={
 
-    <div style={{textAlign:"center",justifyContent:"space-between",display:"flex"}}>
-    <Text
-      ellipsis={{ tooltip: props.package_name }}
-      style={{
-        fontSize: 14,
-        maxWidth: "calc(100% - 120px)",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        textTransform: "capitalize" 
-      }}
-    >
-      {props.package_name}
-    </Text>
+            <div style={{ textAlign: "center", justifyContent: "space-between", display: "flex" }}>
+              <Text
+                ellipsis={{ tooltip: props.package_name }}
+                style={{
+                  fontSize: 14,
+                  maxWidth: "calc(100% - 120px)",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  textTransform: "capitalize"
+                }}
+              >
+                {props.package_name}
+              </Text>
 
 
-{props?.assign ? <> <Tag color="gold" size="small">
-        Assigned
-    </Tag></>:<>
-    <Tag color="red" variant="solid" size="small">
-      UnAssigned
-      </Tag></>}
-   
-     </div>
-  }
-  description={
-    <Text
-      ellipsis={{ tooltip: props.package_tag_line }}
-      style={{
-        fontSize: 12,
-        display: "block",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-      }}
-    >
-      {props.package_tag_line}
-    </Text>
-  }
-/>
+             {props.showAssignTag && (
+    props?.assign ? (
+      <Tag color="gold" size="small">Assigned</Tag>
+    ) : (
+      <Tag color="red" variant="solid" size="small">UnAssigned</Tag>
+    )
+  )}
+
+            </div>
+          }
+          description={
+            <Text
+              ellipsis={{ tooltip: props.package_tag_line }}
+              style={{
+                fontSize: 12,
+                display: "block",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {props.package_tag_line}
+            </Text>
+          }
+        />
 
       </Card>
     </div>

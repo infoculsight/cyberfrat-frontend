@@ -12,12 +12,14 @@ export default function CourseBox(props) {
 
 
 const handleDownload = () => {
-  if (!props.certificate) return;
-  window.open(props.certificate, "_blank");
+  const printWindow = window.open(props.certificate, "_blank");
+  printWindow.onload = () => {
+    printWindow.print();
+  };
 };
 
 
-
+   
   return (
     <div style={{ position: "relative" }}>
       <Card
