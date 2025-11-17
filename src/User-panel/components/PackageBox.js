@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { DownloadOutlined, LoadingOutlined } from "@ant-design/icons";
 const { Text } = Typography;
 export default function PackageBox(props) {
-  const { notification, message } = App.useApp();
   const Navigate = useNavigate();
   const [image_loader, set_image_loader] = useState(false)
 
@@ -78,12 +77,13 @@ export default function PackageBox(props) {
               </Text>
 
 
-              {props?.assign ? <> <Tag color="gold" size="small">
-                Assigned
-              </Tag></> : <>
-                <Tag color="red" variant="solid" size="small">
-                  UnAssigned
-                </Tag></>}
+             {props.showAssignTag && (
+    props?.assign ? (
+      <Tag color="gold" size="small">Assigned</Tag>
+    ) : (
+      <Tag color="red" variant="solid" size="small">UnAssigned</Tag>
+    )
+  )}
 
             </div>
           }
