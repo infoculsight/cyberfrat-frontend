@@ -47,6 +47,8 @@ function CourseLearners(props) {
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
   const [bulkKey, setBulkKey] = useState(0);
+  const [page_size, set_page_size] = useState(10); // default 10 rows per page
+
 
 
   const handleBack = () => {
@@ -74,6 +76,7 @@ function CourseLearners(props) {
     setisModalOpen(false);
     setLoader(true);
     const FORM_DATA = new FormData();
+    FORM_DATA.append("per_page", page_size);
     FORM_DATA.append("course_id", atob(course_id));
     const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
     if (API_CALL?.data?.status) {
@@ -90,6 +93,7 @@ function CourseLearners(props) {
     setIsModalVisible(false);
     setLoader(true);
     const FORM_DATA = new FormData();
+    FORM_DATA.append("per_page", page_size);
     FORM_DATA.append("course_id", atob(course_id));
     const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
     if (API_CALL?.data?.status) {
@@ -105,6 +109,7 @@ function CourseLearners(props) {
   useEffect(() => {
     const LIST_API = async () => {
       const FORM_DATA = new FormData();
+      FORM_DATA.append("per_page", page_size);
       FORM_DATA.append("course_id", atob(course_id));
       const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
       if (API_CALL?.data?.status) {
@@ -220,22 +225,23 @@ function CourseLearners(props) {
   ];
 
 
-  const pagination_on_change = async (page) => {
-    set_pagination_loader(true);
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("page", page);
-    FORM_DATA.append("token", localStorage.getItem("token"));
-    FORM_DATA.append("name", search_query_name);
-    FORM_DATA.append("email", search_query_email);
-    FORM_DATA.append("course_id", atob(course_id));
-    const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
-    if (API_CALL?.data?.status) {
-      set_table_data(API_CALL?.data?.data);
-      set_current_page(API_CALL?.data?.current_page);
-      set_total_learners(API_CALL?.data?.total_learners);
-    }
-    set_pagination_loader(false);
-  };
+const pagination_on_change = async (page, size = page_size) => {
+  set_pagination_loader(true);
+  const FORM_DATA = new FormData();
+  FORM_DATA.append("page", page);
+  FORM_DATA.append("per_page", size); // use new size
+  FORM_DATA.append("name", search_query_name);
+  FORM_DATA.append("email", search_query_email);
+  FORM_DATA.append("course_id", atob(course_id));
+  const API_CALL = await LIST_COURSE_LEANERS(FORM_DATA);
+  if (API_CALL?.data?.status) {
+    set_table_data(API_CALL?.data?.data);
+    set_current_page(API_CALL?.data?.current_page);
+    set_total_learners(API_CALL?.data?.total_learners);
+  }
+  set_pagination_loader(false);
+};
+
 
 
   const fetchResultsName = debounce(async (value) => {
@@ -243,7 +249,7 @@ function CourseLearners(props) {
       set_search_query_name(value);
       set_pagination_loader(true);
       const FORM_DATA = new FormData();
-      FORM_DATA.append("token", localStorage.getItem("token"));
+      FORM_DATA.append("per_page", page_size);
       FORM_DATA.append("name", value);
       FORM_DATA.append("email", "");
       FORM_DATA.append("course_id", atob(course_id));
@@ -266,6 +272,7 @@ function CourseLearners(props) {
       set_search_query_email(value);
       set_pagination_loader(true);
       const FORM_DATA = new FormData();
+      FORM_DATA.append("per_page", page_size);
       FORM_DATA.append("name", "");
       FORM_DATA.append("email", value);
       FORM_DATA.append("course_id", atob(course_id));
@@ -374,13 +381,29 @@ function CourseLearners(props) {
             )}
 
             {total_pages > 0 ? <>
-              <div style={{ float: "right", marginTop: "20px" }}>
-                <Pagination
-                  onChange={pagination_on_change}
-                  current={current_page}
-                  total={total_learners}
-                />
-              </div>
+               <div style={{ float: "right", marginTop: "20px" }}>
+                         <Pagination
+                           current={current_page}
+                           total={total_learners}
+                           pageSize={page_size}
+                           showSizeChanger
+                           pageSizeOptions={["10", "20", "50", "100"]}
+                           onChange={pagination_on_change}
+                           onShowSizeChange={(current, size) => {
+                             set_page_size(size);
+                             pagination_on_change(1, size); // FIXED
+                           }}
+                           style={{ display: "inline-block" }}
+                           className="no-search-pagination"
+                         />
+                         <style>
+                           {`
+                             .no-search-pagination .ant-select-selection-search-input {
+                               display: none !important;
+                             }
+                           `}
+                         </style>
+                       </div>
             </> : <>
               <div style={{ textAlign: "center", color: "red" }}>
                 <h2>No Courses Found</h2>

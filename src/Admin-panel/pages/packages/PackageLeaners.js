@@ -47,6 +47,7 @@ function PackageLeaners(props) {
   const [file, set_file] = useState([]);
   const [is_model_open, set_is_model_open] = useState(false);
   const [errors, set_errors] = useState("");
+  const [page_size, set_page_size] = useState(10);
 
   const showModal = () => {
     setAssignKey((prev) => prev + 1);
@@ -80,8 +81,8 @@ function PackageLeaners(props) {
   const handleModalCancel = async () => {
     setIsModalVisible(false);
     setLoader(true);
-
     const FORM_DATA = new FormData();
+    FORM_DATA.append("page_size", page_size);
     FORM_DATA.append("package_id", atob(package_id));
     const API_CALL = await LIST_PACKAGE_LEARNERS(FORM_DATA);
     if (API_CALL?.data?.status) {
@@ -96,6 +97,7 @@ function PackageLeaners(props) {
   useEffect(() => {
     const LIST_API = async () => {
       const FORM_DATA = new FormData();
+      FORM_DATA.append("page_size", page_size);
       FORM_DATA.append("package_id", atob(package_id));
       const API_CALL = await LIST_PACKAGE_LEARNERS(FORM_DATA);
       if (API_CALL?.data?.status) {
@@ -213,23 +215,23 @@ function PackageLeaners(props) {
     },
   ];
 
-
-  const pagination_on_change = async (page) => {
-    set_pagination_loader(true);
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("page", page);
-    FORM_DATA.append("token", localStorage.getItem("token"));
-    FORM_DATA.append("name", search_query_name);
-    FORM_DATA.append("email", search_query_email);
-    FORM_DATA.append("package_id", atob(package_id));
-    const API_CALL = await LIST_PACKAGE_LEARNERS(FORM_DATA);
-    if (API_CALL?.data?.status) {
-      set_table_data(API_CALL?.data?.data);
-      set_current_page(API_CALL?.data?.current_page);
-      set_total_learners(API_CALL?.data?.total_learners);
-    }
-    set_pagination_loader(false);
-  };
+const pagination_on_change = async (page, size) => {
+  set_pagination_loader(true);
+  set_page_size(size); // update pageSize
+  const FORM_DATA = new FormData();
+  FORM_DATA.append("page", page);
+  FORM_DATA.append("page_size", size); // send page size to API if supported
+  FORM_DATA.append("name", search_query_name);
+  FORM_DATA.append("email", search_query_email);
+  FORM_DATA.append("package_id", atob(package_id));
+  const API_CALL = await LIST_PACKAGE_LEARNERS(FORM_DATA);
+  if (API_CALL?.data?.status) {
+    set_table_data(API_CALL?.data?.data);
+    set_current_page(API_CALL?.data?.current_page);
+    set_total_learners(API_CALL?.data?.total_learners);
+  }
+  set_pagination_loader(false);
+};
 
 
   const fetchResultsName = debounce(async (value) => {
@@ -239,6 +241,7 @@ function PackageLeaners(props) {
       const FORM_DATA = new FormData();
       FORM_DATA.append("name", value);
       FORM_DATA.append("email", "");
+      FORM_DATA.append("page_size", page_size);
       FORM_DATA.append("package_id", atob(package_id));
       const API_CALL = await LIST_PACKAGE_LEARNERS(FORM_DATA);
       if (API_CALL?.data?.status) {
@@ -261,6 +264,7 @@ function PackageLeaners(props) {
       const FORM_DATA = new FormData();
       FORM_DATA.append("name", "");
       FORM_DATA.append("email", value);
+      FORM_DATA.append("page_size", page_size);
       FORM_DATA.append("package_id", atob(package_id));
       const API_CALL = await LIST_PACKAGE_LEARNERS(FORM_DATA);
       if (API_CALL?.data?.status) {
@@ -374,14 +378,29 @@ function PackageLeaners(props) {
                 style={{ marginTop: "15px" }}
               />
             )}
-            <div style={{ float: "right", marginTop: "20px" }}>
-              <Pagination
-                onChange={pagination_on_change}
-                defaultCurrent={current_page}
-                total={total_learners}
-                total_pages={total_pages}
-              />
-            </div>
+         <div style={{ float: "right", marginTop: "20px" }}>
+                         <Pagination
+                           current={current_page}
+                           total={total_learners}
+                           pageSize={page_size}
+                           showSizeChanger
+                           pageSizeOptions={["10", "20", "50", "100"]}
+                           onChange={pagination_on_change}
+                           onShowSizeChange={(current, size) => {
+                             set_page_size(size);
+                             pagination_on_change(1, size); // FIXED
+                           }}
+                           style={{ display: "inline-block" }}
+                           className="no-search-pagination"
+                         />
+                         <style>
+                           {`
+                             .no-search-pagination .ant-select-selection-search-input {
+                               display: none !important;
+                             }
+                           `}
+                         </style>
+                       </div>
           </>
         )}
       </Card>

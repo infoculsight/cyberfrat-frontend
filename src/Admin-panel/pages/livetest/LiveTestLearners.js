@@ -15,7 +15,7 @@ import {
   App,
 } from "antd";
 import { Option } from "antd/es/mentions";
-import { ArrowDownOutlined, ArrowUpOutlined, LeftOutlined, LoadingOutlined } from "@ant-design/icons";
+import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { LIST_LIVE_TEST_LEARNERS, LIST_LIVE_TEST_LEARNERS_STATUS } from "../../apis/apis";
@@ -47,8 +47,8 @@ function LiveTestLearners(props) {
   const [assignKey, setAssignKey] = useState(0);
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
+  const [page_size, set_page_size] = useState(10);
 
-  // const from = location.state?.from || "/courses";
 
   const handleBack = () => {
     if (location.state?.from) {
@@ -58,9 +58,6 @@ function LiveTestLearners(props) {
     }
   };
 
-  // const handleBack = () => {
-  //   Navigate(from);
-  // };
 
 
   const showModal = () => {
@@ -77,6 +74,7 @@ function LiveTestLearners(props) {
     setLoader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("live_test_id", atob(live_test_id));
+     FORM_DATA.append("page_size", page_size);
     const API_CALL = await LIST_LIVE_TEST_LEARNERS(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.data);
@@ -92,6 +90,7 @@ function LiveTestLearners(props) {
     const LIST_API = async () => {
       const FORM_DATA = new FormData();
       FORM_DATA.append("live_test_id", atob(live_test_id));
+      FORM_DATA.append("page_size", page_size);
       const API_CALL = await LIST_LIVE_TEST_LEARNERS(FORM_DATA);
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.data);
@@ -184,12 +183,13 @@ function LiveTestLearners(props) {
   ];
 
 
-  const pagination_on_change = async (page) => {
+  const pagination_on_change = async (page,size = page_size) => {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", page);
     FORM_DATA.append("name", search_query_name);
     FORM_DATA.append("email", search_query_email);
+    FORM_DATA.append("page_size", size);
     FORM_DATA.append("live_test_id", atob(live_test_id));
     const API_CALL = await LIST_LIVE_TEST_LEARNERS(FORM_DATA);
     if (API_CALL?.data?.status) {
@@ -208,6 +208,7 @@ function LiveTestLearners(props) {
       const FORM_DATA = new FormData();
       FORM_DATA.append("name", value);
       FORM_DATA.append("email", "");
+      FORM_DATA.append("page_size", page_size);
       FORM_DATA.append("live_test_id", atob(live_test_id));
       const API_CALL = await LIST_LIVE_TEST_LEARNERS(FORM_DATA);
       if (API_CALL?.data?.status) {
@@ -230,6 +231,7 @@ function LiveTestLearners(props) {
       const FORM_DATA = new FormData();
       FORM_DATA.append("name", "");
       FORM_DATA.append("email", value);
+      FORM_DATA.append("page_size", page_size);
       FORM_DATA.append("live_test_id", atob(live_test_id));
       const API_CALL = await LIST_LIVE_TEST_LEARNERS(FORM_DATA);
       if (API_CALL?.data?.status) {
@@ -325,12 +327,28 @@ function LiveTestLearners(props) {
 
             {total_pages > 0 ? <>
               <div style={{ float: "right", marginTop: "20px" }}>
-                <Pagination
-                  onChange={pagination_on_change}
-                  current={current_page}
-                  total={total_learners}
-                />
-              </div>
+                         <Pagination
+                           current={current_page}
+                           total={total_learners}
+                           pageSize={page_size}
+                           showSizeChanger
+                           pageSizeOptions={["10", "20", "50", "100"]}
+                           onChange={pagination_on_change}
+                           onShowSizeChange={(current, size) => {
+                             set_page_size(size);
+                             pagination_on_change(1, size); // FIXED
+                           }}
+                           style={{ display: "inline-block" }}
+                           className="no-search-pagination"
+                         />
+                         <style>
+                           {`
+                             .no-search-pagination .ant-select-selection-search-input {
+                               display: none !important;
+                             }
+                           `}
+                         </style>
+                       </div>
             </> : <>
               <div style={{ textAlign: "center", color: "red" }}>
                 <h2>No Learners Found</h2>

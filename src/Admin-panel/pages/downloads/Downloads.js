@@ -1,27 +1,23 @@
 import {
-  App,
   Button,
   Card,
   Col,
   Input,
   Pagination,
   Row,
-  Select,
   Spin,
   Table,
-  Tag,
 } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { GET_DOWNLOAD_REPORT, LIST_DOWNLOAD_REPORT } from "../../apis/apis";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import debounce from "lodash.debounce";
-import moment from "moment";
+
 import { formatToIST } from "../../../helper/CommonHelper";
 
 function Downloads() {
-  const { notification } = App.useApp();
+
   // USE STATE FOR PAGINATION AND LOADER
   const [loader, setLoader] = useState(true);
   const [pagination_loader, set_pagination_loader] = useState(false);

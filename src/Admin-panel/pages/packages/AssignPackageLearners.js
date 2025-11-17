@@ -245,7 +245,16 @@ function AssignPackageLearners(props) {
                   set_page_size(size);
                   pagination_on_change(1, size);      // FIXED
                 }}
+                      style={{ display: "inline-block" }}
+                           className="no-search-pagination"
               />
+                  <style>
+                           {`
+                             .no-search-pagination .ant-select-selection-search-input {
+                               display: none !important;
+                             }
+                           `}
+                         </style>
             </div>
           </>
         )}
