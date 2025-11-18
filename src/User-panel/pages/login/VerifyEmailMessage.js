@@ -1,17 +1,12 @@
 
-
-
-
-import React, { useEffect, useState } from "react";
 import "../../assests/Login.css"
-import { Button, Spin } from "antd";
+import { Button } from "antd";
 import { InfoCircleOutlined, CopyrightOutlined, } from "@ant-design/icons";
 import Logo from "../../assests/CFGold_Logo.png"
-import { Link, useNavigate, } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 const VerifyEmailMessage = () => {
-  const Navigate = useNavigate();
     return (
         <>
             <div className="login-wapper">

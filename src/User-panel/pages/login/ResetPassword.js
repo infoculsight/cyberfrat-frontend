@@ -8,7 +8,7 @@ import { Button, Spin } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone, InfoCircleOutlined, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
 import Logo from "../../assests/CFGold_Logo.png"
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { LOGIN_API, NEW_PASSWORD_SET, RESET_PASSWORD_TOKEN_CHECK } from "../../apis/apis";
+import {  NEW_PASSWORD_SET, RESET_PASSWORD_TOKEN_CHECK } from "../../apis/apis";
 
 
 const ResetPassword = () => {
@@ -20,7 +20,7 @@ const ResetPassword = () => {
     const [password, setPassword] = useState('');
     const [cpassword, setCPassword] = useState('');
     const [form_hidden, set_form_hidden] = useState(true);
-    const [message, set_message] = useState("");
+
     const [error, setError] = useState([]);
 
     const togglePasswordVisibility = () => {

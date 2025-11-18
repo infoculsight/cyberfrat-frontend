@@ -209,7 +209,7 @@ function ListLiveTest() {
 
         />
 
-        <div style={{ float: "right", marginTop: "20px" }}>
+        {total_pages > 0  ? <>   <div style={{ float: "right", marginTop: "20px" }}>
           <Pagination
             current={current_page}
             total={total_items}
@@ -217,7 +217,9 @@ function ListLiveTest() {
             onChange={pagination_on_change}
           />
 
-        </div>
+        </div></>:<></>}
+
+     
       </Card>
     </div>
   );
