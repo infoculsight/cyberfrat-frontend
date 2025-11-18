@@ -360,9 +360,11 @@ const QuizQuestion = (props) => {
           <div style={{ width: "100%" }}>
             <Upload
               beforeUpload={beforeUpload}
-              file={file}
+              fileList={file}
               onRemove={() => set_file([])}
               accept=".csv"
+              maxCount={1}
+              multiple={false}
               style={{ width: "100%" }} // optional
             >
               <div style={{ width: "100%" }}>

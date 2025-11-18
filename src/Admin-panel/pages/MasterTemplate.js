@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   DashboardOutlined,
   DownloadOutlined,
@@ -11,7 +11,7 @@ import {
   UploadOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { App, Button, Layout, Menu, ConfigProvider } from 'antd';
+import { App, Button, Layout, Menu } from 'antd';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Logo from "../assests/CF-PPT-1.png";
 import { getUser, logout } from '../../authService';

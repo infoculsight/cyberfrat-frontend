@@ -75,8 +75,8 @@ function Learners() {
         set_pagination_loader(false);
       }
     }, 500)(); // Call debounce immediately
-  }, [page_size,navigate]);
- 
+  }, [page_size, navigate]);
+
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("per_page", page_size);
@@ -429,17 +429,18 @@ function Learners() {
           <div style={{ width: "100%" }}>
             <Upload
               beforeUpload={beforeUpload}
-              file={file}
+              fileList={file}
               onRemove={() => set_file([])}
               accept=".csv"
-              style={{ width: "100%" }} // optional
+              multiple={false}
+              maxCount={1}
+              style={{width:"100%"}}
             >
-              <div style={{ width: "100%" }}>
-                <Button type="primary" icon={<UploadOutlined />} block>
-                  Upload File
-                </Button>
-              </div>
+              <Button type="primary" icon={<UploadOutlined />} block>
+                Upload File
+              </Button>
             </Upload>
+
             {errors?.file ? (
               <>
                 <span style={{ color: "red" }}>

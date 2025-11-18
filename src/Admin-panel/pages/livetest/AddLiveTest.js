@@ -10,13 +10,11 @@ import {
     DatePicker,
     Radio,
     App,
-    TimePicker
 } from "antd";
 import { useState } from "react";
 import { Add_LIVE_TEST } from "../../apis/apis";
 import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
-import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 
 function AddLiveTest() {

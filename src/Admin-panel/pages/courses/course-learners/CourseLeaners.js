@@ -14,7 +14,7 @@ import {
   App,
 } from "antd";
 import { Option } from "antd/es/mentions";
-import { ArrowDownOutlined, ArrowUpOutlined, LeftOutlined, LoadingOutlined } from "@ant-design/icons";
+import { ArrowUpOutlined, LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { LIST_COURSE_LEANERS, LEANERS_COURSE_STATUS } from "../../../apis/apis";

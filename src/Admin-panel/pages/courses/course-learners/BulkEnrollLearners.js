@@ -167,9 +167,11 @@ function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
                 {/* Excel Upload */}
                 <Upload
                     beforeUpload={handleFileChange}
-                    file={file}
+                    fileList={file}
                     onRemove={() => setFile([])}
                     accept=".csv"
+                    multiple={false}
+                    maxCount={1}
                     style={{ width: "100%" }} // optional
                 >
                     <Button icon={<UploadOutlined />}>Select Excel File</Button>

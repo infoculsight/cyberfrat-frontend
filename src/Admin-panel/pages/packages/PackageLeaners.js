@@ -491,19 +491,19 @@ function PackageLeaners(props) {
         destroyOnClose
       >
         <div style={{ width: "100%" }}>
-          <Upload
-            beforeUpload={beforeUpload}
-            file={file}
-            onRemove={() => set_file([])}
-            accept=".csv"
-            style={{ width: "100%" }} // optional
-          >
-            <div style={{ width: "100%" }}>
+            <Upload
+              beforeUpload={beforeUpload}
+              fileList={file}
+              onRemove={() => set_file([])}
+              accept=".csv"
+              multiple={false}
+              maxCount={1}
+              style={{width:"100%"}}
+            >
               <Button type="primary" icon={<UploadOutlined />} block>
                 Upload File
               </Button>
-            </div>
-          </Upload>
+            </Upload>
           {errors?.file ? (
             <>
               <span style={{ color: "red" }}>
