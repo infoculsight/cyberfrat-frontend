@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import  { useCallback, useEffect, useState } from "react";
 import { Table, Button, Row, Col, Input, Pagination, Spin, App } from "antd";
 import { useNavigate } from "react-router-dom";
 import { COURSE_REPORT, DOWNLOAD_REPORT } from "../../../apis/apis";
@@ -43,6 +43,8 @@ const { notification } = App.useApp();
 
 
 const DOWNLOAD_REPORT_ACTION = async (course_id) => {
+    set_download_button(false); // disable button
+
       const FORM_DATA = new FormData();
        FORM_DATA.append("course_id", course_id);
       
@@ -52,6 +54,8 @@ const DOWNLOAD_REPORT_ACTION = async (course_id) => {
                  message: "Successful",
                  description: "Check the Download tab for your report",
                });
+                 set_download_button(true);
+
       } else {
         console.log("error");
         setLoader(false);

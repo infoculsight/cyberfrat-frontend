@@ -1,10 +1,10 @@
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import CulsightPageLoader from '../../../components/CulsightPageLoader';
 import { LEARNER_QUIZ_REPORT } from '../../../apis/apis';
 import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
-import { Button, Card, Col, Pagination, Row, Spin, Table } from 'antd';
+import { Button, Col, Pagination, Row, Spin, Table } from 'antd';
 
 function QuizLearnerReport() {
 const { learner_id } = useParams();
@@ -17,8 +17,7 @@ const { learner_id } = useParams();
   const [current_page, set_current_page] = useState(1);
   const [total_records, set_total_records] = useState(0);
   const [page_size, set_page_size] = useState(10);
-  const [search_query_title, set_search_query_title] = useState("");
-  const [view_details, set_view_details] = useState(false);
+
   useEffect(() => {
     const LIST_API = async () => {
       const FORM_DATA = new FormData();
@@ -38,7 +37,7 @@ const { learner_id } = useParams();
       }
     };
     LIST_API();
-  }, []);
+  }, [learner_id]);
 
   // Pagination change
   const pagination_on_change = async (page) => {
@@ -60,6 +59,7 @@ const { learner_id } = useParams();
     }
     set_pagination_loader(false);
   };
+
     const formatTime = (seconds) => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
@@ -71,6 +71,7 @@ const { learner_id } = useParams();
 
     return h + m + s;
   };
+
   const columns = [
     {
       title: "Chapter Name",
@@ -98,6 +99,7 @@ const { learner_id } = useParams();
       render: (_, record) => <><Button type="link"  onClick={() => navigate(`/report/quiz-report-details/${learner_id}/${btoa(record.chapter_id)}`)}>View Details</Button></>,
     },
   ];
+  
   return (
     <>
       {loader ? (

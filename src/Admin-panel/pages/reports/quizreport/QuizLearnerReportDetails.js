@@ -31,7 +31,7 @@ function QuizLearnerReportDetails() {
       }
     };
     LIST_API();
-  }, []);
+  }, [chapter_id,learner_id]);
 
   return (
     <>

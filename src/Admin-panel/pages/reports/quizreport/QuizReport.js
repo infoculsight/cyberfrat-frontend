@@ -151,7 +151,7 @@ const QuizReport = () => {
               <Pagination
                 current={current_page}
                 total={total_pages}
-                pageSize={10}
+                pageSize={page_size}
                 onChange={pagination_on_change}
               />
             </div>

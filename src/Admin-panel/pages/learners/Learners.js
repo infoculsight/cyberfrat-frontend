@@ -1,6 +1,6 @@
 import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm, Tooltip } from "antd";
 import { EyeFilled, LoadingOutlined, UploadOutlined, BookOutlined } from "@ant-design/icons";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BULD_ADD_LEARNERS, LEARNER_LIST, LEARNER_STATUS } from "../../apis/apis";
 import debounce from "lodash.debounce";
@@ -75,8 +75,8 @@ function Learners() {
         set_pagination_loader(false);
       }
     }, 500)(); // Call debounce immediately
-  }, [page_size]);
-
+  }, [page_size,navigate]);
+ 
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("per_page", page_size);

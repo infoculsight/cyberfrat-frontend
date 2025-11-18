@@ -22,7 +22,7 @@ function App() {
         setUser(use);
         const decoded = jwtDecode(use?.access_token);
         const panelRoles = decoded?.resource_access?.["LMS_FRONTEND"]?.roles || [];
-        const local_theme = localStorage.getItem("dark_theme")
+       
         if (panelRoles.includes('portal_admin')) {
           set_user_role('portal_admin');
           // parseInt(local_theme) === 0 ? set_balck_theme(false) : set_balck_theme(true)
