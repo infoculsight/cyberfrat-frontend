@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import debounce from "lodash.debounce";
 
 function ListLiveTest() {
+  
   const navigate = useNavigate();
   const [loader, setLoader] = useState(true);
   const [table_data, set_table_data] = useState([]);
@@ -123,7 +124,6 @@ function ListLiveTest() {
             Test Submitted
           </Button>
 
-          
           </>: <>
            {record?.expired ? <>
            
@@ -155,7 +155,11 @@ function ListLiveTest() {
            </>}
         
           </>}
-        
+
+            {record?.test_result ? <>
+             <Button size="small" type="primary" onClick={() => navigate("/live-test-result/" + btoa(record.live_test_id))}>View Result</Button>
+            </>:<></>}
+          
         </Space>
       ),
     },

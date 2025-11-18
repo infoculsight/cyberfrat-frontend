@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Icon, {
+import {
   AccountBookOutlined,
   DashboardOutlined,
   HomeOutlined,
@@ -9,7 +9,7 @@ import Icon, {
   SnippetsOutlined,
   UploadOutlined
 } from "@ant-design/icons";
-import { App, Button, Layout, Menu } from "antd";
+import { App, Button, Layout, Menu, Grid, Drawer, Row, Col, Dropdown } from "antd";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assests/CFGold_Logo.png";
 import { getUser, logout } from '../../authService';
@@ -19,6 +19,7 @@ import UserNotification from "../components/UserNotification";
 import CulsightPageLoader from "../components/CulsightPageLoader";
 
 const { Header, Sider, Content } = Layout;
+const { useBreakpoint } = Grid;
 
 const MasterTemplate = () => {
   const { modal } = App.useApp();
@@ -29,29 +30,35 @@ const MasterTemplate = () => {
   const location = useLocation();
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [openKeys, setOpenKeys] = useState([]);
-  const [balck_theme, set_balck_theme] = useState(true)
+  const [balck_theme, set_balck_theme] = useState(true);
 
+  // responsive hook
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
 
   useEffect(() => {
-
-    getUser().then(usr => {
-      setUser(usr);
-      console.log(usr)
-      set_master_loder(false)
-    });
+    const localUser = localStorage.getItem("user");
+    if (localUser) {
+      setUser(JSON.parse(localUser));
+      set_master_loder(false);
+    } else {
+      getUser().then(usr => {
+        setUser(usr);
+        set_master_loder(false);
+        localStorage.setItem("user", JSON.stringify(usr));
+      });
+    }
   }, []);
 
   useEffect(() => {
-
     const pathToKey = {
       "/": { selected: "1" },
-      "/courses": { selected: "2",open:"2" },
-      "/view-course":{selected:"2",open:"2"},
-      "/packages": { selected: "3",open:"3" },
-      "/all-packages": {selected:"4",open:"4"},
-      "/account": { selected: "7",oepn:"7" },
-      "/list-live-test":{selected:"8",open:"8"},
-     
+      "/courses": { selected: "2", open: "2" },
+      "/view-course": { selected: "2", open: "2" },
+      "/packages": { selected: "3", open: "3" },
+      "/all-packages": { selected: "4", open: "4" },
+      "/account": { selected: "7", open: "7" },
+      "/list-live-test": { selected: "8", open: "8" },
     };
 
     const path = location.pathname;
@@ -64,8 +71,9 @@ const MasterTemplate = () => {
         setOpenKeys([]);
       }
     }
-    const local_theme = localStorage.getItem("dark_theme")
-    local_theme === 'dark' ? set_balck_theme(1) : set_balck_theme(0)
+
+    const local_theme = localStorage.getItem("dark_theme");
+    local_theme === 'dark' ? set_balck_theme(1) : set_balck_theme(0);
   }, [location.pathname]);
 
   const handleMenuClick = ({ key }) => {
@@ -73,9 +81,9 @@ const MasterTemplate = () => {
       1: "/",
       2: "courses",
       3: "packages",
-      4:"all-packages",
+      4: "all-packages",
       7: "/account",
-      8:"/list-live-test"
+      8: "/list-live-test"
     };
 
     const route = keyToPath[key];
@@ -91,6 +99,7 @@ const MasterTemplate = () => {
       });
     } else if (route) {
       navigate(route);
+      if (isMobile) setCollapsed(true); // mobile par navigate hone ke baad menu close
     }
   };
 
@@ -98,133 +107,198 @@ const MasterTemplate = () => {
     setOpenKeys(keys);
   };
 
+  const menuItems = [
+    {
+      key: "1",
+      icon: <HomeOutlined />,
+      label: "Dashboard",
+    },
+    {
+      key: "2",
+      icon: <DashboardOutlined />,
+      label: "My Courses",
+    },
+    {
+      key: "3",
+      icon: <AccountBookOutlined />,
+      label: "My Packages",
+    },
+    {
+      key: "4",
+      icon: <AccountBookOutlined />,
+      label: "All Packages",
+    },
+    {
+      key: "8",
+      icon: <SnippetsOutlined />,
+      label: "Live Test",
+    },
+    {
+      key: "7",
+      icon: <SettingFilled />,
+      label: "Account",
+    },
+    {
+      key: "50",
+      icon: <UploadOutlined />,
+      label: "Logout",
+    },
+  ];
+
   return (
     <>
-      {master_loder ? <>
+      {master_loder ? (
         <CulsightPageLoader />
-      </> : <>
+      ) : (
         <Layout style={{ minHeight: "100vh" }}>
-          <Sider
-            trigger={null}
-            collapsible
-            collapsed={collapsed}
-            style={balck_theme ? { background: "#141414" } : {background: "#fff"}}
-          >
-            <div className="menu-logo" style={{marginTop:"20px"}}>
-              <img alt="logo" src={Logo} />
-            </div>
-
-            <Menu
-              style={{marginTop:"40px"}}
-              className="gold-menu"
-              mode="inline"
-              selectedKeys={selectedKeys}
-              openKeys={openKeys}
-             
-              onOpenChange={onOpenChange}
-              onClick={handleMenuClick}
-              items={[
-                {
-                  key: "1",
-                  icon: <HomeOutlined />,
-                  label: "Dashboard",
-                },
-                {
-                  key: "2",
-                  icon: <DashboardOutlined />,
-                  label: "My Courses",
-                },
-                {
-                  key: "3",
-                  icon: <AccountBookOutlined />,
-                  label: "My Packages",
-                },
-                // {
-                //   key: "4",
-                //   icon: <AccountBookOutlined />,
-                //   label: "All Packages",
-                // },
-                   {
-                  key: "8",
-                  icon: <SnippetsOutlined />,
-                  label: "Live Test",
-                },
-                // {
-                //   key: "4",
-                //   icon: <SnippetsOutlined />,
-                //   label: "LiveTest Report",
-                // },
-                // {
-                //   key: "5",
-                //   icon: <SnippetsOutlined />,
-                //   label: "QuizTest Report",
-                // },
-                // {
-                //   key: "6",
-                //   icon: <HeartOutlined />,
-                //   label: "Wishlist",
-                // },
-                {
-                  key: "7",
-                  icon: <SettingFilled />,
-                  label: "Account",
-                },
-                {
-                  key: "50",
-                  icon: <UploadOutlined />,
-                  label: "Logout",
-                },
-              ]}
-            />
-          </Sider>
-          <Layout>
-            <Header
-              style={balck_theme ? {
-                padding: "0",
-                backgroundColor: "#141414",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              } : {
-                padding: "0",
-                 backgroundColor: "#fff",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
+          {isMobile ? (
+            <Drawer
+              placement="left"
+              open={!collapsed}
+              onClose={() => setCollapsed(true)}
+              bodyStyle={{ padding: 0 }}
+              width={220}
+              style={{
+                backgroundColor: balck_theme ? "#141414" : "#fff",
               }}
             >
-              <div>
+              <div className="menu-logo" style={{ margin: "20px 0", textAlign: "center" }}>
+                <img alt="logo" src={Logo} style={{ width: "120px" }} />
+              </div>
+              <Menu
+                className="gold-menu"
+                mode="inline"
+                selectedKeys={selectedKeys}
+                openKeys={openKeys}
+                onOpenChange={onOpenChange}
+                onClick={handleMenuClick}
+                items={menuItems}
+              />
+            </Drawer>
+          ) : (
+            <Sider
+              trigger={null}
+              collapsible
+              collapsed={collapsed}
+              onCollapse={(v) => setCollapsed(v)}
+              breakpoint="md"
+              collapsedWidth={isMobile ? 0 : 80}
+              style={balck_theme ? { background: "#141414" } : { background: "#fff" }}
+            >
+              <div className="menu-logo" style={{ marginTop: "20px" }}>
+                <img alt="logo" src={Logo} />
+              </div>
+
+              <Menu
+                style={{ marginTop: "40px" }}
+                className="gold-menu"
+                mode="inline"
+                selectedKeys={selectedKeys}
+                openKeys={openKeys}
+                onOpenChange={onOpenChange}
+                onClick={handleMenuClick}
+                items={menuItems}
+              />
+            </Sider>
+          )}
+
+          <Layout>
+            <Header
+              style={
+                balck_theme
+                  ? {
+                    padding: "0 10px",
+                    backgroundColor: "#141414",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }
+                  : {
+                    padding: "0 10px",
+                    backgroundColor: "#fff",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }
+              }
+            >
+
+              <div style={{ display: "flex", alignItems: "center" }}>
                 <Button
                   type="text"
                   icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                   onClick={() => setCollapsed(!collapsed)}
                   style={{
                     fontSize: "16px",
-                    width: 64,
-                    height: 64,
-                    color: balck_theme ?"#fff" : "#141414",
+                    width: 48,
+                    height: 48,
+                    color: balck_theme ? "#fff" : "#141414",
                   }}
                 />
-                <span style={{ fontWeight: "bold", fontSize: "20px" }}>Learner Panel</span>
+                {!isMobile && (
+                  <span style={{ fontWeight: "bold", fontSize: "20px" }}>Learner Panel</span>
+                )}
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
 
-                  <ThemeSetting set_theme_style={set_balck_theme} />
+                {!isMobile && <ThemeSetting set_theme_style={set_balck_theme} />}
 
-                </div>
+
                 <UserNotification />
-                <UserDropdown user={user} />
 
+
+                {!isMobile && <UserDropdown user={user} />}
+
+                {isMobile && (
+                  <Dropdown
+                    placement="bottomRight"
+                    trigger={["click"]}
+                    dropdownRender={() => (
+                      <div
+                        style={{
+                          padding: "12px",
+                          background: balck_theme ? "#222121ff" : "#fff",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                          borderRadius: 8,
+                          width: 220,
+                        }}
+                      >
+                        <Row gutter={[12, 12]} justify="center">
+                          <Col span={24}>
+                            <ThemeSetting set_theme_style={set_balck_theme} />
+                          </Col>
+                          <Col span={24}>
+                            <UserDropdown user={user} />
+                          </Col>
+                        </Row>
+                      </div>
+                    )}
+                  >
+                    <Button
+                      type="text"
+                      icon={<SettingFilled />}
+                      style={{
+                        color: balck_theme ? "#fff" : "#141414",
+                      }}
+                    />
+                  </Dropdown>
+                )}
               </div>
             </Header>
-            <Content style={balck_theme ? { backgroundColor: "#000000" } : {backgroundColor: "#e6e6e6ff"}}>
-              <Outlet />
+
+            <Content
+              style={
+                balck_theme
+                  ? { backgroundColor: "#000000" }
+                  : { backgroundColor: "#e6e6e6ff" }
+              }
+            >
+              <Outlet context={{ user, setUser }} />
             </Content>
           </Layout>
         </Layout>
-      </>}
+      )}
     </>
   );
 };

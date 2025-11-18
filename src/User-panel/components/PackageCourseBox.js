@@ -12,12 +12,7 @@ export default function PackageCourseBox(props) {
           <img
             alt="example"
             src={props.course_image}
-            onClick={() => {
-                localStorage.setItem("course_title", props.course_title);
-                Navigate("/chapters/" + props.id, {
-                  state: { title: props.course_title },
-                });
-              }}
+            onClick={() => Navigate("/unassign-course-details/" + props.id)}
             style={{
               width: "100%",
               height: "200px",
@@ -29,7 +24,7 @@ export default function PackageCourseBox(props) {
           />
         }
       >
-          <Card.Meta title={props.course_title} />
+          <Card.Meta title={ <span style={{ textTransform: "capitalize" }}>{props.course_title} </span>} />
        
       </Card>
     </div>

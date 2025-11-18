@@ -5,7 +5,6 @@ import {
   Card,
   Col,
   List,
-
   Pagination,
   Row,
   Spin,
@@ -16,13 +15,11 @@ import { LIST_COMMENT, ADD_COMMENT, VIEW_COURSE } from "../../apis/apis";
 import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import CustomRichTextEditor from "../../components/CustomTextEditor";
-import { FixTruncatedHTMLList } from "../../components/TruncatedHTML"
 
 function CourseDetails(props) {
   const { id } = useParams();
   const { notification, message } = App.useApp();
   const Navigate = useNavigate();
-
   const [page_loader, set_page_loader] = useState(true);
   const [card_loader, set_card_loader] = useState(true);
   const [image_loader, set_image_loader] = useState(false)
@@ -231,7 +228,7 @@ function CourseDetails(props) {
 
               </Col>
               <Col span={10}>
-                <h2>{course_data.title}</h2>
+                <h2 style={{textTransform: "capitalize"}}>{course_data.title}</h2>
                 <p>
                   <b style={{ color: "#e9c70ada" }}>Instructor:</b>{" "}
                   {course_data.instructor_display_name}
@@ -251,9 +248,6 @@ function CourseDetails(props) {
 
             <h3 style={{ color: "#e9c70ada" }}>Description</h3>
              <div dangerouslySetInnerHTML={{ __html: course_data.description }} />
-            <h3 style={{ color: "#e9c70ada" }}>How to use</h3>
-             <div dangerouslySetInnerHTML={{ __html: course_data.how_to_use }} />
-
             {/* 🔹 Comment Section */}
             <div style={{ marginTop: "30px" }} >
               <CustomRichTextEditor

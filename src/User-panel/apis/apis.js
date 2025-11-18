@@ -456,6 +456,25 @@ export const LIST_PACKAGE_COURSES = async (body) => {
     }
 };
 
+export const UNASSIGN_PACKAGE_COURSE_LIST = async (body) => {
+    try {
+        const response = await Axios.post('unassign-package-course-list/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const UNASSIGN_PACKAGE_CHAPTER_LIST = async (body) => {
+    try {
+        const response = await Axios.post('unassign-package-chapter-list/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
 export const ADD_QUIZ_ANSWER = async (body) => {
     try {
         const response = await Axios.post('add-quiz-answer/', body);
@@ -530,6 +549,16 @@ export const  VIEW_LIVE_TEST_DETAILS = async (body) => {
     }
 };
 
+
+
+export const  LIVE_TEST_SCORE = async (body) => {
+    try {
+        const response = await Axios.post('live-test-score/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
 
 
 
@@ -724,6 +753,7 @@ export const LIST_LIVE_TESTS= async (body) => {
         console.error(error);
     }
 };
+
 
 
 
