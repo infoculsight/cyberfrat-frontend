@@ -1037,3 +1037,51 @@ export const BULK_ASSIGN_LIVE_TEST= async (body) => {
         console.error(error);
     }
 };
+
+
+
+export const NEWS_LIST= async (body) => {
+    try {
+        const response = await Axios.post('news-list/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const ADD_NEWS = async (body) => {
+    try {
+        const response = await Axios.post('add-news/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const VIEW_NEWS = async (body) => {
+    try {
+        const response = await Axios.post('view-news/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const EDIT_NEWS = async (body) => {
+    try {
+        const response = await Axios.post('edit-news/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const NEWS_STATUS = async (body) => {
+    try {
+        const response = await Axios.post('news-status/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};

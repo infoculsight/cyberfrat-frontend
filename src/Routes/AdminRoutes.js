@@ -43,6 +43,9 @@ import EditLiveTest from "../Admin-panel/pages/livetest/EditLiveTest";
 import LiveTestQuestion from "../Admin-panel/pages/livetest/LiveTestQuestions";
 import LiveTestLearners from "../Admin-panel/pages/livetest/LiveTestLearners";
 import LearnerCourses from "../Admin-panel/pages/learners/LearnerCourses";
+import Announcment from "../Admin-panel/pages/announcment/Announcment";
+import AddAnnouncment from "../Admin-panel/pages/announcment/AddAnnouncment";
+import EditAnnouncment from "../Admin-panel/pages/announcment/EditAnnouncment";
 
 
 
@@ -94,6 +97,9 @@ function AdminRoutes() {
         </Route>
 
         <Route path="download" element={<Downloads />} />
+        <Route path="announcment/:page?" element={<Announcment />} />
+        <Route path="add-announcment/" element={<AddAnnouncment />} />
+        <Route path="edit-announcment/:id" element={<EditAnnouncment />} />
         <Route path="media" element={<ThemeMedia />} />
         <Route path="report" element={<Reports />} />
         <Route path="notification" element={<AdminNotification />} />

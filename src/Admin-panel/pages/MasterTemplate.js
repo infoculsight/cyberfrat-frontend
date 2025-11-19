@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
+  BellFilled,
   DashboardOutlined,
   DownloadOutlined,
   FileSearchOutlined,
@@ -65,7 +66,10 @@ const MasterTemplate = () => {
       '/notification': { selected: '13' },
       '/add-notification': { selected: '13', open: '13' },
       '/edit-notification': { selected: '13', open: '13' },
-      '/deleted-courses': { selected: '14', open: '5' }
+      '/deleted-courses': { selected: '14', open: '5' },
+      '/announcment': {selected: '15', open: '15'},
+      '/add-announcment':{selected:'15', open:'15'},
+      '/edit-announcment':{selected:'15', open:'15'},
     };
     const path = location.pathname;
     const match = pathToKey[path];
@@ -92,7 +96,8 @@ const MasterTemplate = () => {
       '11':'/live-test',
       '12': '/learners-group',
       '13': '/notification',
-      '14': '/deleted-courses'
+      '14': '/deleted-courses',
+      '15': '/announcment',
     };
 
     const route = keyToPath[key];
@@ -159,8 +164,10 @@ const MasterTemplate = () => {
                 },
                 { key: '8', icon: <ProfileFilled />, label: 'Media' },
                 { key: '9', icon: <FileSearchOutlined />, label: 'Report' },
-                { key: '13', icon: <NotificationOutlined />, label: 'Notification' },
                 { key: '10', icon: <DownloadOutlined />, label: 'Download' },
+                { key: '13', icon: <BellFilled />, label: 'Notification' },
+                { key: '15', icon: <NotificationOutlined />, label: 'Announcment' },
+       
                 { key: '50', icon: <UploadOutlined />, label: 'Logout' },
               ]}
             />
