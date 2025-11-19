@@ -101,6 +101,9 @@ function UserNotification() {
         case 'course_completion':
           path = '/courses/complete' + btoa(item?.meta?.id);
           break;
+        case 'package_assign':
+          path = 'packages/' + btoa(item?.meta?.id);
+          break;
         default:
           path = '/';
       }
@@ -167,7 +170,7 @@ function UserNotification() {
                   description={
                     <>
                       {item?.meta?.text}
-                      {['course_assign', 'course_update', 'course_expire', 'quiz_uploaded', 'certificate_issued', 'add_course_in_package', 'test_expire', 'result_declaration', 'test_submit', 'course_completion'].includes(item.notification_type) && (
+                      {['course_assign', 'course_update', 'course_expire', 'quiz_uploaded', 'certificate_issued', 'add_course_in_package', 'test_expire', 'result_declaration', 'test_submit', 'course_completion','package_assign'].includes(item.notification_type) && (
                         <Button
                           size='small'
                           type="primary"
