@@ -102,7 +102,7 @@ function UserNotification() {
           path = '/courses/complete' + btoa(item?.meta?.id);
           break;
         case 'package_assign':
-          path = 'packages/' + btoa(item?.meta?.id);
+          path = '/packages' + btoa(item?.meta?.id);
           break;
         default:
           path = '/';
