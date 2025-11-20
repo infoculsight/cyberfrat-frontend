@@ -8,11 +8,12 @@ import {
   message,
   Row,
   Upload,
+  Modal
 } from "antd";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import CulsightPageLoader from "../../../User-panel/components/CulsightPageLoader";
-import { EDIT_LEARNER, VIEW_PROFILE } from "../../apis/apis";
+import { EDIT_LEARNER, VIEW_PROFILE, RESET_PASSWORD } from "../../apis/apis";
 import { UploadOutlined } from "@ant-design/icons";
 import LmsCountryDropdown from "../../../User-panel/components/LmsCountryDropdown";
 
@@ -29,6 +30,15 @@ function Settings() {
   const [image_file, set_image_file] = useState(null);
   const [country_code, set_country_code] = useState("IN");
   const [imageError, setImageError] = useState("");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, set_error] = useState("");
+
+
 
   const getBase64 = (img, callback) => {
     const reader = new FileReader();
@@ -75,46 +85,46 @@ function Settings() {
     },
   };
 
-const fetchProfile = async () => {
-  setLoading(true);
-  const FORM_DATA = new FormData();
-  const EDIT_API_RESPONSE = await VIEW_PROFILE(FORM_DATA);
+  const fetchProfile = async () => {
+    setLoading(true);
+    const FORM_DATA = new FormData();
+    const EDIT_API_RESPONSE = await VIEW_PROFILE(FORM_DATA);
 
-  if (EDIT_API_RESPONSE?.data?.status) {
-    const response_data = EDIT_API_RESPONSE?.data?.data;
-    set_first_name(response_data?.first_name);
-    set_last_name(response_data?.last_name);
-    set_email(response_data?.email);
-    set_contact_no(parseInt(response_data?.contact_no));
-    set_country_code(response_data?.country_code);
-    set_image(response_data?.image || "");
+    if (EDIT_API_RESPONSE?.data?.status) {
+      const response_data = EDIT_API_RESPONSE?.data?.data;
+      set_first_name(response_data?.first_name);
+      set_last_name(response_data?.last_name);
+      set_email(response_data?.email);
+      set_contact_no(parseInt(response_data?.contact_no));
+      set_country_code(response_data?.country_code);
+      set_image(response_data?.image || "");
 
 
-    setUser((prev) => ({
-      ...prev,
-      user_info: {
-        ...prev?.user_info,
-        name: `${response_data?.first_name} ${response_data?.last_name}`,
-        email: response_data?.email,
-        image: response_data?.image,
-      },
-    }));
+      setUser((prev) => ({
+        ...prev,
+        user_info: {
+          ...prev?.user_info,
+          name: `${response_data?.first_name} ${response_data?.last_name}`,
+          email: response_data?.email,
+          image: response_data?.image,
+        },
+      }));
 
-    const updatedUser = {
-      ...user,
-      user_info: {
-        ...user?.user_info,
-        name: `${response_data?.first_name} ${response_data?.last_name}`,
-        email: response_data?.email,
-        image: response_data?.image,
-      },
-    };
+      const updatedUser = {
+        ...user,
+        user_info: {
+          ...user?.user_info,
+          name: `${response_data?.first_name} ${response_data?.last_name}`,
+          email: response_data?.email,
+          image: response_data?.image,
+        },
+      };
 
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-  }
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    }
 
-  setLoading(false);
-};
+    setLoading(false);
+  };
 
   useEffect(() => {
     fetchProfile();
@@ -163,6 +173,49 @@ const fetchProfile = async () => {
       setLoading(false);
     }
   };
+
+
+  const handlePasswordSubmit = async () => {
+    set_error(""); // clear old error
+
+    if (newPassword !== confirmPassword) {
+      set_error("New password and Confirm password do not match!");
+      return;
+    }
+
+    setPasswordLoading(true);
+
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("current_password", currentPassword);
+    FORM_DATA.append("new_password", newPassword);
+    FORM_DATA.append("confirm_password", confirmPassword);
+
+    try {
+      const response = await RESET_PASSWORD(FORM_DATA);
+
+      if (response?.data?.status) {
+        notification.success({
+          message: "Password Updated Successfully",
+          description: response?.data?.message,
+        });
+
+        // Reset fields
+        setIsModalOpen(false);
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        set_error("");
+      } else {
+        set_error(response?.data?.message);
+      }
+    } catch (err) {
+      set_error(err?.response?.data?.message);
+    }
+
+    setPasswordLoading(false);
+  };
+
+
 
   return (
     <div className="lms-body" style={{ padding: "10px" }}>
@@ -268,7 +321,10 @@ const fetchProfile = async () => {
                       </h2>
                     </Col>
                     <Col span={4}>
-                    <Button type="text">reset password</Button>
+                      <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                        Reset Password
+                      </Button>
+
                     </Col>
                   </Row>
 
@@ -332,6 +388,64 @@ const fetchProfile = async () => {
             </Card>
           </Col>
         </Row>
+        <Modal
+          title="Reset Password"
+          open={isModalOpen}
+          onCancel={() => {
+            setIsModalOpen(false);
+            set_error("");
+          }}
+          footer={null}
+        >
+          <Form layout="vertical" onFinish={handlePasswordSubmit}>
+
+            {/* Current Password */}
+            <Form.Item label="Current Password" >
+              <Input.Password
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+              {error && (
+                <p style={{ color: "red", marginTop: "5px" }}>{error}</p>
+              )}
+            </Form.Item>
+
+            {/* New Password */}
+            <Form.Item label="New Password" >
+              <Input.Password
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              {error && (
+                <p style={{ color: "red", marginTop: "5px" }}>{error}</p>
+              )}
+            </Form.Item>
+
+            {/* Confirm Password */}
+            <Form.Item label="Confirm Password" >
+              <Input.Password
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              {error && (
+                <p style={{ color: "red", marginTop: "5px" }}>{error}</p>
+              )}
+            </Form.Item>
+
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={passwordLoading}
+                style={{ width: "100%" }}
+              >
+                Update Password
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+
+
       </Card>
     </div>
   );
