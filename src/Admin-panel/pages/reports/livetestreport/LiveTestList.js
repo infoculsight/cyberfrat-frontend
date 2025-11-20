@@ -30,6 +30,8 @@ function LiveTestList() {
   const [pagination_loader, set_pagination_loader] = useState(false);
   const [model_row, set_model_row] = useState(null);
   const [search_query_value, set_search_query_value] = useState('');
+  const [page_size, set_page_size] = useState(10)
+  
 
   const showModal = (record) => {
     set_model_row(record)
@@ -86,7 +88,7 @@ function LiveTestList() {
       try {
         set_pagination_loader(true);
         const FORM_DATA = new FormData();
-
+        FORM_DATA.append("per_page", page_size);
         FORM_DATA.append('title', search_value);
         const API_CALL = await LIST_LIVE_TESTS(FORM_DATA);
         if (API_CALL?.data?.status) {
@@ -105,6 +107,7 @@ function LiveTestList() {
 
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
+    FORM_DATA.append("per_page", page_size);
     const API_CALL = await LIST_LIVE_TESTS(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_dataSource(API_CALL?.data?.data);
@@ -122,16 +125,18 @@ function LiveTestList() {
   }, []);
 
 
-  const pagination_on_change = async (data) => {
+  const pagination_on_change = async (page,size) => {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
-    FORM_DATA.append("page", data);
+    FORM_DATA.append("page", page);
     FORM_DATA.append('title', search_query_value);
+    FORM_DATA.append("per_page",size);
     const API_CALL = await LIST_LIVE_TESTS(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_dataSource(API_CALL?.data?.data);
       set_current_page(API_CALL?.data?.current_page);
       set_total_pages(API_CALL?.data?.total_pages);
+      set_pagination_loader(false);
     } else {
       set_pagination_loader(false);
     }
@@ -185,12 +190,27 @@ function LiveTestList() {
                 <>
                   <div style={{ float: "right", marginTop: "20px" }}>
                     {" "}
-                    <Pagination
-                      onChange={pagination_on_change}
-                      defaultCurrent={current_page}
-                      total={total_pages}
-                      pageSize={10}
-                    />
+                     <Pagination
+                                  current={current_page}
+                                  total={total_pages}
+                                  pageSize={page_size}
+                                  showSizeChanger
+                                  pageSizeOptions={['10', '20', '50', '100']}
+                                  onChange={pagination_on_change}
+                                  onShowSizeChange={(current, size) => {
+                                    set_page_size(size);
+                                    pagination_on_change(1, size);
+                                  }}
+                                  style={{ display: 'inline-block' }}
+                                  className="no-search-pagination"
+                                />
+                                <style>
+                                  {`
+                    .no-search-pagination .ant-select-selection-search-input {
+                      display: none !important;
+                    }
+                  `}
+                                </style>
                   </div>
                 </>
               ) : (

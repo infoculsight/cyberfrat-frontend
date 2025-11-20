@@ -20,11 +20,13 @@ const PackageReport = () => {
   const [total_pages, set_total_pages] = useState("");
   const [total_packages, set_total_packages] = useState("");
   const [search_query_title, set_search_query_title] = useState("");
+  const [page_size, set_page_size] = useState(10)
 
 
   useEffect(() => {
     const LIST_API = async () => {
       const FORM_DATA = new FormData();
+      FORM_DATA.append("per_page", page_size);
       const API_CALL = await PACKAGE_REPORT(FORM_DATA);
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.data);
@@ -40,10 +42,11 @@ const PackageReport = () => {
     LIST_API();
   }, []);
 
-  const pagination_on_change = async (data) => {
+  const pagination_on_change = async (page, size) => {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
-    FORM_DATA.append("page", data);
+    FORM_DATA.append("page", page);
+    FORM_DATA.append("per_page", size);
     FORM_DATA.append("name", search_query_title);
     const API_CALL = await PACKAGE_REPORT(FORM_DATA);
     if (API_CALL?.data?.status) {
@@ -64,6 +67,7 @@ const PackageReport = () => {
         set_search_query_title(value);
         set_pagination_loader(true);
         const FORM_DATA = new FormData();
+        FORM_DATA.append("per_page", page_size);
         FORM_DATA.append("name", value);
         const API_CALL = await PACKAGE_REPORT(FORM_DATA);
         if (API_CALL?.data?.status) {
@@ -79,7 +83,7 @@ const PackageReport = () => {
         console.error("API Error:", err);
       }
     }, 500)(); // Call debounce immediately
-  }, []);
+  }, [page_size]);
 
   const handleInput = (e) => {
     const value = e.target.value;
@@ -126,46 +130,46 @@ const PackageReport = () => {
       key: "action",
       render: (_, record) => (
         <>
-        <Button type="primary" size="small" onClick={() =>
-          navigate("/package-courses/" + btoa(record.package_id), {
-            state: { from: "/report/package-report" },
-          })
-        }><EyeFilled /></Button>
-        <Button style={{marginLeft:"5px"}} color="green" variant="solid" size="small" onClick={() => GET_DOWNLOAD_REPORT_ACTION(record.package_id)}><DownloadOutlined /></Button></>
+          <Button type="primary" size="small" onClick={() =>
+            navigate("/package-courses/" + btoa(record.package_id), {
+              state: { from: "/report/package-report" },
+            })
+          }><EyeFilled /></Button>
+          <Button style={{ marginLeft: "5px" }} color="green" variant="solid" size="small" onClick={() => GET_DOWNLOAD_REPORT_ACTION(record.package_id)}><DownloadOutlined /></Button></>
 
       ),
     },
   ];
 
-    //   const GET_DOWNLOAD_REPORT_ACTION = async (package_id) => {
-    //   const FORM_DATA = new FormData();
-    //   FORM_DATA.append("package_id", package_id);
-    //   const API_CALL = await DOWNLOAD_PACKAGE_REPORT(FORM_DATA);
-    //   if (API_CALL?.data?.status) {
-    //         window.location= API_CALL?.data?.url
-    //   } else {
-    //     console.log("error");
-    //     setLoader(false);
-    //   }
-    // };
-  
+  //   const GET_DOWNLOAD_REPORT_ACTION = async (package_id) => {
+  //   const FORM_DATA = new FormData();
+  //   FORM_DATA.append("package_id", package_id);
+  //   const API_CALL = await DOWNLOAD_PACKAGE_REPORT(FORM_DATA);
+  //   if (API_CALL?.data?.status) {
+  //         window.location= API_CALL?.data?.url
+  //   } else {
+  //     console.log("error");
+  //     setLoader(false);
+  //   }
+  // };
 
-    const GET_DOWNLOAD_REPORT_ACTION = async (package_id) => {
-          const FORM_DATA = new FormData();
-           FORM_DATA.append("package_id", package_id);
-          
-          const API_CALL = await DOWNLOAD_PACKAGE_REPORT(FORM_DATA);
-          if (API_CALL?.data?.status) {
-            notification.success({
-                     message: "Successful",
-                     description: "Check the Download tab for your report",
-                   });
-          } else {
-            console.log("error");
-            setLoader(false);
-          }
-        };
-    
+
+  const GET_DOWNLOAD_REPORT_ACTION = async (package_id) => {
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("package_id", package_id);
+
+    const API_CALL = await DOWNLOAD_PACKAGE_REPORT(FORM_DATA);
+    if (API_CALL?.data?.status) {
+      notification.success({
+        message: "Successful",
+        description: "Check the Download tab for your report",
+      });
+    } else {
+      console.log("error");
+      setLoader(false);
+    }
+  };
+
 
   return (
 
@@ -212,11 +216,26 @@ const PackageReport = () => {
               <div style={{ float: "right", marginTop: "20px" }}>
                 {" "}
                 <Pagination
-                  onChange={pagination_on_change}
-                  defaultCurrent={current_page}
+                  current={current_page}
                   total={total_packages}
-                  pageSize={10}
+                  pageSize={page_size}
+                  showSizeChanger
+                  pageSizeOptions={['10', '20', '50', '100']}
+                  onChange={pagination_on_change}
+                  onShowSizeChange={(current, size) => {
+                    set_page_size(size);
+                    pagination_on_change(1, size);
+                  }}
+                  style={{ display: 'inline-block' }}
+                  className="no-search-pagination"
                 />
+                <style>
+                  {`
+    .no-search-pagination .ant-select-selection-search-input {
+      display: none !important;
+    }
+  `}
+                </style>
               </div>
             </>
           ) : (
