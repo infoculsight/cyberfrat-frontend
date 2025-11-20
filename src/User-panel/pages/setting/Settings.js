@@ -247,7 +247,7 @@ const fetchProfile = async () => {
                       xs={24}
                       sm={16}
                       md={18}
-                      lg={20}
+                      lg={16}
                       style={{
                         textAlign: "left",
                         display: "flex",
@@ -266,6 +266,9 @@ const fetchProfile = async () => {
                       >
                         {first_name} {last_name}
                       </h2>
+                    </Col>
+                    <Col span={4}>
+                    <Button type="text">reset password</Button>
                     </Col>
                   </Row>
 
