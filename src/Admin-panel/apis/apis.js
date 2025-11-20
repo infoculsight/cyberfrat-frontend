@@ -1085,3 +1085,12 @@ export const NEWS_STATUS = async (body) => {
         console.error(error);
     }
 };
+
+export const DELETE_NEWS = async (body) => {
+    try {
+        const response = await Axios.post('delete-news/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
