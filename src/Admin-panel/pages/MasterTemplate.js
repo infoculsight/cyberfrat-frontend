@@ -174,7 +174,7 @@ const MasterTemplate = () => {
           </Sider>
           <Layout>
             <Header
-              style={{
+              style={{    
                 padding: '0',
                 backgroundColor: '#141414',
               }}
