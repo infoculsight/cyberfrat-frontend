@@ -166,7 +166,7 @@ const MasterTemplate = () => {
                 { key: '9', icon: <FileSearchOutlined />, label: 'Report' },
                 { key: '10', icon: <DownloadOutlined />, label: 'Download' },
                 { key: '13', icon: <BellFilled />, label: 'Notification' },
-                { key: '15', icon: <NotificationOutlined />, label: 'Announcment' },
+                { key: '15', icon: <NotificationOutlined />, label: 'Announcement' },
        
                 { key: '50', icon: <UploadOutlined />, label: 'Logout' },
               ]}

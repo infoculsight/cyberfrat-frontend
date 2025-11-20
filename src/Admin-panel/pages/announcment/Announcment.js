@@ -23,6 +23,7 @@ function Announcment() {
 
 
     const LIST_API = async () => {
+      setLoader(true)
         const FORM_DATA = new FormData();
         FORM_DATA.append("per_page", page_size);
         const API_CALL = await NEWS_LIST(FORM_DATA);
@@ -185,7 +186,7 @@ function Announcment() {
             <Card>
                 <Row>
                     <Col span={12}>
-                    <h2>Announcment</h2> 
+                    <h2>Announcement</h2> 
                     </Col>
                     <Col span={12}>
                         <Button type='primary' style={{ float: "right" }} onClick={() => navigate('/add-announcment')}>  Add Announcment</Button>

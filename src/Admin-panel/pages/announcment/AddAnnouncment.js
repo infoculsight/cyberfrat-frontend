@@ -105,7 +105,8 @@ function AddAnnouncment() {
     return (
         <div className='lms-body'>
             <Card>
-                <h2>Add Announcement</h2>
+                <span>
+                    <h2> <LeftOutlined style={{ cursor: "pointer" }} onClick={() => navigate('/announcment')} />Add Announcement</h2></span>
                 <Form
                     form={form}
                     layout="vertical"
