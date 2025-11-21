@@ -1,17 +1,13 @@
 
-
-
-
-import React, { useEffect, useState } from "react";
 import "../../assests/Login.css"
-import { Button, Spin } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone, InfoCircleOutlined, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
+import { Button } from "antd";
+import { InfoCircleOutlined, CopyrightOutlined } from "@ant-design/icons";
 import Logo from "../../assests/CFGold_Logo.png"
-import { Link, useNavigate, } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 const ResetPasswordMessage = () => {
-  const Navigate = useNavigate();
+
     return (
         <>
             <div className="login-wapper">

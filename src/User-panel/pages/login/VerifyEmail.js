@@ -19,7 +19,7 @@ const VerifyEmail = () => {
     const Navigate = useNavigate();
     const [form_hidden, set_form_hidden] = useState(false);
 
-
+   useEffect(() => {
     const EMAIL_VERIFY_API = async () => {
         const FORM_DATA = new FormData();
         FORM_DATA.append("token", token);
@@ -37,9 +37,9 @@ const VerifyEmail = () => {
             setLoader(false);
         }
     };
-    useEffect(() => {
+ 
         EMAIL_VERIFY_API()
-    }, [])
+    }, [token])
 
     return (
         <>

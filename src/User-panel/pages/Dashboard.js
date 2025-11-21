@@ -1,9 +1,9 @@
-import { Avatar, Button, Card, Col, Progress, Row, Table } from "antd";
-import React, { useEffect, useState } from "react";
+import { Button, Card, Col, Progress, Row, Table } from "antd";
+import { useEffect, useState } from "react";
 import { LEANER_WATCHTIME, LEARNER_DASHBOARD } from "../apis/apis";
 import { useNavigate } from "react-router-dom";
 import CulsightPageLoader from "../components/CulsightPageLoader";
-import "./Dashboard.css"; // ✅ Import responsive CSS
+import "./Dashboard.css"; 
 
 function Dashboard() {
   const navigate = useNavigate();

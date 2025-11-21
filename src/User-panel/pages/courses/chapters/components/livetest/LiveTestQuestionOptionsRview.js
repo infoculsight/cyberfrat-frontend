@@ -1,12 +1,11 @@
-// QuizTestQuestionOptions.jsx
-import React, { useEffect } from 'react';
+
 import { List, Radio, Checkbox, Space, Typography } from 'antd';
-import { ADD_LIVE_TEST_ANSWERS } from '../../../../../apis/apis';
+
 
 const { Text } = Typography;
 
 const LiveTestQuestionOptionsRview = (props) => {
-  const { options, setOptions, optionChoice, live_test_id, question_id, option_details } = props;
+  const { options, optionChoice } = props;
   
   //
 const selectedIndex = options.findIndex((option) => option.value === true);

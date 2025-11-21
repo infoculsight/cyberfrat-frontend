@@ -8,17 +8,20 @@ import {
   message,
   Row,
   Upload,
+  Modal
 } from "antd";
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import CulsightPageLoader from "../../../User-panel/components/CulsightPageLoader";
-import { EDIT_LEARNER, VIEW_PROFILE } from "../../apis/apis";
+import { EDIT_LEARNER, VIEW_PROFILE, RESET_PASSWORD } from "../../apis/apis";
 import { UploadOutlined } from "@ant-design/icons";
 import LmsCountryDropdown from "../../../User-panel/components/LmsCountryDropdown";
+import { logout } from "../../../authService";
 
 function Settings() {
   const { user, setUser } = useOutletContext();
   const { notification } = App.useApp();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [first_name, set_first_name] = useState("");
@@ -29,6 +32,17 @@ function Settings() {
   const [image_file, set_image_file] = useState(null);
   const [country_code, set_country_code] = useState("IN");
   const [imageError, setImageError] = useState("");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, set_error] = useState({
+    current_password: "",
+    new_password: "",
+    confirm_password: ""
+  });
 
   const getBase64 = (img, callback) => {
     const reader = new FileReader();
@@ -75,46 +89,45 @@ function Settings() {
     },
   };
 
-const fetchProfile = async () => {
-  setLoading(true);
-  const FORM_DATA = new FormData();
-  const EDIT_API_RESPONSE = await VIEW_PROFILE(FORM_DATA);
+  const fetchProfile = async () => {
+    setLoading(true);
+    const FORM_DATA = new FormData();
+    const EDIT_API_RESPONSE = await VIEW_PROFILE(FORM_DATA);
 
-  if (EDIT_API_RESPONSE?.data?.status) {
-    const response_data = EDIT_API_RESPONSE?.data?.data;
-    set_first_name(response_data?.first_name);
-    set_last_name(response_data?.last_name);
-    set_email(response_data?.email);
-    set_contact_no(parseInt(response_data?.contact_no));
-    set_country_code(response_data?.country_code);
-    set_image(response_data?.image || "");
+    if (EDIT_API_RESPONSE?.data?.status) {
+      const response_data = EDIT_API_RESPONSE?.data?.data;
+      set_first_name(response_data?.first_name);
+      set_last_name(response_data?.last_name);
+      set_email(response_data?.email);
+      set_contact_no(parseInt(response_data?.contact_no));
+      set_country_code(response_data?.country_code);
+      set_image(response_data?.image || "");
 
+      setUser((prev) => ({
+        ...prev,
+        user_info: {
+          ...prev?.user_info,
+          name: `${response_data?.first_name} ${response_data?.last_name}`,
+          email: response_data?.email,
+          image: response_data?.image,
+        },
+      }));
 
-    setUser((prev) => ({
-      ...prev,
-      user_info: {
-        ...prev?.user_info,
-        name: `${response_data?.first_name} ${response_data?.last_name}`,
-        email: response_data?.email,
-        image: response_data?.image,
-      },
-    }));
+      const updatedUser = {
+        ...user,
+        user_info: {
+          ...user?.user_info,
+          name: `${response_data?.first_name} ${response_data?.last_name}`,
+          email: response_data?.email,
+          image: response_data?.image,
+        },
+      };
 
-    const updatedUser = {
-      ...user,
-      user_info: {
-        ...user?.user_info,
-        name: `${response_data?.first_name} ${response_data?.last_name}`,
-        email: response_data?.email,
-        image: response_data?.image,
-      },
-    };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    }
 
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-  }
-
-  setLoading(false);
-};
+    setLoading(false);
+  };
 
   useEffect(() => {
     fetchProfile();
@@ -154,6 +167,11 @@ const fetchProfile = async () => {
         };
         localStorage.setItem("user", JSON.stringify(updatedUser));
       } else {
+        const backendError = response?.data?.message || "Something went wrong!";
+        notification.error({
+          message: "Error",
+          description: backendError,
+        });
         setLoading(false);
       }
     } catch (error) {
@@ -162,6 +180,80 @@ const fetchProfile = async () => {
       );
       setLoading(false);
     }
+  };
+
+  const handlePasswordSubmit = async () => {
+    // Clear previous errors
+    set_error({ current_password: "", new_password: "", confirm_password: "" });
+
+    if (newPassword !== confirmPassword) {
+      const msg = "New password and Confirm password do not match!";
+      set_error({ ...error, confirm_password: msg });
+
+      notification.error({
+        message: "Error",
+        description: msg,
+      });
+      return;
+    }
+
+    setPasswordLoading(true);
+
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("email", email);
+    FORM_DATA.append("current_password", currentPassword);
+    FORM_DATA.append("new_password", newPassword);
+    FORM_DATA.append("confirm_password", confirmPassword);
+
+    try {
+      const response = await RESET_PASSWORD(FORM_DATA);
+
+      if (response?.data?.status) {
+        notification.success({
+          message: "Password Updated Successfully",
+          description: "Your password has been updated. Please login again.",
+        });
+
+        setIsModalOpen(false);
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        set_error({ current_password: "", new_password: "", confirm_password: "" });
+
+        logout();
+      } else {
+        const errors = response?.data?.errors;
+        if (errors) {
+          set_error({
+            current_password: errors.current_password || "",
+            new_password: errors.new_password || "",
+            confirm_password: errors.confirm_password || "",
+          });
+
+          const errorMsg = Object.values(errors).join(" | ");
+          notification.error({
+            message: "Error",
+            description: errorMsg,
+          });
+        } else {
+          const backendError = response?.data?.message || "Something went wrong!";
+          notification.error({
+            message: "Error",
+            description: backendError,
+          });
+        }
+      }
+    } catch (err) {
+      const backendError =
+        err?.response?.data?.message || "Server error! Please try again.";
+
+      notification.error({
+        message: "Error",
+        description: backendError,
+      });
+    }
+
+    setPasswordLoading(false);
   };
 
   return (
@@ -174,26 +266,17 @@ const fetchProfile = async () => {
                 <CulsightPageLoader />
               ) : (
                 <>
-                  {/* Profile Header Section */}
                   <Row
                     gutter={[16, 16]}
                     align="middle"
-                    style={{
-                      flexWrap: "wrap",
-                      textAlign: "center",
-                    }}
+                    style={{ flexWrap: "wrap", textAlign: "center" }}
                   >
-                    {/* Profile Image + Upload Button */}
                     <Col
                       xs={24}
                       sm={8}
                       md={6}
                       lg={4}
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
+                      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
                     >
                       {image ? (
                         <img
@@ -216,38 +299,25 @@ const fetchProfile = async () => {
                             borderRadius: "50%",
                             marginBottom: "10px",
                           }}
-                        ></div>
+                        />
                       )}
 
                       <Upload {...props}>
-                        <Button
-                          icon={<UploadOutlined />}
-                          type="default"
-                          size="small"
-                        >
+                        <Button icon={<UploadOutlined />} type="default" size="small">
                           Upload Photo
                         </Button>
                       </Upload>
-                      {imageError && (
-                        <p style={{ color: "red", marginTop: 6 }}>{imageError}</p>
-                      )}
-                      <span
-                        style={{
-                          color: "gray",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                        }}
-                      >
+                      {imageError && <p style={{ color: "red", marginTop: 6 }}>{imageError}</p>}
+                      <span style={{ color: "gray", fontSize: "12px", marginTop: "4px" }}>
                         Max 500KB • JPG/PNG
                       </span>
                     </Col>
 
-                    {/* Name Section */}
                     <Col
                       xs={24}
                       sm={16}
                       md={18}
-                      lg={20}
+                      lg={16}
                       style={{
                         textAlign: "left",
                         display: "flex",
@@ -256,44 +326,30 @@ const fetchProfile = async () => {
                         alignItems: "flex-start",
                       }}
                     >
-                      <h2
-                        style={{
-                          marginTop: "0px",
-                          fontSize: "20px",
-                          textAlign: "left",
-                          marginLeft: "20px"
-                        }}
-                      >
+                      <h2 style={{ marginTop: "0px", fontSize: "20px", textAlign: "left", marginLeft: "20px" }}>
                         {first_name} {last_name}
                       </h2>
+                    </Col>
+
+                    <Col span={4}>
+                      <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                        Reset Password
+                      </Button>
                     </Col>
                   </Row>
 
                   <hr style={{ margin: "20px 0" }} />
 
-                  {/* Form Section */}
-                  <Form
-                    layout="vertical"
-                    autoComplete="off"
-                    onFinish={onFinish}
-                    form={form}
-                    validateTrigger="onSubmit"
-                  >
+                  <Form layout="vertical" autoComplete="off" onFinish={onFinish} form={form} validateTrigger="onSubmit">
                     <Row gutter={[16, 16]}>
                       <Col xs={24} sm={12}>
                         <Form.Item label="First Name">
-                          <Input
-                            value={first_name}
-                            onChange={(e) => set_first_name(e.target.value)}
-                          />
+                          <Input value={first_name} onChange={(e) => set_first_name(e.target.value)} />
                         </Form.Item>
                       </Col>
                       <Col xs={24} sm={12}>
                         <Form.Item label="Last Name">
-                          <Input
-                            value={last_name}
-                            onChange={(e) => set_last_name(e.target.value)}
-                          />
+                          <Input value={last_name} onChange={(e) => set_last_name(e.target.value)} />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -312,14 +368,7 @@ const fetchProfile = async () => {
                     </Form.Item>
 
                     <Form.Item style={{ textAlign: "center" }}>
-                      <Button
-                        type="primary"
-                        htmlType="submit"
-                        style={{
-                          width: "160px",
-                          fontWeight: "bold",
-                        }}
-                      >
+                      <Button type="primary" htmlType="submit" style={{ width: "160px", fontWeight: "bold" }}>
                         Save Changes
                       </Button>
                     </Form.Item>
@@ -329,6 +378,42 @@ const fetchProfile = async () => {
             </Card>
           </Col>
         </Row>
+
+        <Modal
+          title="Reset Password"
+          open={isModalOpen}
+          onCancel={() => {
+            setIsModalOpen(false);
+            set_error({ current_password: "", new_password: "", confirm_password: "" });
+            setCurrentPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+          }}
+          footer={null}
+        >
+          <Form layout="vertical" onFinish={handlePasswordSubmit}>
+            <Form.Item label="Current Password">
+              <Input.Password value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+              {error.current_password && <p style={{ color: "red" }}>{error.current_password}</p>}
+            </Form.Item>
+
+            <Form.Item label="New Password">
+              <Input.Password value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+              {error.new_password && <p style={{ color: "red" }}>{error.new_password}</p>}
+            </Form.Item>
+
+            <Form.Item label="Confirm Password">
+              <Input.Password value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+              {error.confirm_password && <p style={{ color: "red" }}>{error.confirm_password}</p>}
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={passwordLoading} style={{ width: "100%" }}>
+                Update Password
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
       </Card>
     </div>
   );
