@@ -123,11 +123,11 @@ const MasterTemplate = () => {
       icon: <AccountBookOutlined />,
       label: "My Packages",
     },
-    {
-      key: "4",
-      icon: <AccountBookOutlined />,
-      label: "All Packages",
-    },
+    // {
+    //   key: "4",
+    //   icon: <AccountBookOutlined />,
+    //   label: "All Packages",
+    // },
     {
       key: "8",
       icon: <SnippetsOutlined />,
