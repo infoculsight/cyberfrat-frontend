@@ -61,6 +61,7 @@ function PackageLeaners(props) {
 
   const handleCancel = () => {
     set_is_model_open(false);
+    set_file([])
   };
 
   const beforeUpload = (file) => {

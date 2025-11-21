@@ -35,7 +35,7 @@ const QuizReport = () => {
       }
     };
     LIST_API();
-  }, []);
+  }, [page_size]);
 
   // Pagination change
   const pagination_on_change = async (page, size) => {

@@ -1,4 +1,4 @@
-import  { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Table, Button, Row, Col, Input, Pagination, Spin, App } from "antd";
 import { useNavigate } from "react-router-dom";
 import { COURSE_REPORT, DOWNLOAD_REPORT } from "../../../apis/apis";
@@ -10,7 +10,7 @@ import { DownloadOutlined, EyeFilled, LoadingOutlined, } from "@ant-design/icons
 
 
 const CourseReport = () => {
-const { notification } = App.useApp();
+  const { notification } = App.useApp();
 
   const navigate = useNavigate();
   const [loader, setLoader] = useState(true);
@@ -21,7 +21,7 @@ const { notification } = App.useApp();
   const [total_courses, set_total_courses] = useState("");
   const [search_query_title, set_search_query_title] = useState("");
   const [download_button, set_download_button] = useState(true);
-  const [page_size,set_page_size] = useState(10)
+  const [page_size, set_page_size] = useState(10)
 
 
   useEffect(() => {
@@ -41,76 +41,76 @@ const { notification } = App.useApp();
       }
     };
     LIST_API();
-  }, []);
+  }, [page_size]);
 
 
-const DOWNLOAD_REPORT_ACTION = async (course_id) => {
+  const DOWNLOAD_REPORT_ACTION = async (course_id) => {
     set_download_button(false); // disable button
 
-      const FORM_DATA = new FormData();
-       FORM_DATA.append("course_id", course_id);
-      
-      const API_CALL = await DOWNLOAD_REPORT(FORM_DATA);
-      if (API_CALL?.data?.status) {
-        notification.success({
-                 message: "Successful",
-                 description: "Check the Download tab for your report",
-               });
-                 set_download_button(true);
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("course_id", course_id);
 
-      } else {
-        console.log("error");
-        setLoader(false);
-      }
-    };
+    const API_CALL = await DOWNLOAD_REPORT(FORM_DATA);
+    if (API_CALL?.data?.status) {
+      notification.success({
+        message: "Successful",
+        description: "Check the Download tab for your report",
+      });
+      set_download_button(true);
 
-    
-const pagination_on_change = async (page, size) => {
-  set_pagination_loader(true);
-  const FORM_DATA = new FormData();
-  FORM_DATA.append("page", page);
-  FORM_DATA.append("per_page", size);
-  FORM_DATA.append("title", search_query_title);
+    } else {
+      console.log("error");
+      setLoader(false);
+    }
+  };
 
-  const API_CALL = await COURSE_REPORT(FORM_DATA);
-  if (API_CALL?.data?.status) {
-    set_table_data(API_CALL.data?.data);
-    set_current_page(API_CALL?.data?.current_page);
-    set_total_pages(API_CALL?.data?.total_pages);
-    set_total_courses(API_CALL?.data?.total_courses);
-  }
-  set_pagination_loader(false);
-};
 
-  
-    const fetchResultsTitle = useCallback((value) => {
-      debounce(async () => {
-        try {
-          set_search_query_title(value);
-          set_pagination_loader(true);
-          const FORM_DATA = new FormData();
-          FORM_DATA.append("per_page", page_size);
-          FORM_DATA.append("title", value);
-          const API_CALL = await COURSE_REPORT(FORM_DATA);
-          if (API_CALL?.data?.status) {
-            set_table_data(API_CALL.data?.data);
-            set_current_page(API_CALL?.data?.current_page);
-            set_total_pages(API_CALL?.data?.total_pages);
-            set_total_courses(API_CALL?.data?.total_courses);
-            set_pagination_loader(false);
-          } else {
-            set_pagination_loader(false);
-          }
-        } catch (err) {
-          console.error("API Error:", err);
+  const pagination_on_change = async (page, size) => {
+    set_pagination_loader(true);
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("page", page);
+    FORM_DATA.append("per_page", size);
+    FORM_DATA.append("title", search_query_title);
+
+    const API_CALL = await COURSE_REPORT(FORM_DATA);
+    if (API_CALL?.data?.status) {
+      set_table_data(API_CALL.data?.data);
+      set_current_page(API_CALL?.data?.current_page);
+      set_total_pages(API_CALL?.data?.total_pages);
+      set_total_courses(API_CALL?.data?.total_courses);
+    }
+    set_pagination_loader(false);
+  };
+
+
+  const fetchResultsTitle = useCallback((value) => {
+    debounce(async () => {
+      try {
+        set_search_query_title(value);
+        set_pagination_loader(true);
+        const FORM_DATA = new FormData();
+        FORM_DATA.append("per_page", page_size);
+        FORM_DATA.append("title", value);
+        const API_CALL = await COURSE_REPORT(FORM_DATA);
+        if (API_CALL?.data?.status) {
+          set_table_data(API_CALL.data?.data);
+          set_current_page(API_CALL?.data?.current_page);
+          set_total_pages(API_CALL?.data?.total_pages);
+          set_total_courses(API_CALL?.data?.total_courses);
+          set_pagination_loader(false);
+        } else {
+          set_pagination_loader(false);
         }
-      }, 500)(); // Call debounce immediately
-    }, [page_size]);
-  
-    const handleInput = (e) => {
-      const value = e.target.value;
-      fetchResultsTitle(value);
-    };
+      } catch (err) {
+        console.error("API Error:", err);
+      }
+    }, 500)(); // Call debounce immediately
+  }, [page_size]);
+
+  const handleInput = (e) => {
+    const value = e.target.value;
+    fetchResultsTitle(value);
+  };
 
   const columns = [
     {
@@ -127,7 +127,7 @@ const pagination_on_change = async (page, size) => {
       dataIndex: "course_name",
       render: (text, record) => <span>{record.course_name}</span>,
     },
-        {
+    {
       title: "Completion Rate",
       render: (text, record) => <span>{record.completion_rate}</span>,
     },
@@ -141,18 +141,18 @@ const pagination_on_change = async (page, size) => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-      <>
-        <Button size="small" variant="solid" color="blue" onClick={() =>
-          navigate(`/course-learners/${btoa(record.course_id)}`, {
-            state: { title: record.course_name, from: "/report/course-report" },
-          })
-        }><EyeFilled /></Button>
-        {download_button ? <>
-        <Button  size="small" style={{marginLeft:"10px"}} variant="solid" color="green" onClick={() =>DOWNLOAD_REPORT_ACTION(record.course_id)}><DownloadOutlined /></Button>
-        </> : <>
-        <Button style={{marginLeft:"10px"}} size="small" variant="solid" color="green" disabled><DownloadOutlined /></Button>
-        </>}
-      </>
+        <>
+          <Button size="small" variant="solid" color="blue" onClick={() =>
+            navigate(`/course-learners/${btoa(record.course_id)}`, {
+              state: { title: record.course_name, from: "/report/course-report" },
+            })
+          }><EyeFilled /></Button>
+          {download_button ? <>
+            <Button size="small" style={{ marginLeft: "10px" }} variant="solid" color="green" onClick={() => DOWNLOAD_REPORT_ACTION(record.course_id)}><DownloadOutlined /></Button>
+          </> : <>
+            <Button style={{ marginLeft: "10px" }} size="small" variant="solid" color="green" disabled><DownloadOutlined /></Button>
+          </>}
+        </>
 
       ),
     },
@@ -174,61 +174,61 @@ const pagination_on_change = async (page, size) => {
         </Col>
       </Row>
 
-            {loader ? (
-          <>
-            <CulsightPageLoader />
-          </>
-        ) : (
-          <>
-            {pagination_loader ? (
-              <>
-                <div style={{ textAlign: "center", padding: "60px" }}>
-                  <Spin indicator={<LoadingOutlined spin />} size="large" />
-                </div>
-              </>
-            ) : (
-              <>
-                <Table
-                  columns={columns}
-                  pagination={false}
-                  dataSource={table_data}
-                  style={{ marginTop: "15px" }}
-                />
-              </>
-            )}
+      {loader ? (
+        <>
+          <CulsightPageLoader />
+        </>
+      ) : (
+        <>
+          {pagination_loader ? (
+            <>
+              <div style={{ textAlign: "center", padding: "60px" }}>
+                <Spin indicator={<LoadingOutlined spin />} size="large" />
+              </div>
+            </>
+          ) : (
+            <>
+              <Table
+                columns={columns}
+                pagination={false}
+                dataSource={table_data}
+                style={{ marginTop: "15px" }}
+              />
+            </>
+          )}
 
-            {total_pages > 0 ? (
-              <>
-                <div style={{ float: "right", marginTop: "20px" }}>
-                  {" "}
-              <Pagination
-                    current={current_page}
-                    total={total_courses}
-                    pageSize={page_size}
-                    showSizeChanger
-                    pageSizeOptions={['10', '20', '50', '100']}
-                    onChange={pagination_on_change}
-                    onShowSizeChange={(current, size) => {
-                      set_page_size(size);
-                      pagination_on_change(1, size);
-                    }}
-                    style={{ display: 'inline-block' }}
-                    className="no-search-pagination"
-                  />
-                  <style>
-                    {`
+          {total_pages > 0 ? (
+            <>
+              <div style={{ float: "right", marginTop: "20px" }}>
+                {" "}
+                <Pagination
+                  current={current_page}
+                  total={total_courses}
+                  pageSize={page_size}
+                  showSizeChanger
+                  pageSizeOptions={['10', '20', '50', '100']}
+                  onChange={pagination_on_change}
+                  onShowSizeChange={(current, size) => {
+                    set_page_size(size);
+                    pagination_on_change(1, size);
+                  }}
+                  style={{ display: 'inline-block' }}
+                  className="no-search-pagination"
+                />
+                <style>
+                  {`
     .no-search-pagination .ant-select-selection-search-input {
       display: none !important;
     }
   `}
-                  </style>
-                </div>
-              </>
-            ) : (
-             ""
-            )}
-          </>
-        )}
+                </style>
+              </div>
+            </>
+          ) : (
+            ""
+          )}
+        </>
+      )}
 
     </div>
   );

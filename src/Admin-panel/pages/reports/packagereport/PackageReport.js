@@ -40,7 +40,7 @@ const PackageReport = () => {
       }
     };
     LIST_API();
-  }, []);
+  }, [page_size]);
 
   const pagination_on_change = async (page, size) => {
     set_pagination_loader(true);

@@ -25,9 +25,12 @@ function Downloads() {
   const [current_page, set_current_page] = useState(1);
   const [total_pages, set_total_pages] = useState(0);
   const [search_query_title, set_search_query_title] = useState("");
+  const [page_size, set_page_size] = useState(10)
 
-  const LIST_API = async () => {
+
+  const LIST_API = async (page = 1, perPage = page_size) => {
     const FORM_DATA = new FormData();
+    FORM_DATA.append("per_page", perPage);
     const API_CALL = await LIST_DOWNLOAD_REPORT(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.data);
@@ -114,10 +117,11 @@ function Downloads() {
     },
   ];
 
-  const pagination_on_change = async (data) => {
+  const pagination_on_change = async (page , size) => {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
-    FORM_DATA.append("page", data);
+    FORM_DATA.append("page", page );
+    FORM_DATA.append("per_page",size)
     const API_CALL = await LIST_DOWNLOAD_REPORT(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.data);
@@ -138,7 +142,7 @@ function Downloads() {
         set_current_page(1);
         set_pagination_loader(true);
         const FORM_DATA = new FormData();
-
+        FORM_DATA.append("per_page", page_size);
         FORM_DATA.append("title", value);
         const API_CALL = await LIST_DOWNLOAD_REPORT(FORM_DATA);
         if (API_CALL?.data?.status) {
@@ -153,12 +157,16 @@ function Downloads() {
         console.error("API Error:", err);
       }
     }, 500)(); // Call debounce immediately
-  }, []);
+  }, [page_size]);
 
-  const handleInput = (e) => {
-    const value = e.target.value;
+const handleInput = (e) => {
+  const value = e.target.value;
+  if (!value) {
+    LIST_API(1, page_size); // force current page_size
+  } else {
     fetchResultsTitle(value);
-  };
+  }
+};
 
   return (
     <div className="lms-body">
@@ -199,11 +207,26 @@ function Downloads() {
             {total_pages > 0 ? (
               <div style={{ float: "right", marginTop: "20px" }}>
                 <Pagination
-                current={current_page}
+                  current={current_page}
+                  total={total_pages * page_size}
+                  pageSize={page_size}
+                  showSizeChanger
+                  pageSizeOptions={['10', '20', '50', '100']}
                   onChange={pagination_on_change}
-                  total={total_pages * 10} 
-                  pageSize={10}
+                  onShowSizeChange={(current, size) => {
+                    set_page_size(size);
+                    pagination_on_change(1, size);
+                  }}
+                  style={{ display: 'inline-block' }}
+                  className="no-search-pagination"
                 />
+                <style>
+                  {`
+    .no-search-pagination .ant-select-selection-search-input {
+      display: none !important;
+    }
+  `}
+                </style>
               </div>
             ) : (
               <div style={{ textAlign: "center", color: "red" }}>

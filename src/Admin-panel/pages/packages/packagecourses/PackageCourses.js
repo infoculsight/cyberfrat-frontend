@@ -51,6 +51,9 @@ function PackageCourses() {
       setLoading(false);
     }
   };
+    useEffect(() => {
+    LIST_API();
+  }, [package_id]);
 
   const handleModalCancel = async () => {
     setIsModalVisible(false);
@@ -58,9 +61,7 @@ function PackageCourses() {
     await LIST_API();
   };
 
-  useEffect(() => {
-    LIST_API();
-  }, [package_id]);
+
 
   const selectBefore = (
     <Select

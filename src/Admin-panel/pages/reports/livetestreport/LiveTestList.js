@@ -32,7 +32,6 @@ function LiveTestList() {
   const [search_query_value, set_search_query_value] = useState('');
   const [page_size, set_page_size] = useState(10)
   
-
   const showModal = (record) => {
     set_model_row(record)
     setIsModalOpen(true);
@@ -102,9 +101,9 @@ function LiveTestList() {
         set_pagination_loader(false);
       }
     }, 500)(); 
-  }, []);
+  }, [page_size]);
 
-
+  useEffect(() => {
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("per_page", page_size);
@@ -120,9 +119,9 @@ function LiveTestList() {
     }
   };
 
-  useEffect(() => {
+
     LIST_API();
-  }, []);
+  }, [page_size]);
 
 
   const pagination_on_change = async (page,size) => {

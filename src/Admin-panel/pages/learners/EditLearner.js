@@ -49,7 +49,7 @@ export default function EditLearner() {
     <button style={{ border: 0, background: "none" }} type="button">
       {loading ? <Loading3QuartersOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>Upload</div>
-    </button>
+    </button> 
   );
 
   useEffect(() => {

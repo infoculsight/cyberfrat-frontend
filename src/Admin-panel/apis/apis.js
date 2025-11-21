@@ -167,6 +167,15 @@ export const LEARNER_GROUP_LIST = async (body) => {
 };
 
 
+export const CHANGE_LEARNER_PASSWORD = async (body) => {
+    try {
+        const response = await Axios.post('change-learner-password/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 
 
 //INSTRUCTOR API

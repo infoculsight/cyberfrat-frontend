@@ -1,8 +1,8 @@
-import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm, Tooltip } from "antd";
+import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm, Tooltip, Form } from "antd";
 import { EyeFilled, LoadingOutlined, UploadOutlined, BookOutlined, LockOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { BULD_ADD_LEARNERS, LEARNER_LIST, LEARNER_STATUS } from "../../apis/apis";
+import { BULD_ADD_LEARNERS, CHANGE_LEARNER_PASSWORD, LEARNER_LIST, LEARNER_STATUS } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import { formatToIST } from "../../../helper/CommonHelper";
@@ -31,12 +31,96 @@ function Learners() {
   const [is_model_open, set_is_model_open] = useState(false);
   const [page_size, set_page_size] = useState(10);
 
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [new_password, set_new_password] = useState("");
+  const [confirm_password, set_confirm_password] = useState("");
+  const [selectedLearner, setSelectedLearner] = useState(null);
+
+
+  const [error, set_error] = useState({
+    new_password: "",
+    confirm_password: ""
+  });
+
+  const handlePasswordSubmit = async () => {
+    // Clear previous errors
+    set_error({ current_password: "", new_password: "", confirm_password: "" });
+
+    if (new_password !== confirm_password) {
+      const msg = "New password and Confirm password do not match!";
+      set_error({ ...error, confirm_password: msg });
+
+      notification.error({
+        message: "Error",
+        description: msg,
+      });
+      return;
+    }
+
+    setPasswordLoading(true);
+
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("email", selectedLearner.email);
+    FORM_DATA.append("new_password", new_password);
+    FORM_DATA.append("confirm_password", confirm_password);
+
+    try {
+      const response = await CHANGE_LEARNER_PASSWORD(FORM_DATA);
+ 
+      if (response?.data?.status) {
+        notification.success({
+          message: "Password Updated Successfully",
+        });
+
+        setIsModalOpen(false);
+
+        set_new_password("");
+        set_confirm_password("");
+        set_error({ new_password: "", confirm_password: "" });
+
+      } else {
+        const errors = response?.data?.errors;
+        if (errors) {
+          set_error({
+            new_password: errors.new_password || "",
+            confirm_password: errors.confirm_password || "",
+          });
+
+          const errorMsg = Object.values(errors).join(" | ");
+          notification.error({
+            message: "Error",
+            description: errorMsg,
+          });
+        } else {
+          const backendError = response?.data?.message;
+          notification.error({
+            message: "Error",
+            description: backendError,
+          });
+        }
+      }
+    } catch (err) {
+      const backendError =
+        err?.response?.data?.message ;
+
+      notification.error({
+        message: "Error",
+        description: backendError,
+      });
+    }
+
+    setPasswordLoading(false);
+  };
+
   const showModal = () => {
     set_is_model_open(true);
   };
 
   const handleCancel = () => {
     set_is_model_open(false);
+    set_file([])
   };
 
   const beforeUpload = (file) => {
@@ -230,7 +314,18 @@ function Learners() {
           <Button type="primary" size="small" onClick={() => navigate("/edit-learner/" + btoa(record.id))}><EyeFilled /></Button>
           <Tooltip title=" Learner Courses">
             <Button type="primary" size="small" onClick={() => navigate(`/learner-courses/ ${record.id}`)}><BookOutlined /></Button></Tooltip>
-            <Button variant="solid" color="green" size="small"><LockOutlined /></Button>
+          <Button
+            variant="solid"
+            color="green"
+            size="small"
+            onClick={() => {
+              setSelectedLearner(record);
+              setIsModalOpen(true);
+            }}
+          >
+            <LockOutlined />
+          </Button>
+
           <Popconfirm
             title="Do you really want to change the status ?"
             onConfirm={() => change_status(record?.id)}
@@ -435,7 +530,7 @@ function Learners() {
               accept=".csv"
               multiple={false}
               maxCount={1}
-              style={{width:"100%"}}
+              style={{ width: "100%" }}
             >
               <Button type="primary" icon={<UploadOutlined />} block>
                 Upload File
@@ -452,6 +547,38 @@ function Learners() {
               <></>
             )}
           </div>
+        </Modal>
+
+        <Modal
+          title="Reset Password"
+          open={isModalOpen}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setSelectedLearner(null);
+            set_error({ current_password: "", new_password: "", confirm_password: "" });
+            set_new_password("");
+            set_confirm_password("");
+          }}
+          footer={null}
+        >
+          <Form layout="vertical" onFinish={handlePasswordSubmit}>
+
+            <Form.Item label="New Password">
+              <Input.Password value={new_password} onChange={(e) => set_new_password(e.target.value)} />
+              {error.new_password && <p style={{ color: "red" }}>{error.new_password}</p>}
+            </Form.Item>
+
+            <Form.Item label="Confirm Password">
+              <Input.Password value={confirm_password} onChange={(e) => set_confirm_password(e.target.value)} />
+              {error.confirm_password && <p style={{ color: "red" }}>{error.confirm_password}</p>}
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={passwordLoading} style={{ width: "100%" }}>
+                Update Password
+              </Button>
+            </Form.Item>
+          </Form>
         </Modal>
       </Card>
     </div>
