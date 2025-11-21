@@ -18,11 +18,11 @@ function AddAnnouncment() {
     const [title, set_title] = useState("")
     const [description, set_description] = useState("")
     const [short_description, set_short_description] = useState("")
-    const [tags, set_tags] = useState("")
+    const [tags, set_tags] = useState([])
     const [slug, set_slug] = useState("")
     const [seo_title, set_seo_title] = useState("")
     const [seo_description, set_seo_description] = useState("")
-    const [seo_keywords, set_seo_keywords] = useState("")
+    const [seo_keywords, set_seo_keywords] = useState([])
     const [location, set_location] = useState("")
     const [video_url, set_video_url] = useState("")
     const [source, set_source] = useState("")
@@ -311,10 +311,12 @@ function AddAnnouncment() {
 
 
                     <Form.Item label="Seo keywords">
-                        <Input
+                        <Select
+                            mode="tags"
                             value={seo_keywords}
-                            placeholder="Enter Seo keywords"
-                            onChange={(e) => set_seo_keywords(e.target.value)}
+                            onChange={set_seo_keywords}
+                            placeholder="Please select"
+                            style={{ width: "100%" }}
                         />
                         {errors?.seo_keywords ? (
                             <>
