@@ -1,5 +1,5 @@
 import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm, Tooltip } from "antd";
-import { EyeFilled, LoadingOutlined, UploadOutlined, BookOutlined } from "@ant-design/icons";
+import { EyeFilled, LoadingOutlined, UploadOutlined, BookOutlined, LockOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BULD_ADD_LEARNERS, LEARNER_LIST, LEARNER_STATUS } from "../../apis/apis";
@@ -230,6 +230,7 @@ function Learners() {
           <Button type="primary" size="small" onClick={() => navigate("/edit-learner/" + btoa(record.id))}><EyeFilled /></Button>
           <Tooltip title=" Learner Courses">
             <Button type="primary" size="small" onClick={() => navigate(`/learner-courses/ ${record.id}`)}><BookOutlined /></Button></Tooltip>
+            <Button variant="solid" color="green" size="small"><LockOutlined /></Button>
           <Popconfirm
             title="Do you really want to change the status ?"
             onConfirm={() => change_status(record?.id)}
