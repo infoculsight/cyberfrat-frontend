@@ -143,12 +143,30 @@ const VideoPage = ({
       sendProgressToBackend(single_progress);
     }
   }, [single_progress]);
+  const handlePlaybackRateChange = () => {
+  const video = videoRef.current;
+  if (!video) return;
 
+  // Agar user speed badhaye to instantly tracking disable
+  if (video.playbackRate > 1.0 && !apiDisabledRef.current) {
+    apiDisabledRef.current = true;
+    set_api_disabled(true);
+    console.warn("⚠️ Playback speed > 1.0 detected — API tracking disabled");
+  }
+};
+  
   // ✅ Initialize HLS
   useEffect(() => {
     if (!videoUrl) return;
     const video = videoRef.current;
     let hls;
+    const setupHandlers = () => {
+    // Playback speed event listener
+      video.addEventListener("ratechange", handlePlaybackRateChange);
+
+      // Set initial playback
+      video.playbackRate = 1.0;
+    };
 
     if (Hls.isSupported()) {
       hls = new Hls();
@@ -159,6 +177,7 @@ const VideoPage = ({
         isInitialSeek.current = true;
         video.play().catch(() => {});
         setIsPlaying(true);
+        setupHandlers();
       });
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoUrl;
@@ -167,17 +186,24 @@ const VideoPage = ({
         isInitialSeek.current = true;
         video.play().catch(() => {});
         setIsPlaying(true);
+        setupHandlers();
+
       });
     }
 
-    return () => hls && hls.destroy();
+    return () => {
+    hls && hls.destroy();
+    video?.removeEventListener("ratechange", handlePlaybackRateChange);
+  };
+    
   }, [videoUrl]);
 
   // ✅ Maintain playback speed
   useEffect(() => {
     if (videoRef.current) videoRef.current.playbackRate = playbackRate;
   }, [playbackRate]);
-
+  
+  
   return loading ? (
     <CulsightPageLoader />
   ) : (
