@@ -131,6 +131,7 @@ function Announcment() {
           message: "Successful",
           description: response?.data?.message,
         });
+         await LIST_API();
         set_onchange_call(onchange_call ? false : true)
         setLoader(false);
 
