@@ -289,7 +289,7 @@ function PackageCourses() {
                 <Pagination
                   current={current_page}
                   total={total_courses}
-                  pageSize={10}
+                  pageSize={9}
                   onChange={pagination_on_change}
                 />
               </div>

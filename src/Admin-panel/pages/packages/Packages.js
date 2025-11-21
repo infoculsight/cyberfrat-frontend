@@ -150,7 +150,7 @@ function Packages() {
                 <Pagination
                   current={current_page}
                   total={total_packages}
-                  pageSize={10}
+                  pageSize={9}
                   onChange={pagination_on_change}
                 />
               </div>
