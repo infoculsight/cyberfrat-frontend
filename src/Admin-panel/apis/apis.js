@@ -299,6 +299,16 @@ export const BULK_ASSIGN_COURSE = async (body) => {
     }
 };
 
+export const UPDATE_CHAPTER_PROGRESS = async (body) => {
+    try {
+        const response = await Axios.post('update-chapter-progress/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
 
 
 //CHAPTER API

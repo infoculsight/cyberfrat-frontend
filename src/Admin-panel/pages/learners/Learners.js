@@ -12,7 +12,6 @@ function Learners() {
   const { notification } = App.useApp();
   const { page } = useParams();
 
-
   //USE STATE FOR PAGINATION AND LOADER
   const navigate = useNavigate();
   const [loader, setLoader] = useState(true);
@@ -23,6 +22,7 @@ function Learners() {
   const [total_learners, set_total_learners] = useState("");
   const [onchange_call, set_onchange_call] = useState(true);
   const [errors, set_errors] = useState("");
+  
   // fillter state
   const [placeholder, set_placeholder] = useState("Search by name");
   const [search_query_key, set_search_query_key] = useState('name');
@@ -30,7 +30,6 @@ function Learners() {
   const [file, set_file] = useState([]);
   const [is_model_open, set_is_model_open] = useState(false);
   const [page_size, set_page_size] = useState(10);
-
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
@@ -68,7 +67,7 @@ function Learners() {
 
     try {
       const response = await CHANGE_LEARNER_PASSWORD(FORM_DATA);
- 
+
       if (response?.data?.status) {
         notification.success({
           message: "Password Updated Successfully",
@@ -103,7 +102,7 @@ function Learners() {
       }
     } catch (err) {
       const backendError =
-        err?.response?.data?.message ;
+        err?.response?.data?.message;
 
       notification.error({
         message: "Error",
@@ -333,7 +332,6 @@ function Learners() {
             cancelText="No"
           >
             <Button variant="solid" color="danger" size="small"> Change Status</Button>
-
           </Popconfirm>
 
 
@@ -492,10 +490,10 @@ function Learners() {
                   />
                   <style>
                     {`
-    .no-search-pagination .ant-select-selection-search-input {
-      display: none !important;
-    }
-  `}
+                      .no-search-pagination .ant-select-selection-search-input {
+                        display: none !important;
+                      }
+                    `}
                   </style>
                 </div>
               </>
@@ -550,12 +548,12 @@ function Learners() {
         </Modal>
 
         <Modal
-          title="Reset Password"
+          title="Change Password"
           open={isModalOpen}
           onCancel={() => {
             setIsModalOpen(false);
             setSelectedLearner(null);
-            set_error({ current_password: "", new_password: "", confirm_password: "" });
+            set_error({ new_password: "", confirm_password: "" });
             set_new_password("");
             set_confirm_password("");
           }}
@@ -580,6 +578,7 @@ function Learners() {
             </Form.Item>
           </Form>
         </Modal>
+
       </Card>
     </div>
   );

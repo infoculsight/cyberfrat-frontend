@@ -160,8 +160,6 @@ function LiveTestList() {
 
   return (
     <div>
-      <h2>Live Tests Reports</h2>
-
       <Row gutter={[16, 16]} align="middle">
         <Col xs={24} sm={24} md={18} lg={20}>
           <Input
@@ -205,10 +203,10 @@ function LiveTestList() {
                                 />
                                 <style>
                                   {`
-                    .no-search-pagination .ant-select-selection-search-input {
-                      display: none !important;
-                    }
-                  `}
+                                    .no-search-pagination .ant-select-selection-search-input {
+                                      display: none !important;
+                                    }
+                                  `}
                                 </style>
                   </div>
                 </>

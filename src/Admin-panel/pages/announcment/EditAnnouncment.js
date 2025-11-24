@@ -1,8 +1,8 @@
-import { App, Button, Card, Descriptions, Form, Input, Select, Spin, Upload, message } from 'antd'
+import { App, Button, Card,  Form, Input, Select, Spin, Upload, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { LeftOutlined, Loading3QuartersOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import CustomRichTextEditor from '../../components/CustomTextEditor';
-import { ADD_NEWS, EDIT_NEWS, VIEW_NEWS } from '../../apis/apis';
+import { EDIT_NEWS, VIEW_NEWS } from '../../apis/apis';
 import { useNavigate, useParams } from 'react-router-dom';
 
 
@@ -84,8 +84,8 @@ function EditAnnouncment() {
                 set_description(response_data?.description || "");
                 set_short_description(response_data?.short_description || "");
                 set_tags(response_data?.tags || []);
-                set_slug(response_data?.slug || "");
-                set_seo_title(response_data?.seo_title || "");
+                set_slug(response_data?.slug );
+                set_seo_title(response_data?.seo_title);
                 set_seo_description(response_data?.seo_description || "");
                 set_seo_keywords(response_data?.seo_keywords || []);
                 set_location(response_data?.location || "");

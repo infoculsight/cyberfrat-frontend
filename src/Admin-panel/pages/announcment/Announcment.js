@@ -3,14 +3,13 @@ import { DeleteFilled, EyeFilled, LoadingOutlined } from "@ant-design/icons";
 import React, { useCallback, useEffect, useState } from 'react'
 import { NEWS_LIST, NEWS_STATUS, DELETE_NEWS } from '../../apis/apis';
 import debounce from 'lodash.debounce';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import CulsightPageLoader from '../../components/CulsightPageLoader';
 import { formatToIST } from '../../../helper/CommonHelper';
 
 function Announcment() {
   const navigate = useNavigate();
   const { notification } = App.useApp();
-  const { page } = useParams();
   const [loader, setLoader] = useState(true)
   const [pagination_loader, set_pagination_loader] = useState(false);
   const [table_data, set_table_data] = useState(false);
@@ -43,7 +42,7 @@ function Announcment() {
 
 
   const delete_news = async (id) => {
-    setLoader(true);
+    set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("id", id);
     try {
@@ -63,7 +62,7 @@ function Announcment() {
         "Server Error: " + (error?.response?.data?.message || "Unknown error")
       );
     } finally {
-      setLoader(false);
+      set_pagination_loader(false);
     }
   };
 
@@ -121,7 +120,7 @@ function Announcment() {
 
 
   const change_status = async (id) => {
-    setLoader(true);
+    set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("id", id);
     try {
@@ -133,10 +132,10 @@ function Announcment() {
         });
          await LIST_API();
         set_onchange_call(onchange_call ? false : true)
-        setLoader(false);
+        set_pagination_loader(false);
 
       } else {
-        setLoader(false);
+        set_pagination_loader(false);
 
       }
     } catch (error) {
