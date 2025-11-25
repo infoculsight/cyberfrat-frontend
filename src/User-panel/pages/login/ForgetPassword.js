@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import "../../assests/Login.css"
 import { Button, Spin } from "antd";
-import { InfoCircleOutlined, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
+import { CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
 import Logo from "../../assests/CFGold_Logo.png"
 import { Link } from "react-router-dom";
 import { RESET_PASSWORD_REQUEST } from "../../apis/apis";
@@ -57,12 +57,11 @@ const ForgetPassword = () => {
                     </>}
                 </div>
                 <div style={{ position: "relative", width: "100%", display: "block", }}>{error ? <><p style={{ position: "absolute", width: "100%", top: "-46px", color: "red", fontWeight: "bold" }}>{error}</p></> : ''}</div>
-                <div className="login-footer">
-                    <div>Copyright <CopyrightOutlined /></div>
-                    <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div>
-
-                    <div>  <Link className="lms-link">Terms & Policies</Link></div>
-                </div>
+               <div className="login-footer">
+                            <div style={{marginLeft:"15px"}}>Copyright <CopyrightOutlined /> {new Date().getFullYear()} CyberFrat </div>
+                            {/* <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div> */}
+                            <div style={{marginRight:"15px"}}>  <Link to="/terms-policy" className="lms-link">Terms & Policies</Link></div>
+                        </div>
             </div>
         </>
     )

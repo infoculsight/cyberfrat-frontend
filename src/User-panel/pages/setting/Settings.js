@@ -11,7 +11,7 @@ import {
   Modal
 } from "antd";
 import { useEffect, useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import CulsightPageLoader from "../../../User-panel/components/CulsightPageLoader";
 import { EDIT_LEARNER, VIEW_PROFILE, RESET_PASSWORD } from "../../apis/apis";
 import { UploadOutlined } from "@ant-design/icons";
@@ -21,7 +21,6 @@ import { logout } from "../../../authService";
 function Settings() {
   const { user, setUser } = useOutletContext();
   const { notification } = App.useApp();
-  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [first_name, set_first_name] = useState("");

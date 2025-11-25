@@ -1,7 +1,6 @@
-import { Card, Col, Row, Button, List, Progress, App, Skeleton, Avatar, Pagination } from "antd";
+import { Card, Col, Row, Button, List, Progress, App, Avatar, } from "antd";
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import InfiniteScroll from "react-infinite-scroll-component";
 import {
   ADD_COMMENT,
   LIST_COMMENT,
@@ -10,7 +9,6 @@ import {
   UPDATE_CURRENT_CHAPTER,
 } from "../../../apis/apis";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
-import { FixTruncatedHTMLList } from "../../../components/TruncatedHTML";
 import { CheckCircleFilled, DownloadOutlined, LeftOutlined } from "@ant-design/icons";
 import SectionVideos from "./components/sectionmedia/sectionVideos";
 import CustomRichTextEditor from "../../../components/CustomTextEditor";
@@ -208,6 +206,7 @@ export default function Chapters() {
     const success = await UPDATE_CURRENT_CHAPTER_API(chapter.id, atob(course_id));
     if (success) fetchEnabledChapters();
   };
+
   const handleDownload = () => {
     const url = course_status;
     const link = document.createElement("a");
@@ -215,6 +214,7 @@ export default function Chapters() {
     link.download = `${course_status}_Certificate.pdf`;
     link.click();
   };
+  
   const check_quiz_status = async (chapter_id) => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("chapter_id", chapter_id);

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import "../../assests/Login.css"
 import { App, Button, Spin } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone, InfoCircleOutlined, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
+import { EyeInvisibleOutlined, EyeTwoTone, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
 import Logo from "../../assests/CFGold_Logo.png"
 import { Link } from "react-router-dom";
 import {  SET_TEMP_NEW_PASSWORD } from "../../apis/apis";
@@ -133,12 +133,11 @@ const TemResetPassword = (props) => {
                     <div style={{ position: "relative", marginTop: "80px", width: "100%", display: "block" }}>{error ? <><p style={{ position: "absolute", width: "100%", top: "-46px", color: "red", fontWeight: "bold" }}>{error}</p></> : ''}</div>
                 </div>
 
-                <div className="login-footer">
-                    <div>Copyright <CopyrightOutlined /></div>
-                    <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div>
-
-                    <div>  <Link className="lms-link">Terms & Policies</Link></div>
-                </div>
+            <div className="login-footer">
+                            <div style={{marginLeft:"15px"}}>Copyright <CopyrightOutlined /> {new Date().getFullYear()} CyberFrat </div>
+                            {/* <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div> */}
+                            <div style={{marginRight:"15px"}}>  <Link to="/terms-policy" className="lms-link">Terms & Policies</Link></div>
+                        </div>
             </div>
         </>
     )

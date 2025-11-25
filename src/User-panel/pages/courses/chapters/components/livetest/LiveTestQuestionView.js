@@ -4,7 +4,6 @@ import {
   ADD_LIVE_TEST_ANSWERS,
   LIST_LIVE_TEST_QUESTION,
 } from "../../../../../apis/apis";
-import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 import LiveTestQuestionOptions from "./LiveTestQuestionOptions";
 import LiveTestQuestionOptionsRview from "./LiveTestQuestionOptionsRview";
 
@@ -21,10 +20,8 @@ const LiveTestQuestionView = (props) => {
   const [current_page, set_current_page] = useState(1);
   const [total_questions, set_total_questions] = useState(0);
   const [test_submitted, set_test_submitted] = useState(false);
-  const [attempted_questions, set_attempted_questions] = useState([]);
   const [review_questions, set_review_questions] = useState([]);
   const [rview_view, set_review_view] = useState(false);
-
 
 
 

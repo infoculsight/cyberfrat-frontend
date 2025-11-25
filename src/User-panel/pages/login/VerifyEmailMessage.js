@@ -1,7 +1,7 @@
 
 import "../../assests/Login.css"
 import { Button } from "antd";
-import { InfoCircleOutlined, CopyrightOutlined, } from "@ant-design/icons";
+import { CopyrightOutlined, } from "@ant-design/icons";
 import Logo from "../../assests/CFGold_Logo.png"
 import { Link } from "react-router-dom";
 
@@ -17,12 +17,11 @@ const VerifyEmailMessage = () => {
                       <Button type="primary"  onClick={() => window.location.href = "/"} style={{ width: "100%", height: "42px", marginBottom: "20px" }}>   Login </Button>
                 </div>
 
-                <div className="login-footer">
-                    <div>Copyright <CopyrightOutlined /></div>
-                    <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div>
-
-                    <div>  <Link className="lms-link">Terms & Policies</Link></div>
-                </div>
+                  <div className="login-footer">
+                            <div style={{marginLeft:"15px"}}>Copyright <CopyrightOutlined /> {new Date().getFullYear()} CyberFrat </div>
+                            {/* <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div> */}
+                            <div style={{marginRight:"15px"}}>  <Link to="/terms-policy" className="lms-link">Terms & Policies</Link></div>
+                        </div>
             </div>
         </>
     )

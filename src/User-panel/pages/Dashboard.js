@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { LEANER_WATCHTIME, LEARNER_DASHBOARD } from "../apis/apis";
 import { useNavigate } from "react-router-dom";
 import CulsightPageLoader from "../components/CulsightPageLoader";
-import "./Dashboard.css"; 
+import "./Dashboard.css";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -14,6 +14,20 @@ function Dashboard() {
   const [current_course_chapter, set_current_course_chapter] = useState(null);
   const [learner_watch, set_learner_watch] = useState([]);
   const [single_learner_data, set_single_learner_data] = useState({});
+
+  // 🔥 NEW: Announcement Section
+  const [announcements, setAnnouncements] = useState([
+    {
+      id: 1,
+      title: "New course on Data Analytics launched!",
+      date: "2025-01-20",
+    },
+    {
+      id: 2,
+      title: "Complete at least 3 chapters to earn a badge.",
+      date: "2025-01-18",
+    },
+  ]);
 
   const currentcolumns = [
     {
@@ -29,9 +43,7 @@ function Dashboard() {
     {
       title: "Progress",
       dataIndex: "progress",
-      render: (_, record) => (
-        <span>{record.course_data?.progress}</span>
-      ),
+      render: (_, record) => <span>{record.course_data?.progress}%</span>,
     },
     {
       title: "Action",
@@ -111,9 +123,7 @@ function Dashboard() {
     {
       title: "Time Spent",
       dataIndex: "time",
-      render: (_, record) => (
-        <span>{formatTime(record.total_max_watched)}</span>
-      ),
+      render: (_, record) => <span>{formatTime(record.total_max_watched)}</span>,
     },
   ];
 
@@ -212,7 +222,22 @@ function Dashboard() {
 
             {/* Right Column */}
             <Col xs={24} sm={24} md={24} lg={10}>
-              <Card className="leaderboard-card">
+              {/*               
+              <Card className="announcement-card" style={{ marginBottom: "20px" }}>
+                <h3 style={{color:"#e9c70ada"}}>Announcements</h3>
+                <ul className="announcement-list">
+                  {announcements.map((item) => (
+                    <li key={item.id} className="announcement-item">
+                      <b>{item.title}</b>
+                      <span className="announcement-date">
+                        {new Date(item.date).toLocaleDateString()}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </Card> */}
+
+              <Card>
                 <h3>Leaderboard - Top 10 Learners</h3>
                 <Table
                   columns={columns_leader_board}
