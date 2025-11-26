@@ -5,6 +5,7 @@ import {
   DownloadOutlined,
   FileSearchOutlined,
   FileTextOutlined,
+  MailFilled,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   NotificationOutlined,
@@ -70,6 +71,9 @@ const MasterTemplate = () => {
       '/announcment': {selected: '15', open: '15'},
       '/add-announcment':{selected:'15', open:'15'},
       '/edit-announcment':{selected:'15', open:'15'},
+      '/smtp':{selected:'16', open:'16'},
+      '/add-smtp':{selected:'16',open:'16'},
+      '/edit-smtp':{selected:'16',open:'16'}
     };
     const path = location.pathname;
     const match = pathToKey[path];
@@ -98,6 +102,8 @@ const MasterTemplate = () => {
       '13': '/notification',
       '14': '/deleted-courses',
       '15': '/announcment',
+      '16': '/smtp',
+
     };
 
     const route = keyToPath[key];
@@ -167,7 +173,7 @@ const MasterTemplate = () => {
                 { key: '10', icon: <DownloadOutlined />, label: 'Download' },
                 { key: '13', icon: <BellFilled />, label: 'Notification' },
                 { key: '15', icon: <NotificationOutlined />, label: 'Announcement' },
-       
+                { key: '16', icon: <MailFilled />, label: 'SMTP' },
                 { key: '50', icon: <UploadOutlined />, label: 'Logout' },
               ]}
             />

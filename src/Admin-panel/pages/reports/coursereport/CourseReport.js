@@ -217,10 +217,10 @@ const CourseReport = () => {
                 />
                 <style>
                   {`
-    .no-search-pagination .ant-select-selection-search-input {
-      display: none !important;
-    }
-  `}
+                    .no-search-pagination .ant-select-selection-search-input {
+                      display: none !important;
+                    }
+                  `}
                 </style>
               </div>
             </>

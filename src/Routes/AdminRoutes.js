@@ -46,7 +46,9 @@ import LearnerCourses from "../Admin-panel/pages/learners/LearnerCourses";
 import Announcment from "../Admin-panel/pages/announcment/Announcment";
 import AddAnnouncment from "../Admin-panel/pages/announcment/AddAnnouncment";
 import EditAnnouncment from "../Admin-panel/pages/announcment/EditAnnouncment";
-
+import Smtp from "../Admin-panel/pages/smtp/Smtp";
+import AddSmtp from "../Admin-panel/pages/smtp/AddSmtp";
+import EditSmtp from "../Admin-panel/pages/smtp/EditSmtp"
 
     
 
@@ -100,6 +102,9 @@ function AdminRoutes() {
         <Route path="announcment/:page?" element={<Announcment />} />
         <Route path="add-announcment/" element={<AddAnnouncment />} />
         <Route path="edit-announcment/:id" element={<EditAnnouncment />} />
+        <Route path="smtp" element={<Smtp />} />
+        <Route path="add-smtp" element={<AddSmtp />} />
+        <Route path="edit-smtp/:id" element={<EditSmtp />} />
         <Route path="media" element={<ThemeMedia />} />
         <Route path="report" element={<Reports />} />
         <Route path="notification" element={<AdminNotification />} />

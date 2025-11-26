@@ -120,7 +120,7 @@ function Announcment() {
 
 
   const change_status = async (id) => {
-    set_pagination_loader(true);
+    setLoader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("id", id);
     try {
@@ -132,10 +132,10 @@ function Announcment() {
         });
          await LIST_API();
         set_onchange_call(onchange_call ? false : true)
-        set_pagination_loader(false);
+        setLoader(false);
 
       } else {
-        set_pagination_loader(false);
+        setLoader(false);
 
       }
     } catch (error) {

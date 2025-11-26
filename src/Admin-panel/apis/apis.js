@@ -1113,3 +1113,62 @@ export const DELETE_NEWS = async (body) => {
         console.error(error);
     }
 };
+
+
+export const ADD_SMTP = async (body) => {
+    try {
+        const response = await Axios.post('add-smtp/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const EDIT_SMTP = async (body) => {
+    try {
+        const response = await Axios.post('edit-smtp/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const VIEW_SMTP = async (body) => {
+    try {
+        const response = await Axios.post('view-smtp/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const LIST_SMTP = async (body) => {
+    try {
+        const response = await Axios.post('list-smtp/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const DELETE_SMTP = async (body) => {
+    try {
+        const response = await Axios.post('delete-smtp/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const SMTP_STATUS = async (body) => {
+    try {
+        const response = await Axios.post('smtp-status/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};

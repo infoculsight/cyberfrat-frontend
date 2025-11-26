@@ -1,5 +1,5 @@
-import { App, Button, Card, Col, Input, InputNumber, message, Popconfirm, Progress, Row, Table } from 'antd'
-import { CheckCircleOutlined, LeftOutlined } from "@ant-design/icons";
+import { App, Button, Card, Col, InputNumber, message, Popconfirm, Progress, Row, Table } from 'antd'
+import { LeftOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { UPDATE_CHAPTER_PROGRESS, VIEW_LEARNER_REPORT } from '../../../apis/apis';
@@ -105,6 +105,7 @@ function LearnerReport() {
 
         return (
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+
             <Progress
               percent={percent}
               size="small"
@@ -141,6 +142,7 @@ function LearnerReport() {
       },
     },
   ];
+
 
   const updateProgressAPI = async (chapter_id) => {
     const form = new FormData();

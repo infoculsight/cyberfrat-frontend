@@ -103,6 +103,7 @@ function AddAnnouncment() {
     };
 
     return (
+
         <div className='lms-body'>
             <Card>
                 <span>
@@ -114,6 +115,7 @@ function AddAnnouncment() {
                     onFinish={onFinish}
                     validateTrigger="onSubmit"
                 >
+
                     <Form.Item label="Upload Announcement Photo here">
                         <Upload
                             name="avatar"
@@ -214,7 +216,6 @@ function AddAnnouncment() {
                         )}
                     </Form.Item>
 
-
                     <Form.Item>
                         <CustomRichTextEditor
                             value={description}
@@ -309,7 +310,6 @@ function AddAnnouncment() {
                         )}
                     </Form.Item>
 
-
                     <Form.Item label="Seo keywords">
                         <Select
                             mode="tags"
@@ -380,7 +380,6 @@ function AddAnnouncment() {
                         )}
                     </Form.Item>
 
-
                     <Form.Item label="Priority">
                         <Input
                             value={priority}
@@ -421,6 +420,7 @@ function AddAnnouncment() {
                             </>
                         )}
                     </Form.Item>
+                    
                 </Form>
             </Card>
         </div>
