@@ -1,6 +1,13 @@
-import React from 'react';
+import { Button } from 'antd';
+import { useNavigate } from 'react-router-dom'; 
 
 function TermsAndPolicies() {
+  const navigate = useNavigate(); 
+
+  const handleGoToLogin = () => {
+    navigate('/'); 
+  };
+
   return (
     <div className="lms-body terms-container">
       <h1>Terms & Conditions</h1>
@@ -64,6 +71,15 @@ function TermsAndPolicies() {
         <h2>8. Contact</h2>
         <p>For support or queries, contact: <a href="mailto:support@cfgold.in">support@cfgold.in</a></p>
       </section>
+
+      <div style={{ marginTop: '20px', textAlign: 'center' }}>
+        <Button
+          onClick={handleGoToLogin} 
+          type='primary'
+        >
+          Go to Login Page
+        </Button>
+      </div>
     </div>
   );
 }

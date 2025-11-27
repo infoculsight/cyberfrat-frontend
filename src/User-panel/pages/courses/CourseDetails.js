@@ -1,41 +1,36 @@
 import {
-  App,
-  Avatar,
   Button,
   Card,
   Col,
-  List,
-  Pagination,
   Row,
   Spin,
 } from "antd";
-import React, { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { LIST_COMMENT, ADD_COMMENT, VIEW_COURSE } from "../../apis/apis";
+import {  VIEW_COURSE } from "../../apis/apis";
 import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
-import CustomRichTextEditor from "../../components/CustomTextEditor";
+//import CustomRichTextEditor from "../../components/CustomTextEditor";
 
 function CourseDetails(props) {
   const { id } = useParams();
   const location = useLocation();
-  const { notification, message } = App.useApp();
+  //const { notification, message } = App.useApp();
   const Navigate = useNavigate();
   const [page_loader, set_page_loader] = useState(true);
-  const [card_loader, set_card_loader] = useState(true);
   const [image_loader, set_image_loader] = useState(false)
   const [course_data, set_course_data] = useState({});
-  const [description, set_description] = useState("");
-  const [comments, set_comments] = useState([]);
-  const [current_page, set_current_page] = useState(1);
-  const [total_comments, set_total_comments] = useState(0);
-  const [total_pages, set_total_pages] = useState(1);
+  // const [card_loader, set_card_loader] = useState(true);
+  //const [description, set_description] = useState("");
+  // const [comments, set_comments] = useState([]);
+  // const [current_page, set_current_page] = useState(1);
+  // const [total_comments, set_total_comments] = useState(0);
+  // const [total_pages, set_total_pages] = useState(1);
 
-    const handleBack = () => {
+  const handleBack = () => {
     if (location.state?.from) Navigate(location.state.from);
     else Navigate(-1);
   };
-
 
 
   // Fetch course details
@@ -53,38 +48,36 @@ function CourseDetails(props) {
   }, [id]);
 
   // Fetch comments list
-  const fetchCommentList = useCallback(
-    async (page = 1) => {
-      const FORM_DATA = new FormData();
-      FORM_DATA.append("view_id", atob(id));
-      FORM_DATA.append("page", page);
-      FORM_DATA.append("comment_type", "course");
+  // const fetchCommentList = useCallback(
+  //   async (page = 1) => {
+  //     const FORM_DATA = new FormData();
+  //     FORM_DATA.append("view_id", atob(id));
+  //     FORM_DATA.append("page", page);
+  //     FORM_DATA.append("comment_type", "course");
 
-      try {
-        const API_CALL = await LIST_COMMENT(FORM_DATA);
-        if (API_CALL?.data?.status) {
-          const data = API_CALL.data;
-          set_comments(data.comments || []);
-          set_current_page(data.page || 1);
-          set_total_comments(data.total_comments || 0);
-          set_total_pages(data.total_pages || 1);
-        } else {
-          set_comments([]);
-        }
-      } catch (error) {
-        console.error("Network error:", error);
-      } finally {
-        set_card_loader(false);
-      }
-    },
-    [id]
-  );
+  //     try {
+  //       const API_CALL = await LIST_COMMENT(FORM_DATA);
+  //       if (API_CALL?.data?.status) {
+  //         const data = API_CALL.data;
+  //         set_comments(data.comments || []);
+  //         set_current_page(data.page || 1);
+  //         set_total_comments(data.total_comments || 0);
+  //         set_total_pages(data.total_pages || 1);
+  //       } else {
+  //         set_comments([]);
+  //       }
+  //     } catch (error) {
+  //       console.error("Network error:", error);
+  //     } finally {
+  //       set_card_loader(false);
+  //     }
+  //   },
+  //   [id]
+  // );
 
-  useEffect(() => {
-    fetchCommentList();
-  }, [fetchCommentList]);
-
-
+  // useEffect(() => {
+  //   fetchCommentList();
+  // }, [fetchCommentList]);
 
 
   return (
@@ -123,18 +116,18 @@ function CourseDetails(props) {
                     });
                   }}
                 >
-                  Start Learning
+                  Start Learning 
                 </Button>
               </Col>
             </Row>
+
             <Row>
               <Col span={14} style={{ paddingRight: "30px" }}>
                 <div style={{ width: "100%", position: "relative", borderRadius: 8, overflow: "hidden" }}>
                   <div
                     style={{
                       width: "100%",
-                          aspectRatio: "16 / 9", // adjust ratio as per your image
-
+                      aspectRatio: "16 / 9",
                       position: "relative",
                       display: "flex",
                       alignItems: "center",
@@ -163,10 +156,10 @@ function CourseDetails(props) {
                     />
                   </div>
                 </div>
-
               </Col>
+
               <Col span={10}>
-                <h2 style={{textTransform: "capitalize"}}>{course_data.title}</h2>
+                <h2 style={{ textTransform: "capitalize" }}>{course_data.title}</h2>
                 <p>
                   <b style={{ color: "#e9c70ada" }}>Instructor:</b>{" "}
                   {course_data.instructor_display_name}
@@ -179,14 +172,13 @@ function CourseDetails(props) {
                   <b style={{ color: "#e9c70ada" }}>Duration:</b>{" "}
                   {course_data.course_duration}
                 </p>
-
-
               </Col>
             </Row>
 
             <h3 style={{ color: "#e9c70ada" }}>Description</h3>
-             <div dangerouslySetInnerHTML={{ __html: course_data.description }} />
-            {/* 🔹 Comment Section */}
+            <div dangerouslySetInnerHTML={{ __html: course_data.description }} />
+
+            {/* Comment Section */}
             {/* <div style={{ marginTop: "30px" }} >
               <CustomRichTextEditor
                 editorLabel="Course Discussions"
@@ -241,6 +233,7 @@ function CourseDetails(props) {
                 </div>
               )}
             </div> */}
+
           </Card>
         </div>
       )}
