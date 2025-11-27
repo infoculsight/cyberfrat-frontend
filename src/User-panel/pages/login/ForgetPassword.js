@@ -43,6 +43,7 @@ const ForgetPassword = () => {
                     {/* <p>Enter your details to sign in to your account</p> */}
                     {form_hidden ? <>
                         <p className="reset-text">Please check your email address and reset your password.</p>
+                        <p>If you don’t see the email in your inbox, check your spam folder. If it’s not there, the email address may not be confirmed, or it may not match an existing account.</p>
 
                     </> : <>
                         <input className="black-input" style={{ marginTop: "40px" }} placeholder="Email ID" value={email} onChange={e => setEmail(e.target.value)} />

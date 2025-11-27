@@ -79,7 +79,7 @@ function App() {
               <Route path="/verify-email/:token" element={<VerifyEmail />} />
             </>
           )}
-          <Route path="*" element={<NotFound />} />
+          {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
       </AntdApp>
     </ConfigProvider>
