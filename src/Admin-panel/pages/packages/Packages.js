@@ -1,4 +1,4 @@
-import { Button, Card, Col, Input, Pagination, Row, Spin } from "antd";
+import { Button, Card, Col, Input, Modal, Pagination, Row, Spin, Table, Checkbox } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import PackageBox from "../../components/PackageBox";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { LIST_PACKAGE } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import { LoadingOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
+import BulkAssignPackage from "./BulkAssignPackage";
 
 function Packages() {
   const Navigate = useNavigate();
@@ -15,8 +16,28 @@ function Packages() {
   const [current_page, set_current_page] = useState("");
   const [total_pages, set_total_pages] = useState("");
   const [total_packages, set_total_packages] = useState(0);
-
   const [search_query_title, set_search_query_title] = useState("");
+
+  const [is_model_open, set_is_model_open] = useState(false);
+
+  const [selectedPackages, setSelectedPackages] = useState([]);
+
+  const handleSelect = (id) => {
+    setSelectedPackages((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+
+  const showModal = () => {
+    set_is_model_open(true);
+  };
+
+  const onCancelModal = () => {
+    set_is_model_open(false);
+
+  };
+
 
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
@@ -54,7 +75,7 @@ function Packages() {
   };
 
   const fetchResultsTitle = useCallback((value) => {
-      debounce(async () => {
+    debounce(async () => {
       try {
         set_search_query_title(value);
         set_pagination_loader(true);
@@ -72,7 +93,7 @@ function Packages() {
       } catch (err) {
         console.error("API Error:", err);
       }
-  }, 500)(); 
+    }, 500)();
   }, []);
 
   const handleInput = (e) => {
@@ -80,18 +101,23 @@ function Packages() {
     fetchResultsTitle(value);
   };
 
+
+
+
   return (
     <div className="lms-body">
       <Card>
         <h2>Packages
-        <Button
-             type="primary"
-              size="large"
-              onClick={() => Navigate("/add-packages")}
-              style={{float:"right"}}
-            >
-              Create Package
-            </Button></h2>
+          <Button variant="solid" color="green" style={{ float: "right", marginLeft: "5px" }} size="large" onClick={showModal} onCancel={onCancelModal}>Bulk Assign Package</Button>
+
+          <Button
+            type="primary"
+            size="large"
+            onClick={() => Navigate("/add-packages")}
+            style={{ float: "right" }}
+          >
+            Create Package
+          </Button></h2>
 
         <Row gutter={[16, 16]} align="middle">
           <Col xs={24} sm={24} md={12} lg={12}>
@@ -162,6 +188,21 @@ function Packages() {
           </>
         )}
       </Card>
+
+      <Modal
+        title="Assign Package to Learners"
+        open={is_model_open}
+        onCancel={onCancelModal}
+        footer={null}
+        width={800}
+      >
+        <BulkAssignPackage
+          packages={packages}
+          selectedPackages={selectedPackages}
+          handleSelect={handleSelect}
+        />
+      </Modal>
+
     </div>
   );
 }
