@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Upload, Button, message, Select, Input, DatePicker, Typography, App } from 'antd';
+import { Card, Upload, Button, message, Select, Input, DatePicker, Typography, App, InputNumber } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 import { BULK_ASSIGN_COURSE } from '../../../apis/apis';
 const { Text } = Typography;
 
-function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
+function BulEnrollLearners({ course_id, isModalOpen, onSuccess }) {
 
     const { notification } = App.useApp();
     const [access_type, set_access_type] = useState('LifeTime');
@@ -14,16 +14,16 @@ function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
     const [fileError, setFileError] = useState('');
-    
+
 
     useEffect(() => {
-  if (isModalOpen) {
-    setFile(null);
-    set_access_value('');
-    set_access_type('LifeTime');
-    setFileError('');
-  }
-}, [isModalOpen]);
+        if (isModalOpen) {
+            setFile(null);
+            set_access_value('');
+            set_access_type('LifeTime');
+            setFileError('');
+        }
+    }, [isModalOpen]);
 
 
 
@@ -52,7 +52,7 @@ function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
 
 
     const handleSubmit = async () => {
-     
+
         if (!file) {
             setFileError('Please select a CSV file before submitting.');
             message.error('Please select an Excel file first.');
@@ -69,23 +69,23 @@ function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
             const formData = new FormData();
             formData.append('file', file[0]);
             formData.append('course_id', atob(course_id));
-             formData.append('access_type', access_type);
+            formData.append('access_type', access_type);
 
-        // Only append access_value if access_type is not LifeTime
-        if (access_type === 'FixedDate' || access_type === 'MaxViewingHours') {
-            formData.append('access_value', access_value);
-        }
+            // Only append access_value if access_type is not LifeTime
+            if (access_type === 'FixedDate' || access_type === 'MaxViewingHours') {
+                formData.append('access_value', access_value);
+            }
 
             const response = await BULK_ASSIGN_COURSE(formData);
             if (response?.data?.status) {
-                  notification.success({
-                          message: "Successful",
-                          description: response?.data?.message,
-                        });
+                notification.success({
+                    message: "Successful",
+                    description: response?.data?.message,
+                });
                 setFile(null);
                 set_access_value('');
                 if (onSuccess) onSuccess();
-                
+
             } else {
                 message.error(response?.data?.message || 'Enrollment failed!');
             }
@@ -116,12 +116,13 @@ function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
             return (
                 <>
                     <label><b>Access Value (Enter Hours):</b></label>
-                    <Input
-                        style={{ width: 300, marginBottom: '20px' }}
-                        type="number"
-                        placeholder="Enter number of hours"
+                    <InputNumber
+                        min={1}
+                        max={24}
+                        style={{ width: 200 }}
+                        placeholder="Enter max hours"
                         value={access_value}
-                        onChange={(e) => set_access_value(e.target.value)}
+                        onChange={(value) => set_access_value(value)}
                     />
                 </>
             );
@@ -152,7 +153,7 @@ function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
                                 { value: 'MaxViewingHours', label: 'Max Viewing Hours' },
                             ]}
                         />
-                          <br/>
+                        <br />
                         {/* Conditionally show access_value field */}
                         {renderAccessValueInput()}
 
@@ -176,7 +177,7 @@ function BulEnrollLearners({ course_id, isModalOpen,onSuccess }) {
                 >
                     <Button icon={<UploadOutlined />}>Select Excel File</Button>
                 </Upload>
-                    {fileError && (
+                {fileError && (
                     <Text type="danger" style={{ display: 'block', marginTop: 8 }}>
                         {fileError}
                     </Text>
