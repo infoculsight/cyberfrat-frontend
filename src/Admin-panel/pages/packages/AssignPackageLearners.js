@@ -237,13 +237,13 @@ function AssignPackageLearners(props) {
               <Pagination
                 current={current_page}
                 total={total_learners}
-                pageSize={page_size}                 // ✅ Added
+                pageSize={page_size}                 
                 onChange={pagination_on_change}
-                showSizeChanger                       // ✅ Added
-                pageSizeOptions={["10", "20", "50", "100"]} // ✅ Added
+                showSizeChanger                      
+                pageSizeOptions={["10", "20", "50", "100"]} 
                 onShowSizeChange={(current, size) => {
                   set_page_size(size);
-                  pagination_on_change(1, size);      // FIXED
+                  pagination_on_change(1, size);      
                 }}
                       style={{ display: "inline-block" }}
                            className="no-search-pagination"
@@ -308,6 +308,7 @@ function AssignPackageLearners(props) {
             to this package?
           </p>
         </Modal>
+        
       </Card>
     </div>
   );

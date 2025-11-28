@@ -33,21 +33,15 @@ function Packages() {
     );
   };
 
-
-
   const showModal = () => {
     set_is_model_open(true);
   };
-  const onCancelModal = () => {
+
+  const onCancelModal = () => { 
     set_is_model_open(false);
-
-
     setSelectedPackages([]);
-
-
     set_reset_trigger(prev => prev + 1);
   };
-
 
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
@@ -111,9 +105,6 @@ function Packages() {
     fetchResultsTitle(value);
   };
 
-
-
-
   return (
     <div className="lms-body">
       <Card>
@@ -160,7 +151,7 @@ function Packages() {
                           package_name={items?.name}
                           package_image={items?.thumbnail}
                           package_tag_line={items?.tag_line}
-                        />
+                        />   
                       </Col>
                     ))
                   ) : (
