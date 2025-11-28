@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import "../../assests/Login.css"
-import { Button, Spin } from "antd";
+import { Button, message, Spin } from "antd";
 import { CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
 import Logo from "../../assests/CFGold_Logo.png"
 import { Link } from "react-router-dom";
@@ -12,6 +12,7 @@ const ForgetPassword = () => {
     const [email, setEmail] = useState('');
     const [error, setError] = useState([]);
     const [form_hidden, set_form_hidden] = useState(false);
+    const [success_message,set_success_message] = useState("")
 
     const RESET_PASSWORD_REQUEST_API = async () => {
         setLoader(true);
@@ -22,6 +23,7 @@ const ForgetPassword = () => {
             const response = await RESET_PASSWORD_REQUEST(FORM_DATA);
             if (response?.data?.status) {
                 set_form_hidden(true)
+                set_success_message(response?.data?.message)
                 setError("");
             } else {
                 setError(response?.data?.message);
@@ -42,7 +44,7 @@ const ForgetPassword = () => {
                     <h2 style={{ marginBottom: "15px", marginTop: "20px", }}>Forget Password</h2>
                     {/* <p>Enter your details to sign in to your account</p> */}
                     {form_hidden ? <>
-                        <p className="reset-text">Please check your email address and reset your password.</p>
+                        <p className="reset-text">{success_message}</p>
                         <p>If you don’t see the email in your inbox, check your spam folder. If it’s not there, the email address may not be confirmed, or it may not match an existing account.</p>
 
                     </> : <>
