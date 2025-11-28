@@ -9,7 +9,7 @@ function TermsAndPolicies() {
   };
 
   return (
-    <div className="lms-body terms-container">
+    <div className="lms-body terms-container" style={{color:"#fff"}}>
       <h1>Terms & Conditions</h1>
 
       <section>
