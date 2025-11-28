@@ -19,23 +19,33 @@ function Packages() {
   const [search_query_title, set_search_query_title] = useState("");
 
   const [is_model_open, set_is_model_open] = useState(false);
-
+  const [reset_trigger, set_reset_trigger] = useState(0);
   const [selectedPackages, setSelectedPackages] = useState([]);
 
-  const handleSelect = (id) => {
+  const handleSelect = (id, bulk = false) => {
+    if (bulk) {
+      setSelectedPackages(id);
+      return;
+    }
+
     setSelectedPackages((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
 
+
   const showModal = () => {
     set_is_model_open(true);
   };
-
   const onCancelModal = () => {
     set_is_model_open(false);
 
+
+    setSelectedPackages([]);
+
+
+    set_reset_trigger(prev => prev + 1);
   };
 
 
@@ -195,12 +205,16 @@ function Packages() {
         onCancel={onCancelModal}
         footer={null}
         width={800}
+        
       >
         <BulkAssignPackage
           packages={packages}
           selectedPackages={selectedPackages}
           handleSelect={handleSelect}
+          onCancel={onCancelModal}
+          resetTrigger={reset_trigger}
         />
+
       </Modal>
 
     </div>

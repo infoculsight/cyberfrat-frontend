@@ -130,7 +130,7 @@ function Announcment() {
           message: "Successful",
           description: response?.data?.message,
         });
-         await LIST_API();
+        await LIST_API();
         set_onchange_call(onchange_call ? false : true)
         setLoader(false);
 
@@ -190,14 +190,14 @@ function Announcment() {
       key: "action",
       render: (_, record) => (
         <>
-          <span><Button type='primary' onClick={() => navigate('/edit-announcment/' + btoa(record.id))}><EyeFilled size="large" /></Button></span>
+          <span><Button size='small' type='primary' onClick={() => navigate('/edit-announcment/' + btoa(record.id))}><EyeFilled size="large" /></Button></span>
           <Popconfirm
             title="Do you really want to delete this announcement?"
             onConfirm={() => delete_news(record?.id)}
             okText="Yes"
             cancelText="No"
           >
-            <Button variant='solid' color='red' style={{ marginLeft: "10px" }}><DeleteFilled /></Button>
+            <Button size='small' variant='solid' color='red' style={{ marginLeft: "10px" }}><DeleteFilled /></Button>
           </Popconfirm>
           <Popconfirm
             title="Do you really want to change the status ?"
@@ -205,7 +205,7 @@ function Announcment() {
             okText="Yes"
             cancelText="No"
           >
-            <Button variant="solid" color="danger" style={{ marginLeft: "10px" }}> Change Status</Button>
+            <Button size='small' variant="solid" color="danger" style={{ marginLeft: "10px" }}> Change Status</Button>
 
           </Popconfirm>
 
@@ -223,7 +223,7 @@ function Announcment() {
             <h2>Announcement</h2>
           </Col>
           <Col span={12}>
-            <Button type='primary' style={{ float: "right" }} onClick={() => navigate('/add-announcment')}>  Add Announcment</Button>
+            <Button type='primary' style={{ float: "right" }} onClick={() => navigate('/add-announcment')}>  Add Announcement</Button>
           </Col>
         </Row>
         <Row>
@@ -281,10 +281,10 @@ function Announcment() {
                   />
                   <style>
                     {`
-    .no-search-pagination .ant-select-selection-search-input {
-      display: none !important;
-    }
-  `}
+                    .no-search-pagination .ant-select-selection-search-input {
+                      display: none !important;
+                    }
+                  `}
                   </style>
                 </div>
               </>

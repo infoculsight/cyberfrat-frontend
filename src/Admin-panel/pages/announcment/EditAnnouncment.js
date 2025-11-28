@@ -1,9 +1,10 @@
-import { App, Button, Card,  Form, Input, Select, Spin, Upload, message } from 'antd'
+import { App, Button, Card, Form, Input, Select, Spin, Upload, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { LeftOutlined, Loading3QuartersOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import CustomRichTextEditor from '../../components/CustomTextEditor';
 import { EDIT_NEWS, VIEW_NEWS } from '../../apis/apis';
 import { useNavigate, useParams } from 'react-router-dom';
+import CulsightPageLoader from '../../components/CulsightPageLoader';
 
 
 function EditAnnouncment() {
@@ -68,6 +69,7 @@ function EditAnnouncment() {
 
 
     useEffect(() => {
+        setLoading(true)
         const VIEW_API = async () => {
             const FORM_DATA = new FormData();
             FORM_DATA.append("id", atob(id));
@@ -84,7 +86,7 @@ function EditAnnouncment() {
                 set_description(response_data?.description || "");
                 set_short_description(response_data?.short_description || "");
                 set_tags(response_data?.tags || []);
-                set_slug(response_data?.slug );
+                set_slug(response_data?.slug);
                 set_seo_title(response_data?.seo_title);
                 set_seo_description(response_data?.seo_description || "");
                 set_seo_keywords(response_data?.seo_keywords || []);
@@ -142,323 +144,327 @@ function EditAnnouncment() {
     return (
         <div className='lms-body'>
             <Card>
-               <span>
+                <span>
                     <h2> <LeftOutlined style={{ cursor: "pointer" }} onClick={() => navigate('/announcment')} />Edit Announcement</h2></span>
-                <Form
-                    form={form}
-                    layout="vertical"
-                    autoComplete="off"
-                    onFinish={onFinish}
-                    validateTrigger="onSubmit"
-                >
-                    <Form.Item label="Upload Announcement Photo here">
-                        <Upload
-                            name="avatar"
-                            listType="picture-card"
-                            className="avatar-uploader"
-                            showUploadList={false}
-                            beforeUpload={(file) => {
-                                console.log(file)
-                                const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
-                                const isLt2M = file.size <= 2 * 1024 * 1024;
-                                if (!isJpgOrPng) {
-                                    set_image_api('');
-                                    set_image('')
-                                    setimageError("Only JPG/PNG files are allowed.");
-                                    return false;
-                                }
 
-                                if (!isLt2M) {
-                                    set_image_api('');
-                                    set_image('')
-                                    setimageError("Thumbnail must be smaller than or equal to 2MB.");
-                                    return false;
-                                }
-                                const img = new Image();
-                                img.src = URL.createObjectURL(file);
-
-                                img.onload = () => {
-                                    const { width, height } = img;
-                                    // Example: Minimum 300x300 pixels
-                                    if (width === 600 && height === 400) {
-                                        setimageError(""); // Clear errors if valid
-
-                                        // Set preview and file for API
-                                        getBase64(file, (url) => set_image(url));
-                                        set_image_api(file);
-
-                                    } else {
+                {loading ? <><CulsightPageLoader /></> : <>
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        autoComplete="off"
+                        onFinish={onFinish}
+                        validateTrigger="onSubmit"
+                    >
+                        <Form.Item label="Upload Announcement Photo here">
+                            <Upload
+                                name="avatar"
+                                listType="picture-card"
+                                className="avatar-uploader"
+                                showUploadList={false}
+                                beforeUpload={(file) => {
+                                    console.log(file)
+                                    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
+                                    const isLt2M = file.size <= 2 * 1024 * 1024;
+                                    if (!isJpgOrPng) {
                                         set_image_api('');
                                         set_image('')
-                                        setimageError("Image must be at least 600x400 pixels.");
+                                        setimageError("Only JPG/PNG files are allowed.");
+                                        return false;
                                     }
 
-                                };
-                                return false;
+                                    if (!isLt2M) {
+                                        set_image_api('');
+                                        set_image('')
+                                        setimageError("Thumbnail must be smaller than or equal to 2MB.");
+                                        return false;
+                                    }
+                                    const img = new Image();
+                                    img.src = URL.createObjectURL(file);
 
-                            }}
-                            onChange={handleChange}
-                        >
-                            {image ? (
-                                <img
-                                    src={image}
-                                    alt="avatar"
-                                    style={{
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                    }}
-                                />
-                            ) : (
-                                uploadButton
-                            )}
-                        </Upload>
+                                    img.onload = () => {
+                                        const { width, height } = img;
+                                        // Example: Minimum 300x300 pixels
+                                        if (width === 600 && height === 400) {
+                                            setimageError(""); // Clear errors if valid
 
-                        {/* Error message under the uploader */}
-                        {imageError && (
-                            <span
-                                style={{ color: "red", display: "block", marginTop: 8 }}
+                                            // Set preview and file for API
+                                            getBase64(file, (url) => set_image(url));
+                                            set_image_api(file);
+
+                                        } else {
+                                            set_image_api('');
+                                            set_image('')
+                                            setimageError("Image must be at least 600x400 pixels.");
+                                        }
+
+                                    };
+                                    return false;
+
+                                }}
+                                onChange={handleChange}
                             >
-                                {imageError}
-                            </span>
-                        )}
-                        {/* Server-side validation error */}
-                        {errors?.image && (
-                            <span
-                                style={{ color: "red", display: "block", marginTop: 8 }}
-                            >
-                                {errors?.image}
-                            </span>
-                        )}
-
-                        <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 2MB and must be at least 600x400 pixels.</p>
-                    </Form.Item>
-
-                    <Form.Item label="Title">
-                        <Input
-                            value={title}
-                            placeholder="Enter title"
-                            onChange={(e) => set_title(e.target.value)}
-                        />
-                        {errors?.title ? (
-                            <>
-                                <span style={{ color: "red" }}>
-                                    {errors?.title}
-                                </span>
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                    </Form.Item>
-
-
-                    <Form.Item>
-                        <CustomRichTextEditor
-                            value={description}
-                            editorLabel="Description"
-                            onChange={(val) => set_description(val)}
-                            placeholder="Write something..."
-                        />
-                        {errors?.description && (
-                            <span style={{ color: "red" }}>{errors?.description}</span>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item label="Short Description">
-                        <Input
-                            value={short_description}
-                            placeholder="Enter short description"
-                            onChange={(e) => set_short_description(e.target.value)}
-                        />
-                        {errors?.short_description ? (
-                            <>
-                                <span style={{ color: "red" }}>
-                                    {errors?.short_description}
-                                </span>
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item label="Tags">
-                        <Select
-                            mode="tags"
-                            value={tags}
-                            onChange={set_tags}
-                            placeholder="Please select"
-                            style={{ width: "100%" }}
-                        />
-                        {errors?.tags ? (
-                            <>
-                                <span style={{ color: "red" }}>
-                                    {errors?.tags}
-                                </span>
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item label="Slug">
-                        <Input
-                            value={slug}
-                            placeholder="Enter Slug"
-                            onChange={(e) => set_slug(e.target.value)}
-                        />
-                        {errors?.slug ? (
-                            <>
-                                <span style={{ color: "red" }}>
-                                    {errors?.slug}
-                                </span>
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item label="Seo Title">
-                        <Input
-                            value={seo_title}
-                            placeholder="Enter Slug"
-                            onChange={(e) => set_seo_title(e.target.value)}
-                        />
-                        {errors?.seo_title ? (
-                            <>
-                                <span style={{ color: "red" }}>
-                                    {errors?.seo_title}
-                                </span>
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item>
-                        <CustomRichTextEditor
-                            value={seo_description}
-                            editorLabel=" Seo Description"
-                            onChange={(val) => set_seo_description(val)}
-                            placeholder="Write something..."
-                        />
-                        {errors?.seo_description && (
-                            <span style={{ color: "red" }}>{errors?.seo_description}</span>
-                        )}
-                    </Form.Item>
-
-
-                    <Form.Item label="Seo keywords">
-                        <Select
-                            mode="tags"
-                            value={seo_keywords}
-                            onChange={set_seo_keywords}
-                            placeholder="Please select"
-                            style={{ width: "100%" }}
-                        />
-                        {errors?.seo_keywords ? (
-                            <>
-                                <span style={{ color: "red" }}>
-                                    {errors?.seo_keywords}
-                                </span>
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item label="location">
-                        <Input
-                            value={location}
-                            placeholder="Enter location"
-                            onChange={(e) => set_location(e.target.value)}
-                        />
-                        {errors?.location ? (
-                            <>
-                                <span style={{ color: "red" }}>
-                                    {errors?.location}
-                                </span>
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item label="Video Url">
-                        <Input
-                            value={video_url}
-                            placeholder="Enter video url"
-                            onChange={(e) => set_video_url(e.target.value)}
-                        />
-                        {errors?.video_url ? (
-                            <>
-                                <span style={{ color: "red" }}>
-                                    {errors?.video_url}
-                                </span>
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item label="Source">
-                        <Input
-                            value={source}
-                            placeholder="Enter source"
-                            onChange={(e) => set_source(e.target.value)}
-                        />
-                        {errors?.source ? (
-                            <>
-                                <span style={{ color: "red" }}>
-                                    {errors?.source}
-                                </span>
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                    </Form.Item>
-
-
-                    <Form.Item label="Priority">
-                        <Input
-                            value={priority}
-                            placeholder="Enter priority"
-                            onChange={(e) => set_priority(e.target.value)}
-                        />
-                        {errors?.priority ? (
-                            <>
-                                <span style={{ color: "red" }}>
-                                    {errors?.priority}
-                                </span>
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item>
-                        {loading ? (
-                            <>
-                                <Button type="primary" style={{ float: "right" }}>
-                                    Update{" "}
-                                    <Spin
-                                        indicator={<LoadingOutlined spin />}
-                                        size="small"
+                                {image ? (
+                                    <img
+                                        src={image}
+                                        alt="avatar"
+                                        style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "cover",
+                                        }}
                                     />
-                                </Button>
-                            </>
-                        ) : (
-                            <>
-                                <Button
-                                    type="primary"
-                                    style={{ float: "right" }}
-                                    htmlType="submit"
+                                ) : (
+                                    uploadButton
+                                )}
+                            </Upload>
+
+                            {/* Error message under the uploader */}
+                            {imageError && (
+                                <span
+                                    style={{ color: "red", display: "block", marginTop: 8 }}
                                 >
-                                    Update
-                                </Button>
-                            </>
-                        )}
-                    </Form.Item>
-                </Form>
+                                    {imageError}
+                                </span>
+                            )}
+                            {/* Server-side validation error */}
+                            {errors?.image && (
+                                <span
+                                    style={{ color: "red", display: "block", marginTop: 8 }}
+                                >
+                                    {errors?.image}
+                                </span>
+                            )}
+
+                            <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 2MB and must be at least 600x400 pixels.</p>
+                        </Form.Item>
+
+                        <Form.Item label="Title">
+                            <Input
+                                value={title}
+                                placeholder="Enter title"
+                                onChange={(e) => set_title(e.target.value)}
+                            />
+                            {errors?.title ? (
+                                <>
+                                    <span style={{ color: "red" }}>
+                                        {errors?.title}
+                                    </span>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </Form.Item>
+
+
+                        <Form.Item>
+                            <CustomRichTextEditor
+                                value={description}
+                                editorLabel="Description"
+                                onChange={(val) => set_description(val)}
+                                placeholder="Write something..."
+                            />
+                            {errors?.description && (
+                                <span style={{ color: "red" }}>{errors?.description}</span>
+                            )}
+                        </Form.Item>
+
+                        <Form.Item label="Short Description">
+                            <Input
+                                value={short_description}
+                                placeholder="Enter short description"
+                                onChange={(e) => set_short_description(e.target.value)}
+                            />
+                            {errors?.short_description ? (
+                                <>
+                                    <span style={{ color: "red" }}>
+                                        {errors?.short_description}
+                                    </span>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </Form.Item>
+
+                        <Form.Item label="Tags">
+                            <Select
+                                mode="tags"
+                                value={tags}
+                                onChange={set_tags}
+                                placeholder="Please select"
+                                style={{ width: "100%" }}
+                            />
+                            {errors?.tags ? (
+                                <>
+                                    <span style={{ color: "red" }}>
+                                        {errors?.tags}
+                                    </span>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </Form.Item>
+
+                        <Form.Item label="Slug">
+                            <Input
+                                value={slug}
+                                placeholder="Enter Slug"
+                                onChange={(e) => set_slug(e.target.value)}
+                            />
+                            {errors?.slug ? (
+                                <>
+                                    <span style={{ color: "red" }}>
+                                        {errors?.slug}
+                                    </span>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </Form.Item>
+
+                        <Form.Item label="Seo Title">
+                            <Input
+                                value={seo_title}
+                                placeholder="Enter Slug"
+                                onChange={(e) => set_seo_title(e.target.value)}
+                            />
+                            {errors?.seo_title ? (
+                                <>
+                                    <span style={{ color: "red" }}>
+                                        {errors?.seo_title}
+                                    </span>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </Form.Item>
+
+                        <Form.Item>
+                            <CustomRichTextEditor
+                                value={seo_description}
+                                editorLabel=" Seo Description"
+                                onChange={(val) => set_seo_description(val)}
+                                placeholder="Write something..."
+                            />
+                            {errors?.seo_description && (
+                                <span style={{ color: "red" }}>{errors?.seo_description}</span>
+                            )}
+                        </Form.Item>
+
+
+                        <Form.Item label="Seo keywords">
+                            <Select
+                                mode="tags"
+                                value={seo_keywords}
+                                onChange={set_seo_keywords}
+                                placeholder="Please select"
+                                style={{ width: "100%" }}
+                            />
+                            {errors?.seo_keywords ? (
+                                <>
+                                    <span style={{ color: "red" }}>
+                                        {errors?.seo_keywords}
+                                    </span>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </Form.Item>
+
+                        <Form.Item label="location">
+                            <Input
+                                value={location}
+                                placeholder="Enter location"
+                                onChange={(e) => set_location(e.target.value)}
+                            />
+                            {errors?.location ? (
+                                <>
+                                    <span style={{ color: "red" }}>
+                                        {errors?.location}
+                                    </span>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </Form.Item>
+
+                        <Form.Item label="Video Url">
+                            <Input
+                                value={video_url}
+                                placeholder="Enter video url"
+                                onChange={(e) => set_video_url(e.target.value)}
+                            />
+                            {errors?.video_url ? (
+                                <>
+                                    <span style={{ color: "red" }}>
+                                        {errors?.video_url}
+                                    </span>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </Form.Item>
+
+                        <Form.Item label="Source">
+                            <Input
+                                value={source}
+                                placeholder="Enter source"
+                                onChange={(e) => set_source(e.target.value)}
+                            />
+                            {errors?.source ? (
+                                <>
+                                    <span style={{ color: "red" }}>
+                                        {errors?.source}
+                                    </span>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </Form.Item>
+
+
+                        <Form.Item label="Priority">
+                            <Input
+                                value={priority}
+                                placeholder="Enter priority"
+                                onChange={(e) => set_priority(e.target.value)}
+                            />
+                            {errors?.priority ? (
+                                <>
+                                    <span style={{ color: "red" }}>
+                                        {errors?.priority}
+                                    </span>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </Form.Item>
+
+                        <Form.Item>
+                            {loading ? (
+                                <>
+                                    <Button type="primary" style={{ float: "right" }}>
+                                        Update{" "}
+                                        <Spin
+                                            indicator={<LoadingOutlined spin />}
+                                            size="small"
+                                        />
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Button
+                                        type="primary"
+                                        style={{ float: "right" }}
+                                        htmlType="submit"
+                                    >
+                                        Update
+                                    </Button>
+                                </>
+                            )}
+                        </Form.Item>
+                    </Form>
+                </>}
+
             </Card>
         </div>
     )

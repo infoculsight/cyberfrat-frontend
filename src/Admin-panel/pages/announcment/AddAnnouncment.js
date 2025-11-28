@@ -1,4 +1,4 @@
-import { App, Button, Card, Descriptions, Form, Input, Select, Spin, Upload, message } from 'antd'
+import { App, Button, Card, Form, Input, Select, Spin, Upload, message } from 'antd'
 import React, { useState } from 'react'
 import { LeftOutlined, Loading3QuartersOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import CustomRichTextEditor from '../../components/CustomTextEditor';
@@ -420,7 +420,7 @@ function AddAnnouncment() {
                             </>
                         )}
                     </Form.Item>
-                    
+
                 </Form>
             </Card>
         </div>

@@ -780,6 +780,17 @@ export const LEARNER_PACKAGE_STATUS = async (body) => {
     }
 };
 
+export const BULK_ASSIGN_MULTI_PACKAGE = async (body) => {
+    try {
+        const response = await Axios.post('bulk-assign-multi-package/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+
 
 export const ADD_VIDEO_VIEW = async (body) => {
     try {

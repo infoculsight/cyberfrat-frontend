@@ -1,5 +1,5 @@
 import { App, Button, Card, Col, Input, message, Pagination, Popconfirm, Row, Space, Spin, Table, Tag, } from "antd";
-import { EyeFilled, LoadingOutlined, } from "@ant-design/icons";
+import { DeleteFilled, EyeFilled, LoadingOutlined, } from "@ant-design/icons";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DELETE_SMTP, LIST_SMTP, SMTP_STATUS } from "../../apis/apis";
@@ -181,6 +181,7 @@ function Smtp() {
       render: (_, record) => (
         <Space size="middle">
           <Button type="primary" size="small" onClick={() => navigate("/edit-smtp/" + btoa(record.id))}><EyeFilled /></Button>
+          <Button variant="solid" color="red" size="small" onClick={() => handleDelete(record.id)}><DeleteFilled /></Button>
           <Popconfirm
             title="Are you sure to Change Status this smtp?"
             onConfirm={() => change_status(record?.id)}
@@ -189,7 +190,7 @@ function Smtp() {
           >
             <Button color="red" variant="solid" size="small">Change Status</Button>
           </Popconfirm>
-          <Button danger size="small" onClick={() => handleDelete(record.id)}>Delete</Button>
+
         </Space>
       ),
     },
@@ -218,9 +219,8 @@ function Smtp() {
   return (
     <div className="lms-body">
 
-
-
       <Card>
+
         <Row>
           <Col span={12}>
             <h2>SMTP</h2>

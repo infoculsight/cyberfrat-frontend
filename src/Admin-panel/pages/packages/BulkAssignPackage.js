@@ -1,21 +1,20 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Table, Checkbox, Input, Row, Col, Spin, Pagination, Button, Upload, message } from "antd";
-import { LIST_PACKAGE } from "../../apis/apis";
+import { BULK_ASSIGN_MULTI_PACKAGE, LIST_PACKAGE } from "../../apis/apis";
 import debounce from "lodash.debounce";
 
-function AssignPackagePage({ selectedPackages, handleSelect }) {
+function AssignPackagePage({ selectedPackages, handleSelect, onCancel, resetTrigger }) {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginationLoading, setPaginationLoading] = useState(false);
-
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPackages, setTotalPackages] = useState(0);
   const [errors, set_errors] = useState("");
   const [file, set_file] = useState([]);
-  
 
-    const beforeUpload = (file) => {
+
+  const beforeUpload = (file) => {
     const isCSV = file.type === 'text/csv';
     if (!isCSV) {
       set_errors({ file: "Only CSV files are allowed!" });
@@ -28,7 +27,6 @@ function AssignPackagePage({ selectedPackages, handleSelect }) {
     message.success(` ${file.name}`);
     return false;
   };
-
 
   const fetchPackages = async (page = 1, searchText = "") => {
     setPaginationLoading(true);
@@ -47,12 +45,18 @@ function AssignPackagePage({ selectedPackages, handleSelect }) {
     setPaginationLoading(false);
   };
 
-  // First Load
+
   useEffect(() => {
     fetchPackages(1, "");
   }, []);
 
-  // --- Debounced Search ---
+  useEffect(() => {
+    set_file([]);
+    set_errors("");
+  }, [resetTrigger]);
+
+
+
   const handleSearch = useCallback(
     debounce((value) => {
       setSearch(value);
@@ -73,7 +77,25 @@ function AssignPackagePage({ selectedPackages, handleSelect }) {
   // Table Columns
   const columns = [
     {
-      title: " ",
+      title: (
+        <Checkbox
+          checked={packages.length > 0 && selectedPackages.length === packages.length}
+          indeterminate={
+            selectedPackages.length > 0 &&
+            selectedPackages.length < packages.length
+          }
+          onChange={(e) => {
+            if (e.target.checked) {
+              // Select All IDs
+              const allIds = packages.map((p) => p.id);
+              handleSelect(allIds, true);
+            } else {
+              // Unselect All
+              handleSelect([], true);
+            }
+          }}
+        />
+      ),
       width: 60,
       render: (_, record) => (
         <Checkbox
@@ -82,6 +104,7 @@ function AssignPackagePage({ selectedPackages, handleSelect }) {
         />
       ),
     },
+
     {
       title: "Package Name",
       dataIndex: "name",
@@ -93,6 +116,41 @@ function AssignPackagePage({ selectedPackages, handleSelect }) {
       render: (val) => <b>{val ?? 0}</b>,
     },
   ];
+
+
+  const handleSubmit = async () => {
+    if (!file?.length) {
+      message.error("Please upload a CSV file.");
+      return;
+    }
+
+    if (!selectedPackages.length) {
+      message.error("Please select at least one package.");
+      return;
+    }
+
+    const form = new FormData();
+    form.append("package_id", selectedPackages.join(","));
+    form.append("file", file[0]);
+
+    try {
+      const res = await BULK_ASSIGN_MULTI_PACKAGE(form);
+
+      if (res?.data?.status) {
+        message.success("Bulk package assign successful!");
+        onCancel();
+        set_file(null)
+
+      } else {
+        message.error(res?.data?.message);
+      }
+    } catch (err) {
+
+      message.error("API request failed!");
+    }
+  };
+
+
 
   return (
     <div>
@@ -106,20 +164,8 @@ function AssignPackagePage({ selectedPackages, handleSelect }) {
             size="large"
           />
         </Col>
-        <Col span={12}> 
-           <Upload
-              beforeUpload={beforeUpload}
-              fileList={file}
-              onRemove={() => set_file([])}
-              accept=".csv"
-              multiple={false}
-              maxCount={1}
-              style={{width:"100%"}}
-            >
-        <Button variant="solid" color="green" size="small" style={{float:"right",marginTop:"10px"}}>
-          Add Learners 
-        </Button>
-        </Upload>
+        <Col span={12}>
+
         </Col>
       </Row>
 
@@ -147,9 +193,36 @@ function AssignPackagePage({ selectedPackages, handleSelect }) {
             />
           </div>
         </>
-      
+
       )}
-        <Button variant="solid" color="green" style={{float:"right",marginTop:"-30px"}}>Submit</Button>
+        <Row justify="end" gutter={10} style={{ marginTop: 25 }}>
+        <Col>
+          <Upload
+            beforeUpload={beforeUpload}
+            fileList={file}
+            onRemove={() => set_file([])}
+            accept=".csv"
+            maxCount={1}
+          >
+            <Button type="primary">Upload Learners</Button>
+          </Upload>    {errors?.file ? (
+            <>
+              <span style={{ color: "red" }}>
+                {errors?.file}
+              </span>
+            </>
+          ) : (
+            <></>
+          )}
+        </Col>
+
+        <Col>
+          <Button variant="solid" color="green" onClick={handleSubmit} disabled={file.length === 0}>  
+            Submit
+          </Button>
+        </Col>
+      </Row>
+
     </div>
   );
 }
