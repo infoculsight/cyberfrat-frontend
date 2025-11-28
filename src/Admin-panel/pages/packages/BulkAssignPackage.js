@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Table, Checkbox, Input, Row, Col, Spin, Pagination, Button } from "antd";
+import { Table, Checkbox, Input, Row, Col, Spin, Pagination, Button, Upload, message } from "antd";
 import { LIST_PACKAGE } from "../../apis/apis";
 import debounce from "lodash.debounce";
 
@@ -11,8 +11,25 @@ function AssignPackagePage({ selectedPackages, handleSelect }) {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPackages, setTotalPackages] = useState(0);
-
+  const [errors, set_errors] = useState("");
+  const [file, set_file] = useState([]);
   
+
+    const beforeUpload = (file) => {
+    const isCSV = file.type === 'text/csv';
+    if (!isCSV) {
+      set_errors({ file: "Only CSV files are allowed!" });
+      message.error("Please upload a valid CSV file.");
+      return Upload.LIST_IGNORE;
+    }
+
+    set_file([file]);
+    set_errors("");
+    message.success(` ${file.name}`);
+    return false;
+  };
+
+
   const fetchPackages = async (page = 1, searchText = "") => {
     setPaginationLoading(true);
 
@@ -56,7 +73,7 @@ function AssignPackagePage({ selectedPackages, handleSelect }) {
   // Table Columns
   const columns = [
     {
-      title: "",
+      title: " ",
       width: 60,
       render: (_, record) => (
         <Checkbox
@@ -90,9 +107,19 @@ function AssignPackagePage({ selectedPackages, handleSelect }) {
           />
         </Col>
         <Col span={12}> 
+           <Upload
+              beforeUpload={beforeUpload}
+              fileList={file}
+              onRemove={() => set_file([])}
+              accept=".csv"
+              multiple={false}
+              maxCount={1}
+              style={{width:"100%"}}
+            >
         <Button variant="solid" color="green" size="small" style={{float:"right",marginTop:"10px"}}>
           Add Learners 
         </Button>
+        </Upload>
         </Col>
       </Row>
 
