@@ -12,14 +12,14 @@ const VideoPage = ({
   set_current_video_id,
   set_video_api_refresh,
   video_api_refresh,
- last_progress,
+  last_progress,
   chapter_id,
   video_row,
   set_course_watch_percent
 }) => {
   const videoRef = useRef(null);
   const apiDisabledRef = useRef(false);
-  const skipDetectedAtRef = useRef(0); // ✅ new - to track when skip happened
+  const skipDetectedAtRef = useRef(0);
   const [videoUrl, setVideoUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -31,7 +31,6 @@ const VideoPage = ({
   const lastWatchedTime = useRef(video_row?.watched_seconds || 1);
   const isInitialSeek = useRef(true);
 
-  // ✅ Fullscreen logo adjustment
   useEffect(() => {
     const logo = document.getElementById("fullscreen-logo");
     const handleFullscreen = () => {
@@ -56,7 +55,6 @@ const VideoPage = ({
     return () => document.removeEventListener("fullscreenchange", handleFullscreen);
   }, []);
 
-  // ✅ Fetch HLS URL
   useEffect(() => {
     const fetchVideoUrl = async () => {
       setLoading(true);
@@ -69,7 +67,6 @@ const VideoPage = ({
     fetchVideoUrl();
   }, [video_id]);
 
-  // ✅ Send progress (only if not disabled)
   const sendProgressToBackend = async (progress) => {
     if (apiDisabledRef.current) return;
     const video = videoRef.current;
@@ -82,14 +79,13 @@ const VideoPage = ({
     form.append("watched_seconds", parseFloat(lastWatchedTime.current.toFixed(1)));
     form.append("total_seconds", parseFloat(video.duration?.toFixed(1)) || 0);
     const apirs = await VIDEO_TRACK_PROGRESS(form);
-    if(apirs?.data?.course_watch_percent){
-       set_course_watch_percent(apirs?.data?.course_watch_percent)
+    if (apirs?.data?.course_watch_percent) {
+      set_course_watch_percent(apirs?.data?.course_watch_percent);
     }
-   
-    set_video_api_refresh(!video_api_refresh)
+
+    set_video_api_refresh(!video_api_refresh);
   };
 
-  // ✅ Skip detection
   const handleSeeking = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -99,16 +95,14 @@ const VideoPage = ({
       return;
     }
 
-    // ✅ First user skip → permanently disable instantly
     if (!apiDisabledRef.current) {
       apiDisabledRef.current = true;
-      skipDetectedAtRef.current = Date.now(); // mark timestamp
+      skipDetectedAtRef.current = Date.now();
       set_api_disabled(true);
       console.warn("⚠️ Skip detected — API tracking disabled");
     }
   };
 
-  // ✅ Time tracking
   const handleTimeUpdate = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -130,41 +124,33 @@ const VideoPage = ({
     }
   };
 
-  // ✅ Progress API every 2%, but cancel instantly if skip within same frame
   useEffect(() => {
     const now = Date.now();
-
-    // ✅ if skip was detected recently (within 1 second) → block even queued API
-    if (apiDisabledRef.current || now - skipDetectedAtRef.current < 1000) {
-      return;
-    }
+    if (apiDisabledRef.current || now - skipDetectedAtRef.current < 1000) return;
 
     if (single_progress > 0 && single_progress % 2 === 0) {
       sendProgressToBackend(single_progress);
     }
   }, [single_progress]);
-  const handlePlaybackRateChange = () => {
-  const video = videoRef.current;
-  if (!video) return;
 
-  // Agar user speed badhaye to instantly tracking disable
-  if (video.playbackRate > 1.0 && !apiDisabledRef.current) {
-    apiDisabledRef.current = true;
-    set_api_disabled(true);
-    console.warn("⚠️ Playback speed > 1.0 detected — API tracking disabled");
-  }
-};
-  
-  // ✅ Initialize HLS
+  const handlePlaybackRateChange = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.playbackRate > 1.0 && !apiDisabledRef.current) {
+      apiDisabledRef.current = true;
+      set_api_disabled(true);
+      console.warn("⚠️ Playback speed > 1.0 detected — API tracking disabled");
+    }
+  };
+
   useEffect(() => {
     if (!videoUrl) return;
     const video = videoRef.current;
     let hls;
-    const setupHandlers = () => {
-    // Playback speed event listener
-      video.addEventListener("ratechange", handlePlaybackRateChange);
 
-      // Set initial playback
+    const setupHandlers = () => {
+      video.addEventListener("ratechange", handlePlaybackRateChange);
       video.playbackRate = 1.0;
     };
 
@@ -175,7 +161,7 @@ const VideoPage = ({
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.currentTime = lastWatchedTime.current;
         isInitialSeek.current = true;
-        video.play().catch(() => {});
+        video.play().catch(() => { });
         setIsPlaying(true);
         setupHandlers();
       });
@@ -184,30 +170,33 @@ const VideoPage = ({
       video.addEventListener("loadedmetadata", () => {
         video.currentTime = lastWatchedTime.current;
         isInitialSeek.current = true;
-        video.play().catch(() => {});
+        video.play().catch(() => { });
         setIsPlaying(true);
         setupHandlers();
-
       });
     }
 
     return () => {
-    hls && hls.destroy();
-    video?.removeEventListener("ratechange", handlePlaybackRateChange);
-  };
-    
+      hls && hls.destroy();
+      video?.removeEventListener("ratechange", handlePlaybackRateChange);
+    };
   }, [videoUrl]);
 
-  // ✅ Maintain playback speed
   useEffect(() => {
     if (videoRef.current) videoRef.current.playbackRate = playbackRate;
   }, [playbackRate]);
-  
-  
+
   return loading ? (
     <CulsightPageLoader />
   ) : (
-    <div style={{ position: "relative", display: "inline-block", width: "100%" }}>
+    <div
+      style={{
+        position: "relative",
+        display: "inline-block",
+        width: "100%",
+        maxWidth: "100vw",
+      }}
+    >
       <video
         ref={videoRef}
         onTimeUpdate={handleTimeUpdate}
@@ -218,7 +207,9 @@ const VideoPage = ({
           borderRadius: "10px",
           boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
           marginBottom: "10px",
-          minHeight: "64vh",
+          minHeight: "40vh",
+          maxHeight: "80vh",
+          objectFit: "contain",
         }}
       />
 
@@ -232,16 +223,16 @@ const VideoPage = ({
           right: "10px",
           opacity: 0.3,
           pointerEvents: "none",
-          width: "120px",
+          width: "20vw",
+          maxWidth: "120px",
         }}
       />
 
       <div
         style={{
           position: "absolute",
-          bottom: "20px",
+          bottom: "55px",
           right: "20px",
-          fontSize: "18px",
           fontWeight: "bold",
           color: "rgba(255,255,255,0.5)",
           pointerEvents: "none",
@@ -257,17 +248,19 @@ const VideoPage = ({
             textAlign: "center",
             fontWeight: "bold",
             marginTop: "5px",
+            fontSize: "16px",
           }}
         >
           ⚠️ Tracking disabled — video skipped
         </div>
-      ) :(
+      ) : (
         <div
           style={{
             color: "#e9c70ada",
             textAlign: "center",
             fontWeight: "bold",
             marginTop: "5px",
+            fontSize: "16px",
           }}
         >
           Video Tracking Start

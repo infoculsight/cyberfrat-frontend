@@ -1,4 +1,4 @@
-import { Badge, Button, Drawer, List, message } from 'antd';
+import { Badge, Button, Drawer, List, message, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { BellFilled, CloseOutlined } from "@ant-design/icons";
 import { VIEW_NOTIFICATION, REMOVE_NOTIFICATION, ALL_REMOVE_NOTIFICATION } from '../apis/apis';
@@ -10,7 +10,6 @@ function UserNotification() {
   const [notifications, set_notifications] = useState([]);
   const [loading, set_loading] = useState(false);
   const navigator = useNavigate();
-
   const show_drawer = () => set_open(true);
   const on_close = () => set_open(false);
 
@@ -102,7 +101,7 @@ function UserNotification() {
           path = '/courses/complete' + btoa(item?.meta?.id);
           break;
         case 'package_assign':
-          path = '/packages' + btoa(item?.meta?.id);
+          path = '/package-courses/' + btoa(item?.meta?.id);
           break;
         default:
           path = '/';
@@ -119,6 +118,31 @@ function UserNotification() {
   useEffect(() => {
     LIST_API();
   }, []);
+
+  const formatTime = (timestamp) => {
+    if (!timestamp) return "";
+    const createdTimeUTC = new Date(timestamp.replace(" ", "T") + "Z");
+    const nowUTC = new Date();
+    const diffMs = nowUTC - createdTimeUTC;
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 4) {
+      if (diffMinutes < 1) return "Just now";
+      if (diffMinutes < 60)
+        return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+    }
+    const istDate = new Date(createdTimeUTC.getTime() + 5.5 * 60 * 60 * 1000);
+    return istDate.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "Asia/Kolkata",
+    });
+  };
 
   return (
     <div>
@@ -170,15 +194,18 @@ function UserNotification() {
                   description={
                     <>
                       {item?.meta?.text}
-                      {['course_assign', 'course_update', 'course_expire', 'quiz_uploaded', 'certificate_issued', 'add_course_in_package', 'test_expire', 'result_declaration', 'test_submit', 'course_completion','package_assign'].includes(item.notification_type) && (
-                        <Button
-                          size='small'
-                          type="primary"
-                          style={{ marginLeft: "5px" }}
-                          onClick={() => handleNotificationClick(item)}
-                        >
-                          View
-                        </Button>
+                      {['course_assign', 'course_update', 'course_expire', 'quiz_uploaded', 'certificate_issued', 'add_course_in_package', 'test_expire', 'result_declaration', 'test_submit', 'course_completion', 'package_assign'].includes(item.notification_type) && (
+                        <Space>
+                          <Button
+                            size='small'
+                            type="primary"
+                            style={{ marginLeft: "5px" }}
+                            onClick={() => handleNotificationClick(item)}
+                          >
+                            View
+                          </Button>
+                          <span style={{ fontSize: "13px", color: "#999" }}>{formatTime(item?.meta?.created_at)} </span>
+                        </Space>
                       )}
                     </>
                   }
