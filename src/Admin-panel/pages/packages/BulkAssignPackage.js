@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Table, Checkbox, Input, Row, Col, Spin, Pagination, Button, Upload, message } from "antd";
+import { Table, Checkbox, Input, Row, Col, Spin, Pagination, Button, Upload, message, App } from "antd";
 import { BULK_ASSIGN_MULTI_PACKAGE, LIST_PACKAGE } from "../../apis/apis";
 import debounce from "lodash.debounce";
 
 function AssignPackagePage({ selectedPackages, handleSelect, onCancel, resetTrigger }) {
+  const { notification } = App.useApp();
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginationLoading, setPaginationLoading] = useState(false);
@@ -137,7 +138,10 @@ function AssignPackagePage({ selectedPackages, handleSelect, onCancel, resetTrig
       const res = await BULK_ASSIGN_MULTI_PACKAGE(form);
 
       if (res?.data?.status) {
-        message.success("Bulk package assign successful!");
+       notification.success({
+          message: "Successful",
+          description: res.data.message,
+        });
         onCancel();
         set_file(null)
 
@@ -195,7 +199,7 @@ function AssignPackagePage({ selectedPackages, handleSelect, onCancel, resetTrig
         </>
 
       )}
-        <Row justify="end" gutter={10} style={{ marginTop: 25 }}>
+      <Row justify="end" gutter={10} style={{ marginTop: 25 }}>
         <Col>
           <Upload
             beforeUpload={beforeUpload}
