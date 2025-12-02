@@ -167,8 +167,8 @@ export default function AddSmtp() {
                     value={smtp_for}
                     onChange={(value) => set_smtp_for(value)}
                   >
-                    <Select.Option value="course">Course</Select.Option>
-                    <Select.Option value="package">Package</Select.Option>
+                    <Select.Option value="courses">Courses</Select.Option>
+                    <Select.Option value="packages">Packages</Select.Option>
                     <Select.Option value="list_test">List Test</Select.Option>
                   </Select>
                   {errors?.smtp_for ? (
