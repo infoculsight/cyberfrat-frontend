@@ -51,6 +51,9 @@ function PackageCourses() {
       setLoading(false);
     }
   };
+    useEffect(() => {
+    LIST_API();
+  }, [package_id]);
 
   const handleModalCancel = async () => {
     setIsModalVisible(false);
@@ -58,9 +61,7 @@ function PackageCourses() {
     await LIST_API();
   };
 
-  useEffect(() => {
-    LIST_API();
-  }, [package_id]);
+
 
   const selectBefore = (
     <Select
@@ -288,7 +289,7 @@ function PackageCourses() {
                 <Pagination
                   current={current_page}
                   total={total_courses}
-                  pageSize={10}
+                  pageSize={9}
                   onChange={pagination_on_change}
                 />
               </div>

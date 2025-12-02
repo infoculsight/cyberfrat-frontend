@@ -248,13 +248,15 @@ const LiveTestQuestion = (props) => {
                   </Panel>
                 ))}
               </Collapse>
-              <Pagination
+
+              {total_pages > 0 ?<> <Pagination
                 style={{ marginTop: "15px", float: "right" }}
                 onChange={pagination_on_change}
                 current={current_page}
                 total={total_questions}
                 pageSize={5}
-              />
+              /></>:<></>}
+             
             </>}
 
 

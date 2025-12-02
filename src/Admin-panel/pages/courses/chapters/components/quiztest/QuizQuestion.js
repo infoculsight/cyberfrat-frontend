@@ -17,7 +17,8 @@ import {
 import {
   List_QUIZ_QUESTION,
   DELETE_QUIZ_QUESTION,
-  BULK_QUIZ_QUESTION
+  BULK_QUIZ_QUESTION,
+  BULK_IMPORT_QUIZ_QUESITON_TEMPLATE
 } from "../../../../../apis/apis";
 import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 import { UploadOutlined } from "@ant-design/icons";
@@ -50,6 +51,7 @@ const QuizQuestion = (props) => {
 
   const handleCancel = () => {
     set_is_model_open(false);
+    set_file([])
   };
 
   const beforeUpload = (file) => {
@@ -230,6 +232,36 @@ const QuizQuestion = (props) => {
       }
     };
 
+
+    
+ const DOWNLOAD_TEMPLATE = async () => {
+      try {
+        const response = await BULK_IMPORT_QUIZ_QUESITON_TEMPLATE();
+   
+        const blob = new Blob([response.data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+   
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+   
+        link.href = url;
+        link.download = "bulk_import_quiz_questions_template.xlsx"; // ✅ XLSX
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+   
+        notification.success({
+          message: "Template Downloaded",
+          description: "Excel template downloaded successfully",
+        });
+      } catch (error) {
+        notification.error({
+          message: "Download Failed",
+          description: "Something went wrong",
+        });
+      }
+    };
   return (
     <div>
       {page_loader ? (
@@ -247,6 +279,19 @@ const QuizQuestion = (props) => {
               {addQuestionView ? "Add Question" : "Question List"}
             </Divider>
             <div style={{ position: "absolute", right: "0px", top: "0px" }}>
+                <Button
+                variant="solid"
+                color="green"
+                size="small"
+                style={{
+                  marginBottom: 16,
+                  marginRight: "5px",
+                  display: addQuestionView ? "none" : "inline-block",
+                }}
+                onClick={DOWNLOAD_TEMPLATE}
+              >
+               Download Template
+              </Button>
               <Button
                 type="primary"
                 size="small"
@@ -360,9 +405,11 @@ const QuizQuestion = (props) => {
           <div style={{ width: "100%" }}>
             <Upload
               beforeUpload={beforeUpload}
-              file={file}
+              fileList={file}
               onRemove={() => set_file([])}
               accept=".csv"
+              maxCount={1}
+              multiple={false}
               style={{ width: "100%" }} // optional
             >
               <div style={{ width: "100%" }}>

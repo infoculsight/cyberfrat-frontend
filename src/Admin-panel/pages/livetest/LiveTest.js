@@ -172,7 +172,6 @@ function LiveTest() {
           pagination={false}
           rowKey="id"
         />
-
         <div style={{ float: "right", marginTop: "20px" }}>
           <Pagination
             current={current_page}
@@ -181,6 +180,7 @@ function LiveTest() {
             onChange={pagination_on_change}
           />
         </div>
+
       </Card>
     </div>
   );

@@ -68,7 +68,7 @@ function ConfirmationAssignCourse(props) {
         {access_type === "MaxViewingHours" && (
           <InputNumber
             min={1}
-            max={1000}
+            max={24}
             style={{ width: 200 }}
             placeholder="Enter max hours"
             value={max_hours}

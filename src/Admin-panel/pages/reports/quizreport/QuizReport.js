@@ -20,13 +20,14 @@ const QuizReport = () => {
   useEffect(() => {
     const LIST_API = async () => {
       const FORM_DATA = new FormData();
+      FORM_DATA.append("per_page", page_size);
       const API_CALL = await QUIZ_REPORT(FORM_DATA);
 
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL?.data?.data?.results || []);
         set_current_page(Number(API_CALL?.data?.data?.current_page || 1));
         set_total_pages(Number(API_CALL?.data?.data?.total_pages || 0)); // ✅ total_records
-        set_page_size(Number(API_CALL?.data?.data?.page_size || 10));
+
         setLoader(false);
       } else {
         console.log("error");
@@ -34,21 +35,22 @@ const QuizReport = () => {
       }
     };
     LIST_API();
-  }, []);
+  }, [page_size]);
 
   // Pagination change
-  const pagination_on_change = async (page) => {
+  const pagination_on_change = async (page, size) => {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", page);
     FORM_DATA.append("search", search_query_title);
+    FORM_DATA.append("per_page", size);
 
     const API_CALL = await QUIZ_REPORT(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.data?.results || []);
       set_current_page(Number(API_CALL?.data?.data?.current_page || page));
       set_total_pages(Number(API_CALL?.data?.data?.total_pages || 0));
-      set_page_size(Number(API_CALL?.data?.data?.page_size || 10));
+
     }
     set_pagination_loader(false);
   };
@@ -62,22 +64,22 @@ const QuizReport = () => {
 
         const FORM_DATA = new FormData();
         FORM_DATA.append("search", value);
-
+        FORM_DATA.append("per_page", page_size); // <– now always latest
         const API_CALL = await QUIZ_REPORT(FORM_DATA);
+
         if (API_CALL?.data?.status) {
-          set_table_data(API_CALL?.data?.data?.results || []);
-          set_current_page(Number(API_CALL?.data?.data?.current_page || 1));
-          set_total_pages(Number(API_CALL?.data?.data?.total_pages || 0));
-          set_page_size(Number(API_CALL?.data?.data?.page_size || 10));
+          set_table_data(API_CALL.data.data.results || []);
+          set_current_page(Number(API_CALL.data.data.current_page || 1));
+          set_total_pages(Number(API_CALL.data.data.total_pages || 0));
+          // <- Correct key
         }
-        set_pagination_loader(false);
-      } catch (err) {
-        console.error("API Error:", err);
+      } finally {
         set_pagination_loader(false);
       }
     }, 500),
-    []
+    [page_size]
   );
+
 
   const handleInput = (e) => {
     const value = e.target.value;
@@ -101,7 +103,7 @@ const QuizReport = () => {
       title: "Total Quiz",
       render: (text, record) => <span>{record.chapter_count}</span>,
     },
-  
+
     {
       title: "Action",
       key: "action",
@@ -146,16 +148,32 @@ const QuizReport = () => {
             rowKey={(record, index) => index}
           />
 
-         
-            <div style={{ float: "right", marginTop: "20px" }}>
-              <Pagination
-                current={current_page}
-                total={total_pages}
-                pageSize={10}
-                onChange={pagination_on_change}
-              />
-            </div>
-          
+
+          <div style={{ float: "right", marginTop: "20px" }}>
+            <Pagination
+              current={current_page}
+              total={total_pages}
+              pageSize={page_size}
+              showSizeChanger
+              pageSizeOptions={['10', '20', '50', '100']}
+              onChange={pagination_on_change}
+              onShowSizeChange={(page, newPageSize) => {
+                set_page_size(newPageSize);
+                pagination_on_change(1, newPageSize);
+              }}
+
+              style={{ display: 'inline-block' }}
+              className="no-search-pagination"
+            />
+            <style>
+              {`
+                .no-search-pagination .ant-select-selection-search-input {
+                  display: none !important;
+                }
+              `}
+            </style>
+          </div>
+
         </>
       )}
     </div>

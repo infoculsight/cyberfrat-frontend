@@ -43,9 +43,14 @@ import EditLiveTest from "../Admin-panel/pages/livetest/EditLiveTest";
 import LiveTestQuestion from "../Admin-panel/pages/livetest/LiveTestQuestions";
 import LiveTestLearners from "../Admin-panel/pages/livetest/LiveTestLearners";
 import LearnerCourses from "../Admin-panel/pages/learners/LearnerCourses";
+import Announcment from "../Admin-panel/pages/announcment/Announcment";
+import AddAnnouncment from "../Admin-panel/pages/announcment/AddAnnouncment";
+import EditAnnouncment from "../Admin-panel/pages/announcment/EditAnnouncment";
+import Smtp from "../Admin-panel/pages/smtp/Smtp";
+import AddSmtp from "../Admin-panel/pages/smtp/AddSmtp";
+import EditSmtp from "../Admin-panel/pages/smtp/EditSmtp"
 
-
-
+    
 
 function AdminRoutes() {
   return (
@@ -72,7 +77,6 @@ function AdminRoutes() {
         <Route path="/edit-chapter/:id" element={<EditChapter />} />
         <Route path="/edit-chapter/:id/quiz-setting" element={<EditChapter />} />
         <Route path="/edit-chapter/:id/quiz-questions" element={<EditChapter />} />
-
         <Route path="/packages" element={<Packages />} />
         <Route path="add-packages" element={<AddPackages />} />
         <Route path="edit-package/:id" element={<EditPackages />} />
@@ -94,6 +98,12 @@ function AdminRoutes() {
         </Route>
 
         <Route path="download" element={<Downloads />} />
+        <Route path="announcment/:page?" element={<Announcment />} />
+        <Route path="add-announcment/" element={<AddAnnouncment />} />
+        <Route path="edit-announcment/:id" element={<EditAnnouncment />} />
+        <Route path="smtp" element={<Smtp />} />
+        <Route path="add-smtp" element={<AddSmtp />} />
+        <Route path="edit-smtp/:id" element={<EditSmtp />} />      
         <Route path="media" element={<ThemeMedia />} />
         <Route path="report" element={<Reports />} />
         <Route path="notification" element={<AdminNotification />} />
@@ -102,7 +112,7 @@ function AdminRoutes() {
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
-  );
+  );   
 }
 
 export default AdminRoutes;

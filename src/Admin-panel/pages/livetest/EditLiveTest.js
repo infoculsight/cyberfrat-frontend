@@ -10,9 +10,8 @@ import {
     DatePicker,
     Radio,
     App,
-    TimePicker
 } from "antd";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { EDIT_LIVE_TEST, VIEW_LIVE_TEST } from "../../apis/apis";
 import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
@@ -57,7 +56,7 @@ function EditLiveTest() {
 
         VIEW_API();
 
-    }, []);
+    }, [id]);
 
     const handleSubmit = async () => {
         setLoading(true);

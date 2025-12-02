@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
+  BellFilled,
   DashboardOutlined,
   DownloadOutlined,
   FileSearchOutlined,
   FileTextOutlined,
+  MailFilled,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   NotificationOutlined,
@@ -11,7 +13,7 @@ import {
   UploadOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { App, Button, Layout, Menu, ConfigProvider } from 'antd';
+import { App, Button, Layout, Menu } from 'antd';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Logo from "../assests/CF-PPT-1.png";
 import { getUser, logout } from '../../authService';
@@ -65,7 +67,13 @@ const MasterTemplate = () => {
       '/notification': { selected: '13' },
       '/add-notification': { selected: '13', open: '13' },
       '/edit-notification': { selected: '13', open: '13' },
-      '/deleted-courses': { selected: '14', open: '5' }
+      '/deleted-courses': { selected: '14', open: '5' },
+      '/announcment': {selected: '15', open: '15'},
+      '/add-announcment':{selected:'15', open:'15'},
+      '/edit-announcment':{selected:'15', open:'15'},
+      '/smtp':{selected:'16', open:'16'},
+      '/add-smtp':{selected:'16',open:'16'},
+      '/edit-smtp':{selected:'16',open:'16'}
     };
     const path = location.pathname;
     const match = pathToKey[path];
@@ -92,7 +100,10 @@ const MasterTemplate = () => {
       '11':'/live-test',
       '12': '/learners-group',
       '13': '/notification',
-      '14': '/deleted-courses'
+      '14': '/deleted-courses',
+      '15': '/announcment',
+      '16': '/smtp',
+
     };
 
     const route = keyToPath[key];
@@ -159,15 +170,17 @@ const MasterTemplate = () => {
                 },
                 { key: '8', icon: <ProfileFilled />, label: 'Media' },
                 { key: '9', icon: <FileSearchOutlined />, label: 'Report' },
-                { key: '13', icon: <NotificationOutlined />, label: 'Notification' },
                 { key: '10', icon: <DownloadOutlined />, label: 'Download' },
+                { key: '13', icon: <BellFilled />, label: 'Notification' },
+                { key: '15', icon: <NotificationOutlined />, label: 'Announcement' },
+                { key: '16', icon: <MailFilled />, label: 'SMTP' },
                 { key: '50', icon: <UploadOutlined />, label: 'Logout' },
               ]}
             />
           </Sider>
           <Layout>
             <Header
-              style={{
+              style={{    
                 padding: '0',
                 backgroundColor: '#141414',
               }}

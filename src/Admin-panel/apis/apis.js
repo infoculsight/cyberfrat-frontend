@@ -167,6 +167,15 @@ export const LEARNER_GROUP_LIST = async (body) => {
 };
 
 
+export const CHANGE_LEARNER_PASSWORD = async (body) => {
+    try {
+        const response = await Axios.post('change-learner-password/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 
 
 //INSTRUCTOR API
@@ -289,6 +298,16 @@ export const BULK_ASSIGN_COURSE = async (body) => {
         console.error(error);
     }
 };
+
+export const UPDATE_CHAPTER_PROGRESS = async (body) => {
+    try {
+        const response = await Axios.post('update-chapter-progress/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 
 
 
@@ -761,6 +780,17 @@ export const LEARNER_PACKAGE_STATUS = async (body) => {
     }
 };
 
+export const BULK_ASSIGN_MULTI_PACKAGE = async (body) => {
+    try {
+        const response = await Axios.post('bulk-assign-multi-package/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+
 
 export const ADD_VIDEO_VIEW = async (body) => {
     try {
@@ -1036,4 +1066,162 @@ export const BULK_ASSIGN_LIVE_TEST= async (body) => {
     } catch (error) {
         console.error(error);
     }
+};
+
+
+
+export const NEWS_LIST= async (body) => {
+    try {
+        const response = await Axios.post('news-list/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const ADD_NEWS = async (body) => {
+    try {
+        const response = await Axios.post('add-news/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const VIEW_NEWS = async (body) => {
+    try {
+        const response = await Axios.post('view-news/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const EDIT_NEWS = async (body) => {
+    try {
+        const response = await Axios.post('edit-news/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const NEWS_STATUS = async (body) => {
+    try {
+        const response = await Axios.post('news-status/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const DELETE_NEWS = async (body) => {
+    try {
+        const response = await Axios.post('delete-news/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const ADD_SMTP = async (body) => {
+    try {
+        const response = await Axios.post('add-smtp/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const EDIT_SMTP = async (body) => {
+    try {
+        const response = await Axios.post('edit-smtp/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const VIEW_SMTP = async (body) => {
+    try {
+        const response = await Axios.post('view-smtp/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const LIST_SMTP = async (body) => {
+    try {
+        const response = await Axios.post('list-smtp/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const DELETE_SMTP = async (body) => {
+    try {
+        const response = await Axios.post('delete-smtp/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const SMTP_STATUS = async (body) => {
+    try {
+        const response = await Axios.post('smtp-status/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+
+
+export const BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE = async (body) => {
+    try {
+        const response = await Axios.post('bulk-assign-package-course-template/', body, {
+        responseType: "blob",
+      });
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const BULK_IMPORT_QUIZ_QUESITON_TEMPLATE = async (body) => {
+    try {
+        const response = await Axios.post('bulk-import-quiz-question-template/', body, {
+        responseType: "blob",
+      });
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+
+export const BULK_ADD_LEARNER_TEMPLATE = async (body) => {
+ try {
+    const response = await Axios.post( 'bulk-add-learner-template/',body,
+      {
+        responseType: "blob",
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };

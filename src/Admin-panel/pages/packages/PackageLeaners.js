@@ -19,7 +19,7 @@ import { Option } from "antd/es/mentions";
 import { LeftOutlined, LoadingOutlined, UploadOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { LIST_PACKAGE_LEARNERS, LEARNER_PACKAGE_STATUS, BULK_ASSIGN_PACKAGE } from "../../apis/apis";
+import { LIST_PACKAGE_LEARNERS, LEARNER_PACKAGE_STATUS, BULK_ASSIGN_PACKAGE, DOWNLOAD_PACKAGE_LEARNER_REPORT, BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE } from "../../apis/apis";
 import moment from "moment";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
@@ -61,6 +61,7 @@ function PackageLeaners(props) {
 
   const handleCancel = () => {
     set_is_model_open(false);
+    set_file([])
   };
 
   const beforeUpload = (file) => {
@@ -112,7 +113,7 @@ function PackageLeaners(props) {
     };
 
     LIST_API();
-  }, [package_id]);
+  }, [package_id, page_size]);
 
 
   const selectBefore = (
@@ -215,23 +216,23 @@ function PackageLeaners(props) {
     },
   ];
 
-const pagination_on_change = async (page, size) => {
-  set_pagination_loader(true);
-  set_page_size(size); // update pageSize
-  const FORM_DATA = new FormData();
-  FORM_DATA.append("page", page);
-  FORM_DATA.append("page_size", size); // send page size to API if supported
-  FORM_DATA.append("name", search_query_name);
-  FORM_DATA.append("email", search_query_email);
-  FORM_DATA.append("package_id", atob(package_id));
-  const API_CALL = await LIST_PACKAGE_LEARNERS(FORM_DATA);
-  if (API_CALL?.data?.status) {
-    set_table_data(API_CALL?.data?.data);
-    set_current_page(API_CALL?.data?.current_page);
-    set_total_learners(API_CALL?.data?.total_learners);
-  }
-  set_pagination_loader(false);
-};
+  const pagination_on_change = async (page, size) => {
+    set_pagination_loader(true);
+    set_page_size(size); // update pageSize
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("page", page);
+    FORM_DATA.append("page_size", size); // send page size to API if supported
+    FORM_DATA.append("name", search_query_name);
+    FORM_DATA.append("email", search_query_email);
+    FORM_DATA.append("package_id", atob(package_id));
+    const API_CALL = await LIST_PACKAGE_LEARNERS(FORM_DATA);
+    if (API_CALL?.data?.status) {
+      set_table_data(API_CALL?.data?.data);
+      set_current_page(API_CALL?.data?.current_page);
+      set_total_learners(API_CALL?.data?.total_learners);
+    }
+    set_pagination_loader(false);
+  };
 
 
   const fetchResultsName = debounce(async (value) => {
@@ -300,10 +301,10 @@ const pagination_on_change = async (page, size) => {
     try {
       const response = await BULK_ASSIGN_PACKAGE(formData);
       if (response?.data?.status) {
-          notification.success({
-                          message: "Successful",
-                          description: response?.data?.message,
-                        });
+        notification.success({
+          message: "Successful",
+          description: response?.data?.message,
+        });
         set_is_model_open(false);
         setLoader(false)
       } else {
@@ -316,7 +317,34 @@ const pagination_on_change = async (page, size) => {
     }
   };
 
-
+ const DOWNLOAD_TEMPLATE = async () => {
+      try {
+        const response = await BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE();
+   
+        const blob = new Blob([response.data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+   
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+   
+        link.href = url;
+        link.download = "bulk_add_package_learners_template.xlsx"; // ✅ XLSX
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+   
+        notification.success({
+          message: "Template Downloaded",
+          description: "Excel template downloaded successfully",
+        });
+      } catch (error) {
+        notification.error({
+          message: "Download Failed",
+          description: "Something went wrong",
+        });
+      }
+    };
 
 
   return (
@@ -331,7 +359,7 @@ const pagination_on_change = async (page, size) => {
         </Row>
 
         <Row gutter={[16, 16]}>
-          <Col xs={24} sm={24} md={16} lg={16} xl={16}>
+          <Col xs={24} sm={24} md={12} lg={12} xl={12}>
             <Input
               addonBefore={selectBefore}
               placeholder={search_paceholder}
@@ -339,6 +367,18 @@ const pagination_on_change = async (page, size) => {
               size="large"
             />
           </Col>
+          <Col xs={24} sm={24} md={4} lg={4} xl={4}>
+            <Button
+              variant="solid"
+              color="green"
+              style={{ width: "100%" }}
+              size="large"
+              onClick={DOWNLOAD_TEMPLATE}
+            >
+              Download Template
+            </Button>
+          </Col>
+
           <Col xs={24} sm={24} md={4} lg={4} xl={4}>
             <Button
               type="primary"
@@ -378,29 +418,31 @@ const pagination_on_change = async (page, size) => {
                 style={{ marginTop: "15px" }}
               />
             )}
-         <div style={{ float: "right", marginTop: "20px" }}>
-                         <Pagination
-                           current={current_page}
-                           total={total_learners}
-                           pageSize={page_size}
-                           showSizeChanger
-                           pageSizeOptions={["10", "20", "50", "100"]}
-                           onChange={pagination_on_change}
-                           onShowSizeChange={(current, size) => {
-                             set_page_size(size);
-                             pagination_on_change(1, size); // FIXED
-                           }}
-                           style={{ display: "inline-block" }}
-                           className="no-search-pagination"
-                         />
-                         <style>
-                           {`
+
+            {total_pages > 0 ? <>  <div style={{ float: "right", marginTop: "20px" }}>
+              <Pagination
+                current={current_page}
+                total={total_learners}
+                pageSize={page_size}
+                showSizeChanger
+                pageSizeOptions={["10", "20", "50", "100"]}
+                onChange={pagination_on_change}
+                onShowSizeChange={(current, size) => {
+                  set_page_size(size);
+                  pagination_on_change(1, size); // FIXED
+                }}
+                style={{ display: "inline-block" }}
+                className="no-search-pagination"
+              />
+              <style>
+                {`
                              .no-search-pagination .ant-select-selection-search-input {
                                display: none !important;
                              }
                            `}
-                         </style>
-                       </div>
+              </style>
+            </div></> : <></>}
+
           </>
         )}
       </Card>
@@ -491,16 +533,16 @@ const pagination_on_change = async (page, size) => {
         <div style={{ width: "100%" }}>
           <Upload
             beforeUpload={beforeUpload}
-            file={file}
+            fileList={file}
             onRemove={() => set_file([])}
             accept=".csv"
-            style={{ width: "100%" }} // optional
+            multiple={false}
+            maxCount={1}
+            style={{ width: "100%" }}
           >
-            <div style={{ width: "100%" }}>
-              <Button type="primary" icon={<UploadOutlined />} block>
-                Upload File
-              </Button>
-            </div>
+            <Button type="primary" icon={<UploadOutlined />} block>
+              Upload File
+            </Button>
           </Upload>
           {errors?.file ? (
             <>

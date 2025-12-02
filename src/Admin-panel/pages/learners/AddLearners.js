@@ -89,7 +89,7 @@ export default function AddLearners() {
     FORM_DATA.append("email", email);
     FORM_DATA.append("country_code", country_code);
     FORM_DATA.append("contact_no", contact_no);
-    FORM_DATA.append("organization", organization);
+    FORM_DATA.append("organization", organization); 
     FORM_DATA.append("designation", designation);
     // FORM_DATA.append("password", password);
     // FORM_DATA.append("confirm_password", confirm_password);

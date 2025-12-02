@@ -9,7 +9,6 @@ import {
   Space,
   Spin,
   Table,
-  Tag,
   Modal,
   message,
   App,
@@ -65,7 +64,7 @@ function LiveTestLearners(props) {
     setIsModalVisible(true);
   };
 
-  const showEnrollModal = () => setisModalOpen(true);
+
   const CancelEnrollModal = () => setisModalOpen(false);
 
 
@@ -101,7 +100,7 @@ function LiveTestLearners(props) {
       setLoader(false);
     };
     LIST_API();
-  }, [live_test_id]);
+  }, [live_test_id,page_size]);
 
 
   const selectBefore = (

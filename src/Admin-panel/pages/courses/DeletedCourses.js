@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   Col,
   Input,
@@ -10,13 +9,12 @@ import {
 } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import DeletedCourseBox from "../../components/DeletedCourseBox";
-import { useNavigate } from "react-router-dom";
 import { DELETED_COURSE_LIST, COURSE_STATUS, DELETE_COURSE } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 
 function DeletedCourses() {
-  const Navigate = useNavigate();
+
   const [courses, set_courses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination_loader, set_pagination_loader] = useState(false);

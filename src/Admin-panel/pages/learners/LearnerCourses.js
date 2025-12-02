@@ -7,10 +7,9 @@ import {
   Table,
   Pagination,
   Spin,
-  App,
-  Button
+  Button 
 } from "antd";
-import { LeftOutlined, LoadingOutlined, DownloadOutlined } from "@ant-design/icons";
+import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate,useParams } from "react-router-dom";
 import debounce from "lodash.debounce";
 import moment from "moment";
@@ -21,8 +20,6 @@ function LearnerCourses() {
   const { learner_id } = useParams();
   const location = useLocation();
   const Navigate = useNavigate();
-  const { notification } = App.useApp();
-
   const [loader, setLoader] = useState(true);
   const [pagination_loader, setPaginationLoader] = useState(false);
   const [table_data, setTableData] = useState([]);

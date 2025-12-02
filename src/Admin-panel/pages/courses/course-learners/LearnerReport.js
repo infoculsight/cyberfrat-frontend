@@ -1,12 +1,13 @@
-import { Card, Col, Row, Table } from 'antd'
-import { CheckCircleOutlined, LeftOutlined } from "@ant-design/icons";
+import { App, Button, Card, Col, InputNumber, message, Popconfirm, Progress, Row, Table } from 'antd'
+import { LeftOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams,useLocation } from 'react-router-dom';
-import { VIEW_LEARNER_REPORT } from '../../../apis/apis';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { UPDATE_CHAPTER_PROGRESS, VIEW_LEARNER_REPORT } from '../../../apis/apis';
 import CulsightPageLoader from '../../../components/CulsightPageLoader';
 
 function LearnerReport() {
   const Navigate = useNavigate();
+  const { notification } = App.useApp();
   const { course_id, learner_id } = useParams();
   const [loader, setLoader] = useState(true);
   const [course_name, set_course_name] = useState("")
@@ -16,15 +17,17 @@ function LearnerReport() {
   const [learner_row, set_learner_row] = useState("")
   const [table_data, set_table_data] = useState(false)
   const location = useLocation();
+  const [chapterProgress, setChapterProgress] = useState({});
+
 
   const handleBack = () => {
     if (location.state?.from) {
-      Navigate(location.state.from); // go back to where user came from
+      Navigate(location.state.from);
     } else {
-      Navigate(-1); // fallback if no state
+      Navigate(-1);
     }
   };
-  
+
   const formatDuration = (seconds) => {
     if (!seconds && seconds !== 0) return "";
 
@@ -41,7 +44,6 @@ function LearnerReport() {
 
     return result.join(" ");
   };
-
 
 
   useEffect(() => {
@@ -69,6 +71,8 @@ function LearnerReport() {
     LIST_API();
   }, [course_id, learner_id]);
 
+
+
   const columns = [
     {
       title: "Name",
@@ -93,16 +97,75 @@ function LearnerReport() {
       ),
     },
     {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <CheckCircleOutlined style={{ fontSize: "20px", color: "green", cursor: "pointer" }} />
-      ),
+      title: "Action",
+      key: "action",
+      render: (_, record) => {
+        const chapter_id = record.id;
+        const percent = chapterProgress[chapter_id] ?? 0;
+
+        return (
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+
+            <Progress
+              percent={percent}
+              size="small"
+              status="active"
+              style={{ width: "120px" }}
+            />
+
+            <InputNumber
+              min={0}
+              max={100}
+              value={percent}
+              onChange={(value) => handleProgressChange(chapter_id, value)}
+              style={{ width: "60px" }}
+            />
+
+            <Popconfirm
+              title="Do you really want to change chapter progress !"
+              onConfirm={() => updateProgressAPI(chapter_id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button
+                variant='solid'
+                color='green'
+                size='small'
+              >
+                Update
+              </Button>
+
+            </Popconfirm>
+
+          </div>
+        );
+      },
     },
   ];
 
 
+  const updateProgressAPI = async (chapter_id) => {
+    const form = new FormData();
+    form.append("learner_id", atob(learner_id));
+    form.append("chapter_id", chapter_id);
+    form.append("progress_percent", chapterProgress[chapter_id]);
+    const response = await UPDATE_CHAPTER_PROGRESS(form);
+    if (response?.data?.status) {
+      notification.success({
+          message: "Successful",
+          description: response?.data?.message,
+        });
+    } else {
+      message.error("Failed to update");
+    }
+  };
 
+  const handleProgressChange = (chapter_id, value) => {
+    setChapterProgress(prev => ({
+      ...prev,
+      [chapter_id]: value
+    }));
+  };
 
   return (
     <div className='lms-body'>

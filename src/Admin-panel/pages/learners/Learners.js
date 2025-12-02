@@ -1,8 +1,8 @@
-import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm, Tooltip } from "antd";
-import { EyeFilled, LoadingOutlined, UploadOutlined, BookOutlined } from "@ant-design/icons";
-import React, { useCallback, useEffect, useState } from "react";
+import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm, Tooltip, Form } from "antd";
+import { EyeFilled, LoadingOutlined, UploadOutlined, BookOutlined, LockOutlined } from "@ant-design/icons";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { BULD_ADD_LEARNERS, LEARNER_LIST, LEARNER_STATUS } from "../../apis/apis";
+import { BULD_ADD_LEARNERS, BULK_ADD_LEARNER_TEMPLATE, CHANGE_LEARNER_PASSWORD, LEARNER_LIST, LEARNER_STATUS } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import { formatToIST } from "../../../helper/CommonHelper";
@@ -11,7 +11,6 @@ import { formatToIST } from "../../../helper/CommonHelper";
 function Learners() {
   const { notification } = App.useApp();
   const { page } = useParams();
-
 
   //USE STATE FOR PAGINATION AND LOADER
   const navigate = useNavigate();
@@ -23,6 +22,7 @@ function Learners() {
   const [total_learners, set_total_learners] = useState("");
   const [onchange_call, set_onchange_call] = useState(true);
   const [errors, set_errors] = useState("");
+
   // fillter state
   const [placeholder, set_placeholder] = useState("Search by name");
   const [search_query_key, set_search_query_key] = useState('name');
@@ -31,12 +31,95 @@ function Learners() {
   const [is_model_open, set_is_model_open] = useState(false);
   const [page_size, set_page_size] = useState(10);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [new_password, set_new_password] = useState("");
+  const [confirm_password, set_confirm_password] = useState("");
+  const [selectedLearner, setSelectedLearner] = useState(null);
+
+
+  const [error, set_error] = useState({
+    new_password: "",
+    confirm_password: ""
+  });
+
+  const handlePasswordSubmit = async () => {
+    // Clear previous errors
+    set_error({ current_password: "", new_password: "", confirm_password: "" });
+
+    if (new_password !== confirm_password) {
+      const msg = "New password and Confirm password do not match!";
+      set_error({ ...error, confirm_password: msg });
+
+      notification.error({
+        message: "Error",
+        description: msg,
+      });
+      return;
+    }
+
+    setPasswordLoading(true);
+
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("email", selectedLearner.email);
+    FORM_DATA.append("new_password", new_password);
+    FORM_DATA.append("confirm_password", confirm_password);
+
+    try {
+      const response = await CHANGE_LEARNER_PASSWORD(FORM_DATA);
+
+      if (response?.data?.status) {
+        notification.success({
+          message: "Password Updated Successfully",
+        });
+
+        setIsModalOpen(false);
+
+        set_new_password("");
+        set_confirm_password("");
+        set_error({ new_password: "", confirm_password: "" });
+
+      } else {
+        const errors = response?.data?.errors;
+        if (errors) {
+          set_error({
+            new_password: errors.new_password || "",
+            confirm_password: errors.confirm_password || "",
+          });
+
+          const errorMsg = Object.values(errors).join(" | ");
+          notification.error({
+            message: "Error",
+            description: errorMsg,
+          });
+        } else {
+          const backendError = response?.data?.message;
+          notification.error({
+            message: "Error",
+            description: backendError,
+          });
+        }
+      }
+    } catch (err) {
+      const backendError =
+        err?.response?.data?.message;
+
+      notification.error({
+        message: "Error",
+        description: backendError,
+      });
+    }
+
+    setPasswordLoading(false);
+  };
+
   const showModal = () => {
     set_is_model_open(true);
   };
 
   const handleCancel = () => {
     set_is_model_open(false);
+    set_file([])
   };
 
   const beforeUpload = (file) => {
@@ -75,7 +158,7 @@ function Learners() {
         set_pagination_loader(false);
       }
     }, 500)(); // Call debounce immediately
-  }, [page_size]);
+  }, [page_size, navigate]);
 
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
@@ -230,6 +313,18 @@ function Learners() {
           <Button type="primary" size="small" onClick={() => navigate("/edit-learner/" + btoa(record.id))}><EyeFilled /></Button>
           <Tooltip title=" Learner Courses">
             <Button type="primary" size="small" onClick={() => navigate(`/learner-courses/ ${record.id}`)}><BookOutlined /></Button></Tooltip>
+          <Button
+            variant="solid"
+            color="green"
+            size="small"
+            onClick={() => {
+              setSelectedLearner(record);
+              setIsModalOpen(true);
+            }}
+          >
+            <LockOutlined />
+          </Button>
+
           <Popconfirm
             title="Do you really want to change the status ?"
             onConfirm={() => change_status(record?.id)}
@@ -237,7 +332,6 @@ function Learners() {
             cancelText="No"
           >
             <Button variant="solid" color="danger" size="small"> Change Status</Button>
-
           </Popconfirm>
 
 
@@ -305,6 +399,40 @@ function Learners() {
     }
   };
 
+ 
+  const DOWNLOAD_TEMPLATE = async () => {
+    try {
+      const response = await BULK_ADD_LEARNER_TEMPLATE();
+ 
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+ 
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+ 
+      link.href = url;
+      link.download = "bulk_add_learners_template.xlsx"; // ✅ XLSX
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+ 
+      notification.success({
+        message: "Template Downloaded",
+        description: "Excel template downloaded successfully",
+      });
+      console.log(response.data.size); // should be > 0
+
+    } catch (error) {
+      notification.error({
+        message: "Download Failed",
+        description: "Something went wrong",
+      });
+    }
+  };
+
+
+
   return (
     <div className="lms-body">
       <Card>
@@ -314,6 +442,15 @@ function Learners() {
           </Col>
           <Col span={12}>
             <div className="learner-buttons" style={{ float: "right" }}>
+              <Button
+                type="primary"
+                color="green"
+                variant="solid"
+                style={{ marginRight: "10px" }}
+                onClick={DOWNLOAD_TEMPLATE}
+              >
+                Download Template
+              </Button>
               <Button
                 type="primary"
                 color="green"
@@ -396,10 +533,10 @@ function Learners() {
                   />
                   <style>
                     {`
-    .no-search-pagination .ant-select-selection-search-input {
-      display: none !important;
-    }
-  `}
+                      .no-search-pagination .ant-select-selection-search-input {
+                        display: none !important;
+                      }
+                    `}
                   </style>
                 </div>
               </>
@@ -429,17 +566,18 @@ function Learners() {
           <div style={{ width: "100%" }}>
             <Upload
               beforeUpload={beforeUpload}
-              file={file}
+              fileList={file}
               onRemove={() => set_file([])}
               accept=".csv"
-              style={{ width: "100%" }} // optional
+              multiple={false}
+              maxCount={1}
+              style={{ width: "100%" }}
             >
-              <div style={{ width: "100%" }}>
-                <Button type="primary" icon={<UploadOutlined />} block>
-                  Upload File
-                </Button>
-              </div>
+              <Button type="primary" icon={<UploadOutlined />} block>
+                Upload File
+              </Button>
             </Upload>
+
             {errors?.file ? (
               <>
                 <span style={{ color: "red" }}>
@@ -451,6 +589,39 @@ function Learners() {
             )}
           </div>
         </Modal>
+
+        <Modal
+          title="Change Password"
+          open={isModalOpen}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setSelectedLearner(null);
+            set_error({ new_password: "", confirm_password: "" });
+            set_new_password("");
+            set_confirm_password("");
+          }}
+          footer={null}
+        >
+          <Form layout="vertical" onFinish={handlePasswordSubmit}>
+
+            <Form.Item label="New Password">
+              <Input.Password value={new_password} onChange={(e) => set_new_password(e.target.value)} />
+              {error.new_password && <p style={{ color: "red" }}>{error.new_password}</p>}
+            </Form.Item>
+
+            <Form.Item label="Confirm Password">
+              <Input.Password value={confirm_password} onChange={(e) => set_confirm_password(e.target.value)} />
+              {error.confirm_password && <p style={{ color: "red" }}>{error.confirm_password}</p>}
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={passwordLoading} style={{ width: "100%" }}>
+                Update Password
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+
       </Card>
     </div>
   );

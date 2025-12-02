@@ -1,13 +1,10 @@
-import { Button, Card, Popconfirm, Popover, Spin, Tag } from "antd";
+import { Button, Card, Popover, Spin, Tag } from "antd";
 import { useState } from "react";
 import {
-  DeleteFilled,
   UserOutlined,
   FileOutlined,
   EyeOutlined,
   LoadingOutlined,
-  GlobalOutlined,
-  LockOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
