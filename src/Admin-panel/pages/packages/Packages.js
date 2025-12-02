@@ -1,8 +1,8 @@
-import { Button, Card, Col, Input, Modal, Pagination, Row, Spin, Table, Checkbox } from "antd";
+import { Button, Card, Col, Input, Modal, Pagination, Row, Spin, Table, Checkbox, App } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import PackageBox from "../../components/PackageBox";
 import { useNavigate } from "react-router-dom";
-import { LIST_PACKAGE } from "../../apis/apis";
+import { BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE, DOWNLOAD_ALL_PACKAGE_REPORT, LIST_PACKAGE } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import { LoadingOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
@@ -10,6 +10,7 @@ import BulkAssignPackage from "./BulkAssignPackage";
 
 function Packages() {
   const Navigate = useNavigate();
+    const { notification } = App.useApp();
   const [packages, set_packages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination_loader, set_pagination_loader] = useState(false);
@@ -37,7 +38,7 @@ function Packages() {
     set_is_model_open(true);
   };
 
-  const onCancelModal = () => { 
+  const onCancelModal = () => {
     set_is_model_open(false);
     setSelectedPackages([]);
     set_reset_trigger(prev => prev + 1);
@@ -105,20 +106,89 @@ function Packages() {
     fetchResultsTitle(value);
   };
 
+   const DOWNLOAD_TEMPLATE = async () => {
+      try {
+        const response = await BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE();
+   
+        const blob = new Blob([response.data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+   
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+   
+        link.href = url;
+        link.download = "bulk_add_package_learners_template.xlsx"; // ✅ XLSX
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+   
+        notification.success({
+          message: "Template Downloaded",
+          description: "Excel template downloaded successfully",
+        });
+      } catch (error) {
+        notification.error({
+          message: "Download Failed",
+          description: "Something went wrong",
+        });
+      }
+    };
+  
+  
+  
+
   return (
     <div className="lms-body">
       <Card>
-        <h2>Packages
-          <Button variant="solid" color="green" style={{ float: "right", marginLeft: "5px" }} size="large" onClick={showModal} onCancel={onCancelModal}>Bulk Assign Package</Button>
+        <Row
+          gutter={[16, 16]}
+          style={{ marginBottom: "20px" }}
+          justify="space-between"
+          align="middle"
+        >
+          {/* Heading on the left */}
+          <Col xs={24} sm={24} md={12} lg={12} xl={12} style={{ textAlign: "left" }}>
+            <h2>Packages</h2>
+          </Col>
 
-          <Button
-            type="primary"
-            size="large"
-            onClick={() => Navigate("/add-packages")}
-            style={{ float: "right" }}
-          >
-            Create Package
-          </Button></h2>
+          {/* Buttons on the right */}
+          <Col xs={24} sm={24} md={12} lg={12} xl={12} style={{ textAlign: "right" }}>
+            <Row gutter={[16, 16]} justify="end">
+              <Col>
+                <Button
+                  variant="solid"
+                  color="green"
+                  size="large"
+                  onClick={DOWNLOAD_TEMPLATE}
+                >
+                  Download Template
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  variant="solid"
+                  color="green"
+                  size="large"
+                  onClick={showModal}
+                >
+                  Bulk Assign Package
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  type="primary"
+                  size="large"
+                  onClick={() => Navigate("/add-packages")}
+                >
+                  Create Package
+                </Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+
+
 
         <Row gutter={[16, 16]} align="middle">
           <Col xs={24} sm={24} md={12} lg={12}>
@@ -151,7 +221,7 @@ function Packages() {
                           package_name={items?.name}
                           package_image={items?.thumbnail}
                           package_tag_line={items?.tag_line}
-                        />   
+                        />
                       </Col>
                     ))
                   ) : (
@@ -196,7 +266,7 @@ function Packages() {
         onCancel={onCancelModal}
         footer={null}
         width={800}
-        
+
       >
         <BulkAssignPackage
           packages={packages}

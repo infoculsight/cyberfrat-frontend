@@ -2,7 +2,7 @@ import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row,
 import { EyeFilled, LoadingOutlined, UploadOutlined, BookOutlined, LockOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { BULD_ADD_LEARNERS, CHANGE_LEARNER_PASSWORD, LEARNER_LIST, LEARNER_STATUS } from "../../apis/apis";
+import { BULD_ADD_LEARNERS, BULK_ADD_LEARNER_TEMPLATE, CHANGE_LEARNER_PASSWORD, LEARNER_LIST, LEARNER_STATUS } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import { formatToIST } from "../../../helper/CommonHelper";
@@ -22,7 +22,7 @@ function Learners() {
   const [total_learners, set_total_learners] = useState("");
   const [onchange_call, set_onchange_call] = useState(true);
   const [errors, set_errors] = useState("");
-  
+
   // fillter state
   const [placeholder, set_placeholder] = useState("Search by name");
   const [search_query_key, set_search_query_key] = useState('name');
@@ -399,6 +399,40 @@ function Learners() {
     }
   };
 
+ 
+  const DOWNLOAD_TEMPLATE = async () => {
+    try {
+      const response = await BULK_ADD_LEARNER_TEMPLATE();
+ 
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+ 
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+ 
+      link.href = url;
+      link.download = "bulk_add_learners_template.xlsx"; // ✅ XLSX
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+ 
+      notification.success({
+        message: "Template Downloaded",
+        description: "Excel template downloaded successfully",
+      });
+      console.log(response.data.size); // should be > 0
+
+    } catch (error) {
+      notification.error({
+        message: "Download Failed",
+        description: "Something went wrong",
+      });
+    }
+  };
+
+
+
   return (
     <div className="lms-body">
       <Card>
@@ -408,6 +442,15 @@ function Learners() {
           </Col>
           <Col span={12}>
             <div className="learner-buttons" style={{ float: "right" }}>
+              <Button
+                type="primary"
+                color="green"
+                variant="solid"
+                style={{ marginRight: "10px" }}
+                onClick={DOWNLOAD_TEMPLATE}
+              >
+                Download Template
+              </Button>
               <Button
                 type="primary"
                 color="green"

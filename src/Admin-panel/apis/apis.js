@@ -1183,3 +1183,45 @@ export const SMTP_STATUS = async (body) => {
         console.error(error);
     }
 };
+
+
+
+
+export const BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE = async (body) => {
+    try {
+        const response = await Axios.post('bulk-assign-package-course-template/', body, {
+        responseType: "blob",
+      });
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+export const BULK_IMPORT_QUIZ_QUESITON_TEMPLATE = async (body) => {
+    try {
+        const response = await Axios.post('bulk-import-quiz-question-template/', body, {
+        responseType: "blob",
+      });
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+
+export const BULK_ADD_LEARNER_TEMPLATE = async (body) => {
+ try {
+    const response = await Axios.post( 'bulk-add-learner-template/',body,
+      {
+        responseType: "blob",
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
