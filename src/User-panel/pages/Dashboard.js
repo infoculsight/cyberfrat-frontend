@@ -430,6 +430,7 @@ function Dashboard() {
                             <h4>{current_course_chapter.course_data?.title}</h4>
                             <p>
                               <b>Chapter:</b>{" "}
+
                               {current_course_chapter.chapter_data?.title}
                             </p>
                             <p>
@@ -439,7 +440,7 @@ function Dashboard() {
                             <Button
                               type="primary"
                               size="small"
-                              style={{ display: "inline-block", float: "right", marginTop: "-45px", marginLeft: "15px" }}
+                              className="view-btn"
                               disabled={!current_course_chapter?.chapter_data?.course_id}
                               onClick={() =>
                                 navigate(
@@ -450,6 +451,7 @@ function Dashboard() {
                             >
                               View
                             </Button>
+
                           </Card>
                         </Col>
                       </Row>
@@ -495,10 +497,10 @@ function Dashboard() {
               ) : (
                 <Row gutter={[16, 16]} style={{ marginTop: "10px" }}>
                   <Col span={24}>
-                    <h2 style={{margin:"0" }}>Leaderboard - Top 10 Learners</h2>
+                    <h2 style={{ margin: "0" }}>Leaderboard - Top 10 Learners</h2>
                   </Col>
                   {learner_watch?.map((learner, index) => (
-                    <Col span={24} key={learner.id || index} style={{marginTop:"-10px"}}>
+                    <Col span={24} key={learner.id || index} style={{ marginTop: "-10px" }}>
                       <Card className="leader-tile">
                         <p><b>Rank:</b> {learner.rank}</p>
                         <p>

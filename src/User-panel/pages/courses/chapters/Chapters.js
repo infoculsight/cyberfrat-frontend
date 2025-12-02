@@ -191,14 +191,22 @@ export default function Chapters() {
     parseInt(local_theme) === 0 ? set_balck_theme(false) : set_balck_theme(true);
   }, [fetchEnabledChapters]);
 
-  const handleChapterClick = async (chapter, index) => {
-    if (hasQuiz(chapter.title) && course_watch_percent < 90) {
-      message.warning("Please complete at least 90% of the course before attempting the quiz.");
-      return;
+const handleChapterClick = async (chapter, index) => {
+  if (hasQuiz(chapter.title) && course_watch_percent < 90) {
+    message.warning("Please complete at least 90% of the course before attempting the quiz.");
+    return;
+  }
+  const success = await UPDATE_CURRENT_CHAPTER_API(chapter.id, atob(course_id));
+  if (success) {
+    fetchEnabledChapters();
+
+    
+    if (window.innerWidth <= 768) {
+      setShowChapterList(false);
     }
-    const success = await UPDATE_CURRENT_CHAPTER_API(chapter.id, atob(course_id));
-    if (success) fetchEnabledChapters();
-  };
+  }
+};
+
 
   const handleDownload = () => {
     const url = course_status;

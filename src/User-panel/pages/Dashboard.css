@@ -71,6 +71,19 @@
 }
 
 
+.course-tile {
+  position: relative;
+  padding-right: 90px; /* button को space देने के लिए */
+}
+
+.course-tile .view-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10;
+}
+
+
 
 /*  Tablet (≥768px and <1200px) */
 @media (max-width: 1199px) and (min-width: 768px) {
