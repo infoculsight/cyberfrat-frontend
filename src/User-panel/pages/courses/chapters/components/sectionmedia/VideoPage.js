@@ -251,7 +251,7 @@ const VideoPage = ({
             fontSize: "16px",
           }}
         >
-          ⚠️ Tracking disabled — video skipped
+          ⚠️ Tracking paused as video was skipped. Refresh and continue to resume.
         </div>
       ) : (
         <div
