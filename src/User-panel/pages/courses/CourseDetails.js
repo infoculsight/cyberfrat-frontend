@@ -88,7 +88,7 @@ function CourseDetails(props) {
         <div>
           <Card>
             <Row>
-              <Col lg={12} xs={24} sm={24}>
+              <Col lg={12} xs={12} sm={12}>
                 <h3
                   onClick={handleBack}
                   style={{
@@ -100,7 +100,7 @@ function CourseDetails(props) {
                   <LeftOutlined /> Go Back
                 </h3>
               </Col>
-              <Col lg={12} xs={24} sm={24}>
+              <Col lg={12} xs={12} sm={12}>
                 <Button
                   style={{
                     float: "right",
@@ -121,8 +121,8 @@ function CourseDetails(props) {
               </Col>
             </Row>
 
-            <Row>
-              <Col span={14} style={{ paddingRight: "30px" }}>
+            <Row gutter={30}>
+              <Col  lg={12} xs={24} sm={24} style={{ marginBottom: "30px" }}>
                 <div style={{ width: "100%", position: "relative", borderRadius: 8, overflow: "hidden" }}>
                   <div
                     style={{
@@ -158,7 +158,7 @@ function CourseDetails(props) {
                 </div>
               </Col>
 
-              <Col span={10}>
+              <Col  lg={12} xs={24} sm={24}>
                 <h2 style={{ textTransform: "capitalize" }}>{course_data.title}</h2>
                 <p>
                   <b style={{ color: "#e9c70ada" }}>Instructor:</b>{" "}
