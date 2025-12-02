@@ -302,4 +302,4 @@ function Announcment() {
   )
 }
 
-export default Announcment
+export default Announcment;
