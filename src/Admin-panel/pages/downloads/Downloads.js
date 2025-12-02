@@ -44,12 +44,12 @@ function Downloads() {
     const FORM_DATA = new FormData();
     FORM_DATA.append("id",id);
    
-    const API_CALL = await GET_DOWNLOAD_REPORT(FORM_DATA);
+     const API_CALL = await GET_DOWNLOAD_REPORT(FORM_DATA);
     if (API_CALL?.data?.status) {
           window.location= API_CALL?.data?.url
     } else {
       console.log("error");
-      setLoader(false);
+     setLoader(false);
     }
   };
 
