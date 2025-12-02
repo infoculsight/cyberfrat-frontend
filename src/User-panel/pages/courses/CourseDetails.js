@@ -88,7 +88,7 @@ function CourseDetails(props) {
         <div>
           <Card>
             <Row>
-              <Col span={12}>
+              <Col lg={12} xs={24} sm={24}>
                 <h3
                   onClick={handleBack}
                   style={{
@@ -100,7 +100,7 @@ function CourseDetails(props) {
                   <LeftOutlined /> Go Back
                 </h3>
               </Col>
-              <Col span={12}>
+              <Col lg={12} xs={24} sm={24}>
                 <Button
                   style={{
                     float: "right",
