@@ -1,11 +1,14 @@
-import { Button, Card, Col, Progress, Row, Table } from "antd";
+import { Button, Card, Col, Progress, Row, Table, Grid } from "antd";
 import { useEffect, useState } from "react";
 import { LEANER_WATCHTIME, LEARNER_DASHBOARD } from "../apis/apis";
 import { useNavigate } from "react-router-dom";
 import CulsightPageLoader from "../components/CulsightPageLoader";
 import "./Dashboard.css";
 
+const { useBreakpoint } = Grid;
+
 function Dashboard() {
+  const screens = useBreakpoint(); // AntD hook for responsive
   const navigate = useNavigate();
   const [Loading, setLoading] = useState(false);
   const [all_courses, set_all_courses] = useState(0);
@@ -14,20 +17,6 @@ function Dashboard() {
   const [current_course_chapter, set_current_course_chapter] = useState(null);
   const [learner_watch, set_learner_watch] = useState([]);
   const [single_learner_data, set_single_learner_data] = useState({});
-
-  // 🔥 NEW: Announcement Section
-  const [announcements, setAnnouncements] = useState([
-    {
-      id: 1,
-      title: "New course on Data Analytics launched!",
-      date: "2025-01-20",
-    },
-    {
-      id: 2,
-      title: "Complete at least 3 chapters to earn a badge.",
-      date: "2025-01-18",
-    },
-  ]);
 
   const currentcolumns = [
     {
@@ -141,61 +130,131 @@ function Dashboard() {
             <Col xs={24} sm={24} md={24} lg={14}>
               <Row gutter={[16, 16]}>
                 <Col span={24}>
-                  <Card className="progress-card">
-                    <Row gutter={[16, 16]} justify="center">
-                      <Col xs={8} sm={8} md={8} className="circle-col">
-                        <Progress
-                          type="circle"
-                          percent={100}
-                          format={() => (
-                            <span style={{ color: "#1890ff" }}>{all_courses}</span>
-                          )}
-                          strokeColor="#1890ff"
-                        />
-                        <h4>All Courses</h4>
+                  {/* Responsive Progress Section */}
+                  {screens.lg ? (
+                    // Desktop: Circular Progress
+                    <Card className="progress-card">
+                      <Row gutter={[16, 16]} justify="center">
+                        <Col xs={8} sm={8} md={8} className="circle-col">
+                          <Progress
+                            type="circle"
+                            percent={100}
+                            format={() => (
+                              <span style={{ color: "#1890ff" }}>{all_courses}</span>
+                            )}
+                            strokeColor="#1890ff"
+                          />
+                          <h4>All Courses</h4>
+                        </Col>
+                        <Col xs={8} sm={8} md={8} className="circle-col">
+                          <Progress
+                            type="circle"
+                            percent={getPercent(in_progress_courses)}
+                            format={() => (
+                              <span style={{ color: "#faad14" }}>
+                                {in_progress_courses}
+                              </span>
+                            )}
+                            strokeColor="#faad14"
+                          />
+                          <h4>In Progress</h4>
+                        </Col>
+                        <Col xs={8} sm={8} md={8} className="circle-col">
+                          <Progress
+                            type="circle"
+                            percent={getPercent(complete_courses)}
+                            format={() => (
+                              <span style={{ color: "#52c41a" }}>
+                                {complete_courses}
+                              </span>
+                            )}
+                            strokeColor="#52c41a"
+                          />
+                          <h4>Completed</h4>
+                        </Col>
+                      </Row>
+                    </Card>
+                  ) : (
+                    // Mobile: Box Layout
+
+                    <Row gutter={[16, 16]}>
+                      <Col span={8} className="mobile-progress-box">
+                        <div className="progress-box all-courses" style={{ textAlign: "center" }}>
+                          <h3 style={{ color: "#1890ff" }}>{all_courses}</h3>
+                          <p style={{ color: "#1890ff" }}>All Courses</p>
+                        </div>
+
                       </Col>
-                      <Col xs={8} sm={8} md={8} className="circle-col">
-                        <Progress
-                          type="circle"
-                          percent={getPercent(in_progress_courses)}
-                          format={() => (
-                            <span style={{ color: "#faad14" }}>
-                              {in_progress_courses}
-                            </span>
-                          )}
-                          strokeColor="#faad14"
-                        />
-                        <h4>In Progress</h4>
+
+                      <Col span={8} className="mobile-progress-box">
+
+                        <div className="progress-box in-progress" style={{ textAlign: "center" }}>
+                          <h3 style={{ color: "#faad14" }}>{in_progress_courses}</h3>
+                          <p style={{ color: "#faad14" }}>In Progress</p>
+                        </div>
+
                       </Col>
-                      <Col xs={8} sm={8} md={8} className="circle-col">
-                        <Progress
-                          type="circle"
-                          percent={getPercent(complete_courses)}
-                          format={() => (
-                            <span style={{ color: "#52c41a" }}>
-                              {complete_courses}
-                            </span>
-                          )}
-                          strokeColor="#52c41a"
-                        />
-                        <h4>Completed</h4>
+                      <Col span={8} className="mobile-progress-box"  >
+
+                        <div className="progress-box completed" style={{ textAlign: "center" }}>
+                          <h3 style={{ color: "#52c41a" }}>{complete_courses}</h3>
+                          <p style={{ color: "#52c41a" }}>Completed</p>
+                        </div>
+
                       </Col>
                     </Row>
-                  </Card>
+
+                  )}
                 </Col>
 
+                {/*  Current Course Section */}
                 <Col span={24}>
-                  <Table
-                    columns={currentcolumns}
-                    pagination={false}
-                    scroll={{ x: "max-content" }}
-                    rowKey={(record) =>
-                      record.chapter_data?.course_id || record.id || Math.random()
-                    }
-                    dataSource={
-                      current_course_chapter ? [current_course_chapter] : []
-                    }
-                  />
+                  {screens.lg ? (
+                    <Table
+                      columns={currentcolumns}
+                      pagination={false}
+                      scroll={{ x: "max-content" }}
+                      rowKey={(record) =>
+                        record.chapter_data?.course_id || record.id || Math.random()
+                      }
+                      dataSource={
+                        current_course_chapter ? [current_course_chapter] : []
+                      }
+                    />
+                  ) : (
+                    // Mobile: Tile/Card Layout
+                    current_course_chapter && (
+                      <Row gutter={[16, 16]}>
+                        <Col span={24}>
+                          <Card className="course-tile">
+                            <h4>{current_course_chapter.course_data?.title}</h4>
+                            <p>
+                              <b>Chapter:</b>{" "}
+                              {current_course_chapter.chapter_data?.title}
+                            </p>
+                            <p>
+                              <b>Progress:</b>{" "}
+                              {current_course_chapter.course_data?.progress}%
+                            </p>
+                            <Button
+                              type="primary"
+                              size="small"
+                              style={{ display: "inline-block", float: "right", marginTop: "-45px", marginLeft: "15px" }}
+                              disabled={!current_course_chapter?.chapter_data?.course_id}
+                              onClick={() =>
+                                navigate(
+                                  "/chapters/" +
+                                  btoa(current_course_chapter.chapter_data?.course_id)
+                                )
+                              }
+                            >
+                              View
+                            </Button>
+                          </Card>
+                        </Col>
+                      </Row>
+                    )
+                  )}
 
                   {single_learner_data && (
                     <Card className="rank-card">
@@ -220,33 +279,45 @@ function Dashboard() {
               </Row>
             </Col>
 
+       
             {/* Right Column */}
             <Col xs={24} sm={24} md={24} lg={10}>
-              {/*               
-              <Card className="announcement-card" style={{ marginBottom: "20px" }}>
-                <h3 style={{color:"#e9c70ada"}}>Announcements</h3>
-                <ul className="announcement-list">
-                  {announcements.map((item) => (
-                    <li key={item.id} className="announcement-item">
-                      <b>{item.title}</b>
-                      <span className="announcement-date">
-                        {new Date(item.date).toLocaleDateString()}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </Card> */}
-
               <Card>
-                <h3>Leaderboard - Top 10 Learners</h3>
-                <Table
-                  columns={columns_leader_board}
-                  pagination={false}
-                  scroll={{ x: "max-content" }}
-                  dataSource={learner_watch}
-                />
+                <h3 style={{marginTop:"-15px"}}>Leaderboard - Top 10 Learners</h3>
+
+                {screens.lg ? (
+                  <Table
+                    columns={columns_leader_board}
+                    pagination={false}
+                    scroll={{ x: "max-content" }}
+                    dataSource={learner_watch}
+                  />
+                ) : (
+                  // Mobile: Tile/Card Layout
+                  <Row gutter={[16, 16]} style={{marginTop:"10px"}}>
+                    {learner_watch?.map((learner, index) => (
+                      <Col span={24} key={learner.id || index}>
+                        <Card className="leader-tile">
+                          <p>
+                            <b>Rank:</b> {learner.rank}
+                          </p>
+                          <p>
+                            <b>Name:</b>{" "}
+                            <span style={{ textTransform: "capitalize" }}>
+                              {learner.first_name} {learner.last_name}
+                            </span>
+                          </p>
+                          <p>
+                            <b>Time Spent:</b> {formatTime(learner.total_max_watched)}
+                          </p>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                )}
               </Card>
             </Col>
+
           </Row>
         )}
       </Card>

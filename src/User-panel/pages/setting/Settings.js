@@ -37,6 +37,8 @@ function Settings() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+
   const [error, set_error] = useState({
     current_password: "",
     new_password: "",
@@ -268,12 +270,30 @@ function Settings() {
                   <Row
                     gutter={[16, 16]}
                     align="middle"
-                    style={{ flexWrap: "wrap", textAlign: "center" }}
+                    style={{
+                      position: "relative",
+                      padding:"30px"
+                    }}
                   >
+
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                        zIndex: 10
+                      }}
+                    >
+                      <Button size="small" type="primary" onClick={() => setIsModalOpen(true)}>
+                        Reset Password
+                      </Button>
+                    </div>
+
+
                     <Col
                       xs={24}
-                      sm={8}
-                      md={6}
+                      sm={24}
+                      md={24}
                       lg={4}
                       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
                     >
@@ -286,7 +306,7 @@ function Settings() {
                             height: "120px",
                             borderRadius: "50%",
                             objectFit: "cover",
-                            marginBottom: "10px",
+                            marginBottom: "10px"
                           }}
                         />
                       ) : (
@@ -296,7 +316,7 @@ function Settings() {
                             height: "120px",
                             backgroundColor: "#ccc",
                             borderRadius: "50%",
-                            marginBottom: "10px",
+                            marginBottom: "10px"
                           }}
                         />
                       )}
@@ -312,30 +332,25 @@ function Settings() {
                       </span>
                     </Col>
 
+
                     <Col
                       xs={24}
-                      sm={16}
-                      md={18}
-                      lg={16}
+                      sm={24}
+                      md={24}
+                      lg={4}
                       style={{
-                        textAlign: "left",
+                        textAlign: "center",
                         display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "flex-start",
+                        justifyContent: "center"
                       }}
                     >
-                      <h2 style={{ marginTop: "0px", fontSize: "20px", textAlign: "left", marginLeft: "20px" }}>
+                      <h2 style={{ margin: 0, fontSize: "20px" }}>
                         {first_name} {last_name}
                       </h2>
                     </Col>
 
-                    <Col span={4}>
-                      <Button type="primary" onClick={() => setIsModalOpen(true)}>
-                        Reset Password
-                      </Button>
-                    </Col>
                   </Row>
+
 
                   <hr style={{ margin: "20px 0" }} />
 

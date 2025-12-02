@@ -25,7 +25,7 @@ const MasterTemplate = () => {
   const { modal } = App.useApp();
   const [user, setUser] = useState(null);
   const [master_loder, set_master_loder] = useState(true);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedKeys, setSelectedKeys] = useState([]);

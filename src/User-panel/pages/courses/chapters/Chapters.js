@@ -1,4 +1,4 @@
-import { Card, Col, Row, Button, List, Progress, App, Avatar, } from "antd";
+import { Card, Col, Row, Button, List, Progress, App, Avatar, Popover } from "antd";
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
@@ -9,10 +9,10 @@ import {
   UPDATE_CURRENT_CHAPTER,
 } from "../../../apis/apis";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
-import { CheckCircleFilled, DownloadOutlined, LeftOutlined } from "@ant-design/icons";
+import { CheckCircleFilled, DownloadOutlined, LeftOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import SectionVideos from "./components/sectionmedia/sectionVideos";
 import CustomRichTextEditor from "../../../components/CustomTextEditor";
-import QuizLearnerReportDeatils from "../chapters/components/quiz/QuizLearnerReportDetails"
+import QuizLearnerReportDeatils from "../chapters/components/quiz/QuizLearnerReportDetails";
 import PdfIframeViewer from "../../../components/PdfIframeViewer";
 
 export default function Chapters() {
@@ -36,14 +36,14 @@ export default function Chapters() {
   const [total_pages, set_total_pages] = useState(1);
   const [card_loader, set_card_loader] = useState(true);
   const [course_watch_percent, set_course_watch_percent] = useState(0);
-  const [course_status, set_course_status] = useState('');
+  const [course_status, set_course_status] = useState("");
 
-  //  Helper to detect quiz keyword in title
+  const [showChapterList, setShowChapterList] = useState(false);
+
   function hasQuiz(title) {
     return /\bquiz\b/i.test(title);
   }
 
-  // Format time (IST) + Relative time
   const formatTime = (timestamp) => {
     if (!timestamp) return "";
     const createdTimeUTC = new Date(timestamp.replace(" ", "T") + "Z");
@@ -69,7 +69,6 @@ export default function Chapters() {
     });
   };
 
-  // Fetch comments
   const fetchCommentList = useCallback(async (page = 1, chapter_id) => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("view_id", chapter_id);
@@ -99,7 +98,6 @@ export default function Chapters() {
     }
   }, [currentChapter, fetchCommentList]);
 
-  // Add new comment
   const onFinish = async () => {
     if (!description.trim()) {
       message.warning("Please write a comment first.");
@@ -129,12 +127,6 @@ export default function Chapters() {
     }
   };
 
-  // const pagination_on_change = (page) => {
-  //   set_card_loader(true);
-  //   set_current_page(page);
-  //   fetchCommentList(page, currentChapter.id);
-  // };
-
   const handleBack = () => {
     if (location.state?.from) Navigate(location.state.from);
     else Navigate(-1);
@@ -158,7 +150,6 @@ export default function Chapters() {
     return res?.data?.status || false;
   };
 
-  // Fetch enabled chapters
   const fetchEnabledChapters = useCallback(async () => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("course_id", atob(course_id));
@@ -168,15 +159,18 @@ export default function Chapters() {
       if (API_CALL?.data?.status) {
         let data = API_CALL.data?.data || [];
         set_course_watch_percent(API_CALL.data?.course_watch_percent);
-        set_course_status(API_CALL.data?.course_status)
+        set_course_status(API_CALL.data?.course_status);
+
         const normal = data.filter((ch) => !hasQuiz(ch.title));
         const quiz = data.filter((ch) => hasQuiz(ch.title));
         data = [...normal, ...quiz];
+
         setEnabledChapters(data);
         if (data.length > 0) {
           set_last_chapter(data[data.length - 1].id);
           const chapter =
             data.find((i) => i.id === data[0]?.current_chapter_data?.chapter_id) || data[0];
+
           setCurrentChapter(chapter);
           set_single_progress(parseInt(chapter.progress) || 0);
           await UPDATE_CURRENT_CHAPTER_API(chapter.id, atob(course_id));
@@ -223,14 +217,13 @@ export default function Chapters() {
         if (API_CALL?.data?.quiz_submit) {
           message.error("Quiz already submitted! Please refresh the page.");
         } else {
-          openFullscreenWindow("/quiz-test/" + btoa(chapter_id))
+          openFullscreenWindow("/quiz-test/" + btoa(chapter_id));
         }
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
-
 
   return (
     <div
@@ -253,34 +246,81 @@ export default function Chapters() {
       }
     >
       <Card>
-        <Row gutter={[10, 10]}>
+        <Row gutter={[10, 10]} style={{ marginBottom: "10px" }}>
           <Col xs={24} sm={24} md={14} lg={14}>
             <h2>
               <LeftOutlined onClick={handleBack} /> Chapters
             </h2>
           </Col>
-          <Col xs={24} sm={24} md={10} lg={10} style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '5px' }}>
-            {course_status ? (
-              <Button type="primary" size="small" onClick={handleDownload}>
-                Certificate <DownloadOutlined />
+
+          <Col
+            xs={24}
+            sm={24}
+            md={10}
+            lg={10}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+
+
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Popover content="Chapter List"
+                trigger="hover" size="small">
+                <Button size="small" icon={<UnorderedListOutlined />} className="chapter-toggle-btn" style={{ display: "none", }} onClick={() => setShowChapterList(!showChapterList)} />
+              </Popover>
+            </div>
+
+
+            <div
+              style={{
+                display: "flex",
+                gap: "5px",
+                alignItems: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              {course_status ? (
+                <Button type="primary" size="small" onClick={handleDownload}>
+                  Certificate <DownloadOutlined />
+                </Button>
+              ) : (
+                <Button variant="solid" size="small" disabled>
+                  Certificate <DownloadOutlined />
+                </Button>
+              )}
+
+
+              <Button
+                type="primary"
+                onClick={() => set_full_screen(!full_screen)}
+                size="small"
+              >
+                {full_screen ? "Normal View" : "Full Screen"}
               </Button>
-            ) : (
-              <Button variant="solid" size="small" color="green" disabled>
-                Certificate <DownloadOutlined />
-              </Button>
-            )}
-            <Button type="primary" onClick={() => set_full_screen(!full_screen)} size="small">
-              {full_screen ? "Normal View" : "Full Screen"}
-            </Button>
+            </div>
+
           </Col>
+
         </Row>
 
         {loading ? (
           <CulsightPageLoader />
         ) : (
           <Row gutter={[10, 10]}>
-            {/* LEFT PANEL */}
-            <Col xs={24} sm={24} md={24} lg={5}>
+            {/* LEFT PANEL (RESPONSIVE) */}
+            <Col
+              xs={24}
+              sm={24}
+              md={24}
+              lg={5}
+              className="chapter-list-col"
+              style={{
+                display: showChapterList ? "block" : "none",
+              }}
+            >
               <List
                 header={<div>Chapter List</div>}
                 bordered
@@ -291,16 +331,31 @@ export default function Chapters() {
                     key={item.id}
                     style={{
                       padding: "12px",
-                      cursor: hasQuiz(item.title) && course_watch_percent < 90 ? "not-allowed" : "pointer",
-                      backgroundColor: currentChapter?.id === item?.id ? (balck_theme ? "rgb(46 46 46)" : "rgb(243 242 242)") : "transparent",
-                      opacity: hasQuiz(item.title) && course_watch_percent < 90 ? 0.4 : index === 0 || item.get_tracking_chapter_data ? 1 : 0.5,
+                      cursor:
+                        hasQuiz(item.title) && course_watch_percent < 90
+                          ? "not-allowed"
+                          : "pointer",
+                      backgroundColor:
+                        currentChapter?.id === item?.id
+                          ? balck_theme
+                            ? "rgb(46 46 46)"
+                            : "rgb(243 242 242)"
+                          : "transparent",
+                      opacity:
+                        hasQuiz(item.title) && course_watch_percent < 90
+                          ? 0.4
+                          : index === 0 || item.get_tracking_chapter_data
+                            ? 1
+                            : 0.5,
                     }}
                     onClick={() => handleChapterClick(item, index)}
                   >
                     <List.Item.Meta
                       description={
                         <div>
-                          <h5 style={{ color: "#FFD700", marginBottom: 0, fontSize: '16px' }}>{item.title}</h5>
+                          <h5 style={{ color: "#FFD700", marginBottom: 0, fontSize: "16px" }}>
+                            {item.title}
+                          </h5>
                           <div style={{ position: "relative" }}>
                             {currentChapter?.id === item?.id ? (
                               <>
@@ -311,22 +366,37 @@ export default function Chapters() {
                                     ) : (
                                       <>
                                         <CheckCircleFilled className="check-pro" />
-                                        <Progress percent={100} status="active" strokeColor="#FFD700" />
+                                        <Progress
+                                          percent={100}
+                                          status="active"
+                                          strokeColor="#FFD700"
+                                        />
                                       </>
                                     )}
                                   </>
                                 ) : (
                                   <>
-                                    {single_progress >= 90 && <CheckCircleFilled className="check-pro" />}
-                                    <Progress percent={single_progress} status="active" strokeColor="#FFD700" />
+                                    {single_progress >= 90 && (
+                                      <CheckCircleFilled className="check-pro" />
+                                    )}
+                                    <Progress
+                                      percent={single_progress}
+                                      status="active"
+                                      strokeColor="#FFD700"
+                                    />
                                   </>
                                 )}
                               </>
                             ) : (
-                              <Progress percent={item?.progress || 0} status="active" strokeColor="#FFD700" />
+                              <Progress
+                                percent={item?.progress || 0}
+                                status="active"
+                                strokeColor="#FFD700"
+                              />
                             )}
                             <span style={{ fontSize: "10px" }}>
-                              {item.video_id && "Video"} {item.scorm && " PDF"} {item.quiz_available && " Quiz"}
+                              {item.video_id && "Video"} {item.scorm && " PDF"}{" "}
+                              {item.quiz_available && " Quiz"}
                             </span>
                           </div>
                         </div>
@@ -341,12 +411,22 @@ export default function Chapters() {
             <Col xs={24} sm={24} md={24} lg={19}>
               {currentChapter ? (
                 <Card>
-                  <Row gutter={[10, 10]}>
-                    <Col xs={24} sm={24} md={12}>
-                      <h3 style={{ fontSize: "20px", wordBreak: "break-word" }}>{currentChapter.title}</h3>
+                  <Row
+                    gutter={[10, 10]}
+                    align="middle"
+                    justify="space-between"
+                    style={{ marginBottom: "10px" }}
+                  >
+                    {/* Title */}
+                    <Col flex="auto">
+                      <h3 style={{ fontSize: "20px", wordBreak: "break-word", margin: 0 }}>
+                        {currentChapter.title}
+                      </h3>
                     </Col>
-                    <Col xs={24} sm={24} md={12}>
-                      <div style={{ float: "right", marginTop: '10px', display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+
+                    {/* Buttons */}
+                    <Col>
+                      <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
                         {!currentChapter?.quiz_row && (
                           <Button
                             size="small"
@@ -356,13 +436,18 @@ export default function Chapters() {
                               <>
                                 <CheckCircleFilled /> Completed
                               </>
-                            ) : "Incomplete"}
+                            ) : (
+                              "Incomplete"
+                            )}
                           </Button>
                         )}
 
-                        {(single_progress >= 90 || !currentChapter.video_id) && currentChapter?.quiz_available && (
-                          currentChapter?.quiz_submitted ? (
-                            <Button disabled size="small">Attempted Quiz Test</Button>
+                        {(single_progress >= 90 || !currentChapter.video_id) &&
+                          currentChapter?.quiz_available &&
+                          (currentChapter?.quiz_submitted ? (
+                            <Button disabled size="small">
+                              Attempted Quiz Test
+                            </Button>
                           ) : (
                             <Button
                               type="primary"
@@ -372,45 +457,66 @@ export default function Chapters() {
                             >
                               Quiz Test
                             </Button>
-                          )
-                        )}
+                          ))}
                       </div>
                     </Col>
                   </Row>
 
+
                   <br />
 
-                  {currentChapter?.quiz_row && currentChapter?.title?.toLowerCase().includes("quiz") ? (
+                  {currentChapter?.quiz_row &&
+                    currentChapter?.title?.toLowerCase().includes("quiz") ? (
                     currentChapter?.quiz_row?.time_limit > 0 ? (
-                      <div className="section-details section-details-right-padding" style={{ minHeight: "auto" }}>
-                        <Row gutter={[10, 10]}>
-                          <Col xs={24} sm={12}>
-                            <p>
-                              <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>Time Limit :- </span>
-                              {currentChapter?.quiz_row?.time_limit} min
-                              <br />
-                              <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>Passing percentage :- </span>
-                              {currentChapter?.quiz_row?.passing_percentage}%
-                              <br />
-                            </p>
+                      <div
+                        className="section-details section-details-right-padding"
+                        style={{ minHeight: "auto" }}
+                      >
+                        <Row gutter={[10, 10]} align="middle">
+                          {/* Left Column */}
+                          <Col xs={24} sm={24} lg={12}>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                              <div>
+                                <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>Time Limit :- </span>
+                                {currentChapter?.quiz_row?.time_limit} min
+                              </div>
+                              <div>
+                                <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>Passing percentage :- </span>
+                                {currentChapter?.quiz_row?.passing_percentage}%
+                              </div>
+                            </div>
                           </Col>
-                          <Col xs={24} sm={12}>
-                            <div style={{ float: "right" }}>
-                              <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>Number of retake :- </span>
-                              {currentChapter?.quiz_row?.no_of_retake} <br />
-                              <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>Number of questions :- </span>
-                              {currentChapter?.quiz_row?.display_question}
-                              <br />
+
+                          {/* Right Column */}
+                          <Col xs={24} sm={24} lg={12}>
+                            <div style={{ display: "flex", justifyContent: "flex-end", flexDirection: "column", gap: "4px" }}>
+                              <div>
+                                <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>Number of retake :- </span>
+                                {currentChapter?.quiz_row?.no_of_retake}
+                              </div>
+                              <div>
+                                <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>Number of questions :- </span>
+                                {currentChapter?.quiz_row?.display_question}
+                              </div>
                             </div>
                           </Col>
                         </Row>
+
+
                         <p style={{ textAlign: "center", margin: "30px" }}>
                           You can attempt this test a maximum of {currentChapter?.quiz_row?.number_of_retake} times. The time limit for the test is {currentChapter?.quiz_row?.time_limit} minutes, and you must score at least {currentChapter?.quiz_row?.passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.
                         </p>
                         {course_status && <QuizLearnerReportDeatils chapter_id={currentChapter.id} />}
                       </div>
                     ) : (
-                      <h3 style={{ padding: "50px", textAlign: "center", color: "red", fontSize: "42px" }}>
+                      <h3
+                        style={{
+                          padding: "50px",
+                          textAlign: "center",
+                          color: "red",
+                          fontSize: "42px",
+                        }}
+                      >
                         Data Empty
                       </h3>
                     )
@@ -425,9 +531,14 @@ export default function Chapters() {
                         set_single_progress={set_single_progress}
                       />
 
-                      {currentChapter.introduction && currentChapter.introduction !== "null" && (
-                        <div dangerouslySetInnerHTML={{ __html: currentChapter.introduction }} />
-                      )}
+                      {currentChapter.introduction &&
+                        currentChapter.introduction !== "null" && (
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: currentChapter.introduction,
+                            }}
+                          />
+                        )}
 
                       {currentChapter.scorm && (
                         <>
@@ -463,9 +574,15 @@ export default function Chapters() {
                                 title={`${item.first_name} ${item.last_name}`}
                                 description={
                                   <>
-                                    <span dangerouslySetInnerHTML={{ __html: item.description }} />
+                                    <span
+                                      dangerouslySetInnerHTML={{
+                                        __html: item.description,
+                                      }}
+                                    />
                                     <br />
-                                    <span style={{ fontSize: "10px", color: "#999" }}>{formatTime(item.created_at)}</span>
+                                    <span style={{ fontSize: "10px", color: "#999" }}>
+                                      {formatTime(item.created_at)}
+                                    </span>
                                   </>
                                 }
                               />
@@ -483,6 +600,25 @@ export default function Chapters() {
           </Row>
         )}
       </Card>
+
+
+      <style>
+        {`
+          @media (max-width: 768px) {
+            .chapter-toggle-btn {
+              display: inline-flex !important;
+            }
+            .chapter-list-col {
+              display: none;
+            }
+          }
+          @media (min-width: 769px) {
+            .chapter-list-col {
+              display: block !important;
+            }
+          }
+        `}
+      </style>
     </div>
   );
 }

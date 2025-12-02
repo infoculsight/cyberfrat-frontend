@@ -76,7 +76,7 @@ const QuizTestQuestionView = (props) => {
   }
 
   return (
-    <div style={{ marginTop: 20 }}>
+    <div>
       {show_result ? (
         <QuizResult chapter_id={chapter_id} />
       ) : test_submitted ? (
@@ -179,7 +179,7 @@ const QuizTestQuestionView = (props) => {
           ) : (
             <>
               <Row gutter={[16, 16]}>
-                <Col xs={24} md={18}>
+                <Col xs={24} md={18} >
                   <h3 style={{ marginBottom: 20 }}>{`Ques ${current_page}. ${items?.question_text}`}</h3>
                   <QuizTestQuestionOptions
                     chapter_id={chapter_id_new}
@@ -238,6 +238,7 @@ const QuizTestQuestionView = (props) => {
                   color="black"
                   disabled={current_page <= 1}
                   onClick={() => set_current_page(parseInt(current_page) - 1)}
+                  style={{marginTop:"-15px"}}
                 >
                   Previous
                 </Button>
@@ -247,6 +248,7 @@ const QuizTestQuestionView = (props) => {
                     variant="solid"
                     color="orange"
                     onClick={() => set_current_page(parseInt(current_page) + 1)}
+                   style={{marginTop:"-15px"}}
                   >
                     Next
                   </Button>
@@ -269,7 +271,7 @@ const QuizTestQuestionView = (props) => {
                     }
                     showCancel={false}
                   >
-                    <Button variant="solid" color="green">
+                    <Button variant="solid" color="green"   style={{marginTop:"-15px"}}>
                       Submit
                     </Button>
                   </Popconfirm>

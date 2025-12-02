@@ -34,14 +34,45 @@
   overflow-x: auto;
 }
 
-/* 🖥️ Desktop (≥1200px) */
+
+/*  Desktop (≥1200px) */
 @media (min-width: 1200px) {
   .progress-card {
     padding: 20px;
   }
 }
 
-/* 💻 Tablet (≥768px and <1200px) */
+.leader-tile {
+  border-radius: 8px;
+
+  box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+}
+.progress-box {
+  border: 0.05px solid gray;
+  padding: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 100px; 
+ 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.progress-box h3 {
+  font-size: clamp(16px, 4vw, 24px); /* adjusts with screen size */
+  margin: 0;
+}
+
+.progress-box p {
+  font-size: clamp(12px, 3vw, 16px);
+  margin: 0;
+}
+
+
+
+/*  Tablet (≥768px and <1200px) */
 @media (max-width: 1199px) and (min-width: 768px) {
   .circle-col h4 {
     font-size: 13px;
@@ -52,7 +83,7 @@
   }
 }
 
-/* 📱 Mobile (<768px) */
+/*  Mobile (<768px) */
 @media (max-width: 767px) {
   .lms-body {
     padding: 8px !important;
