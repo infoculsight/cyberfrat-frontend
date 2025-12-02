@@ -437,7 +437,7 @@ function CourseLearners(props) {
               </div>
             </> : <>
               <div style={{ textAlign: "center", color: "red" }}>
-                <h2>No Courses Found</h2>
+                <h2>No Learners Found</h2>
               </div>
             </>}
 

@@ -99,47 +99,47 @@ function LearnerReport() {
     {
       title: "Action",
       key: "action",
-      render: (_, record) => {
-        const chapter_id = record.id;
-        const percent = chapterProgress[chapter_id] ?? 0;
+      // render: (_, record) => {
+      //   const chapter_id = record.id;
+      //   const percent = chapterProgress[chapter_id] ?? 0;
 
-        return (
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      //   return (
+      //     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
 
-            <Progress
-              percent={percent}
-              size="small"
-              status="active"
-              style={{ width: "120px" }}
-            />
+      //       <Progress
+      //         percent={percent}
+      //         size="small"
+      //         status="active"
+      //         style={{ width: "120px" }}
+      //       />
 
-            <InputNumber
-              min={0}
-              max={100}
-              value={percent}
-              onChange={(value) => handleProgressChange(chapter_id, value)}
-              style={{ width: "60px" }}
-            />
+      //       <InputNumber
+      //         min={0}
+      //         max={100}
+      //         value={percent}
+      //         onChange={(value) => handleProgressChange(chapter_id, value)}
+      //         style={{ width: "60px" }}
+      //       />
 
-            <Popconfirm
-              title="Do you really want to change chapter progress !"
-              onConfirm={() => updateProgressAPI(chapter_id)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button
-                variant='solid'
-                color='green'
-                size='small'
-              >
-                Update
-              </Button>
+      //       <Popconfirm
+      //         title="Do you really want to change chapter progress !"
+      //         onConfirm={() => updateProgressAPI(chapter_id)}
+      //         okText="Yes"
+      //         cancelText="No"
+      //       >
+      //         <Button
+      //           variant='solid'
+      //           color='green'
+      //           size='small'
+      //         >
+      //           Update
+      //         </Button>
 
-            </Popconfirm>
+      //       </Popconfirm>
 
-          </div>
-        );
-      },
+      //     </div>
+      //   );
+      // },
     },
   ];
 
