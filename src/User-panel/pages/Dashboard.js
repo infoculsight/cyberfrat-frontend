@@ -10,6 +10,7 @@ const { useBreakpoint } = Grid;
 function Dashboard() {
   const screens = useBreakpoint(); // AntD hook for responsive
   const navigate = useNavigate();
+  const isLg = screens?.lg;
   const [Loading, setLoading] = useState(false);
   const [all_courses, set_all_courses] = useState(0);
   const [complete_courses, set_complete_courses] = useState(0);
@@ -481,41 +482,40 @@ function Dashboard() {
 
             {/* Right Column */}
             <Col xs={24} sm={24} md={24} lg={10}>
-              <Card>
-                <h3 style={{ marginTop: "-15px" }}>Leaderboard - Top 10 Learners</h3>
-
-                {screens.lg ? (
+              {screens.lg ? (
+                <Card>
+                  <h3 style={{ marginTop: "-15px" }}>Leaderboard - Top 10 Learners</h3>
                   <Table
                     columns={columns_leader_board}
                     pagination={false}
                     scroll={{ x: "max-content" }}
                     dataSource={learner_watch}
                   />
-                ) : (
-                  // Mobile: Tile/Card Layout
-                  <Row gutter={[16, 16]} style={{ marginTop: "10px" }}>
-                    {learner_watch?.map((learner, index) => (
-                      <Col span={24} key={learner.id || index}>
-                        <Card className="leader-tile">
-                          <p>
-                            <b>Rank:</b> {learner.rank}
-                          </p>
-                          <p>
-                            <b>Name:</b>{" "}
-                            <span style={{ textTransform: "capitalize" }}>
-                              {learner.first_name} {learner.last_name}
-                            </span>
-                          </p>
-                          <p>
-                            <b>Time Spent:</b> {formatTime(learner.total_max_watched)}
-                          </p>
-                        </Card>
-                      </Col>
-                    ))}
-                  </Row>
-                )}
-              </Card>
+                </Card>
+              ) : (
+                <Row gutter={[16, 16]} style={{ marginTop: "10px" }}>
+                  <Col span={24}>
+                    <h2 style={{margin:"0" }}>Leaderboard - Top 10 Learners</h2>
+                  </Col>
+                  {learner_watch?.map((learner, index) => (
+                    <Col span={24} key={learner.id || index} style={{marginTop:"-10px"}}>
+                      <Card className="leader-tile">
+                        <p><b>Rank:</b> {learner.rank}</p>
+                        <p>
+                          <b>Name:</b>{" "}
+                          <span style={{ textTransform: "capitalize" }}>
+                            {learner.first_name} {learner.last_name}
+                          </span>
+                        </p>
+                        <p><b>Time Spent:</b> {formatTime(learner.total_max_watched)}</p>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+
+              )}
             </Col>
+
 
           </Row>
         )}
