@@ -77,7 +77,6 @@ function AdminRoutes() {
         <Route path="/edit-chapter/:id" element={<EditChapter />} />
         <Route path="/edit-chapter/:id/quiz-setting" element={<EditChapter />} />
         <Route path="/edit-chapter/:id/quiz-questions" element={<EditChapter />} />
-
         <Route path="/packages" element={<Packages />} />
         <Route path="add-packages" element={<AddPackages />} />
         <Route path="edit-package/:id" element={<EditPackages />} />
@@ -104,7 +103,7 @@ function AdminRoutes() {
         <Route path="edit-announcment/:id" element={<EditAnnouncment />} />
         <Route path="smtp" element={<Smtp />} />
         <Route path="add-smtp" element={<AddSmtp />} />
-        <Route path="edit-smtp/:id" element={<EditSmtp />} />
+        <Route path="edit-smtp/:id" element={<EditSmtp />} />      
         <Route path="media" element={<ThemeMedia />} />
         <Route path="report" element={<Reports />} />
         <Route path="notification" element={<AdminNotification />} />
@@ -113,7 +112,7 @@ function AdminRoutes() {
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
-  );
+  );   
 }
 
 export default AdminRoutes;
