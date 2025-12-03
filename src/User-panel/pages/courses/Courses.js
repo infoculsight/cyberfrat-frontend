@@ -1,4 +1,4 @@
-import { Card, Col, Input, Pagination, Row, Spin, Tabs } from "antd";
+import { Card, Col, Input, Pagination, Row, Select, Spin, Tabs } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import CourseBox from "../../components/CourseBox";
 import { COURSE_LIST } from "../../apis/apis";
@@ -17,6 +17,7 @@ function Courses() {
   const [total_pages, set_total_pages] = useState("");
   const [total_courses, set_total_courses] = useState(0);
   const [search_query_title, set_search_query_title] = useState("");
+  const [search_by, set_search_by] = useState("title");
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,9 +27,8 @@ function Courses() {
     const path = location.pathname;
     if (path.includes("/complete")) return "2";
     if (path.includes("/incomplete")) return "3";
-    return "1"; // Default tab: My Courses
+    return "1";
   };
-
 
   const activeTabKey = getTabKeyFromPath();
   const onTabChange = (key) => {
@@ -36,7 +36,6 @@ function Courses() {
     if (key === "2") navigate("/courses/complete");
     if (key === "3") navigate("/courses/incomplete");
   };
-
 
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
@@ -61,7 +60,7 @@ function Courses() {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", data);
-    FORM_DATA.append("title", search_query_title);
+    FORM_DATA.append(search_by, search_query_title);
     const API_CALL = await COURSE_LIST(FORM_DATA);
 
     if (API_CALL?.data?.status) {
@@ -75,29 +74,32 @@ function Courses() {
     }
   };
 
-  const fetchResultsTitle = useCallback((value) => {
-    debounce(async () => {
-      try {
-        set_search_query_title(value);
-        set_pagination_loader(true);
-        const FORM_DATA = new FormData();
-        FORM_DATA.append("token", localStorage.getItem("token"));
-        FORM_DATA.append("title", value);
-        const API_CALL = await COURSE_LIST(FORM_DATA);
-        if (API_CALL?.data?.status) {
-          set_courses(API_CALL.data?.data);
-          set_current_page(API_CALL?.data?.current_page);
-          set_total_pages(API_CALL?.data?.total_pages);
-          set_total_courses(API_CALL?.data?.total_courses);
-          set_pagination_loader(false);
-        } else {
-          set_pagination_loader(false);
+  const fetchResultsTitle = useCallback(
+    (value) => {
+      debounce(async () => {
+        try {
+          set_search_query_title(value);
+          set_pagination_loader(true);
+          const FORM_DATA = new FormData();
+          FORM_DATA.append(search_by, value);
+
+          const API_CALL = await COURSE_LIST(FORM_DATA);
+          if (API_CALL?.data?.status) {
+            set_courses(API_CALL.data?.data);
+            set_current_page(API_CALL?.data?.current_page);
+            set_total_pages(API_CALL?.data?.total_pages);
+            set_total_courses(API_CALL?.data?.total_courses);
+            set_pagination_loader(false);
+          } else {
+            set_pagination_loader(false);
+          }
+        } catch (err) {
+          console.error("API Error:", err);
         }
-      } catch (err) {
-        console.error("API Error:", err);
-      }
-    }, 500)();
-  }, []);
+      }, 500)();
+    },
+    [search_by] // 🔥 RE-RUN WHEN SELECT CHANGES
+  );
 
   const handleInput = (e) => {
     const value = e.target.value;
@@ -108,7 +110,6 @@ function Courses() {
     <div className="lms-body">
       <Card>
         <h2>Courses</h2>
-
 
         {loading ? (
           <CulsightPageLoader />
@@ -125,12 +126,25 @@ function Courses() {
                     <Row gutter={[16, 16]} align="middle">
                       <Col xs={24} sm={24} md={18} lg={20}>
                         <Input
-                          addonBefore={<span>Title</span>}
-                          placeholder="Search by title"
+                          addonBefore={
+
+
+                            <Select
+                              value={search_by}
+                              onChange={(value) => set_search_by(value)}
+                              style={{ width: 120 }}
+                            >
+                              <Select.Option value="title">Title</Select.Option>
+                              <Select.Option value="tag">Tags</Select.Option>
+                            </Select>
+                          }
+                          placeholder={`Search by ${search_by}`}
                           onChange={handleInput}
                           size="large"
                           style={{ width: "100%" }}
                         />
+
+
                       </Col>
                     </Row>
 
@@ -198,12 +212,10 @@ function Courses() {
               },
             ]}
           />
-
         )}
       </Card>
     </div>
   );
-
 }
 
 export default Courses;

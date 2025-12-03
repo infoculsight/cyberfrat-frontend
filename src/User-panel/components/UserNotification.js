@@ -204,7 +204,7 @@ function UserNotification() {
                           >
                             View
                           </Button>
-                          <span style={{ fontSize: "13px", color: "#999" }}>{formatTime(item?.meta?.created_at)} </span>
+                          <span style={{ fontSize: "13px", color: "#999" }}>{formatTime(item.created_at)} </span>
                         </Space>
                       )}
                     </>
