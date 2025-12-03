@@ -8,14 +8,15 @@ import {
   Spin,
   message,
   App,
+  Select,
 } from "antd";
 import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import { EDIT_SMTP, VIEW_SMTP } from "../../apis/apis";
 import { useNavigate, useParams } from "react-router-dom";
- 
+
 import CulsightPageLoader from "../../components/CulsightPageLoader";
- 
+
 export default function EditSmtp() {
   const { notification } = App.useApp();
   const navigate = useNavigate();
@@ -28,8 +29,8 @@ export default function EditSmtp() {
   const [smtp_port, set_smtp_port] = useState("")
   const [smtp_for, set_smtp_for] = useState("");
   const [errors, set_errors] = useState("");
- 
- 
+
+
   useEffect(() => {
     const VIEW_API = async () => {
       const FORM_DATA = new FormData();
@@ -43,13 +44,13 @@ export default function EditSmtp() {
         set_password(response_data?.password);
         set_smtp_for(response_data?.smtp_for);
         setLoading(false);
- 
+
       }
     };
- 
+
     VIEW_API();
   }, [id]);
- 
+
 
   const onFinish = async () => {
     setLoading(true);
@@ -62,7 +63,7 @@ export default function EditSmtp() {
     FORM_DATA.append("smtp_for", smtp_for);
     try {
       const response = await EDIT_SMTP(FORM_DATA);
- 
+
       if (response?.data?.status) {
         notification.success({
           message: "Successful",
@@ -79,14 +80,14 @@ export default function EditSmtp() {
       );
     }
   };
- 
+
 
   return (
     <div className="lms-body">
       <Card>
         <div className="lms-form">
- 
- 
+
+
           <Row>
             <Col span={12}>
               <h2><span style={{ cursor: "pointer" }}
@@ -101,7 +102,7 @@ export default function EditSmtp() {
             </>
           ) : (
             <>
- 
+
 
               <Form
                 form={form}
@@ -110,8 +111,8 @@ export default function EditSmtp() {
                 onFinish={onFinish}
                 validateTrigger="onSubmit"
               >
- 
- 
+
+
                 <Form.Item label="SMTP Server">
                   <Input
                     type="text"
@@ -127,8 +128,8 @@ export default function EditSmtp() {
                     <></>
                   )}
                 </Form.Item>
- 
- 
+
+
                 <Form.Item label="SMTP User">
                   <Input
                     type="email"
@@ -164,7 +165,7 @@ export default function EditSmtp() {
 
                 <Form.Item label="SMTP Port">
                   <Input
- 
+
                     value={smtp_port}
                     placeholder="Enter Smtp port"
                     onChange={(e) => set_smtp_port(e.target.value)}
@@ -177,25 +178,21 @@ export default function EditSmtp() {
                     <></>
                   )}
                 </Form.Item>
- 
 
-                <Form.Item label="Smtp For">
-                  <Input
-                    type="text"
+                <Form.Item label="SMTP For">
+                  <Select
+                    placeholder="Select SMTP For"
                     value={smtp_for}
-                    placeholder="Enter header name"
-                    onChange={(e) => set_smtp_for(e.target.value)}
-                  />
+                    onChange={(value) => set_smtp_for(value)}
+                  >
+                    <Select.Option value="courses">Courses</Select.Option>
+                    <Select.Option value="packages">Packages</Select.Option>
+                    <Select.Option value="list_test">List Test</Select.Option>
+                  </Select>
                   {errors?.smtp_for ? (
-                    <>
-                      <span style={{ color: "red" }}>{errors?.smtp_for}</span>
-                    </>
-                  ) : (
-                    <></>
-                  )}
+                    <span style={{ color: "red" }}>{errors?.smtp_for}</span>
+                  ) : null}
                 </Form.Item>
- 
- 
                 <Form.Item>
                   {loading ? (
                     <>
@@ -219,9 +216,9 @@ export default function EditSmtp() {
                     </>
                   )}
                 </Form.Item>
- 
+
               </Form>
- 
+
             </>
           )}
         </div>
