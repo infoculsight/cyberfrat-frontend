@@ -143,7 +143,7 @@ function AssignPackagePage({ selectedPackages, handleSelect, onCancel, resetTrig
           description: res.data.message,
         });
         onCancel();
-        set_file(null)
+        set_file([])
 
       } else {
         message.error(res?.data?.message);

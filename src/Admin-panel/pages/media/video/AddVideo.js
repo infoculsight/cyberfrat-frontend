@@ -177,7 +177,7 @@ const handleChangeVideo = async (info) => {
                 style={{ width: "100%", height: "32vh", overflow: "hidden" }}
                 beforeUpload={(file) => {
                   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
-                  const isLt2M = file.size <= 2 * 1024 * 1024;
+                   const isLt512KB = file.size <= 512 * 1024;
                   if (!isJpgOrPng) {
                     set_thumbnail_api('');
                     set_thumbnail('')
@@ -185,10 +185,10 @@ const handleChangeVideo = async (info) => {
                     return false;
                   }
 
-                  if (!isLt2M) {
+                  if (!isLt512KB) {
                     set_thumbnail_api('');
                     set_thumbnail('')
-                    setthumbnailError("Thumbnail must be smaller than or equal to 2MB.");
+                    setthumbnailError("Thumbnail must be smaller than or equal to 512KB.");
                     return false;
                   }
                   const img = new Image();
@@ -196,14 +196,14 @@ const handleChangeVideo = async (info) => {
 
                   img.onload = () => {
                     const { width, height } = img;
-                    if (width === 600 && height === 400) {
+                    if (width === 490 && height === 320) {
                       setthumbnailError("");
                       getBase64(file, (url) => set_thumbnail(url));
                       set_thumbnail_api(file);
                     } else {
                       set_thumbnail_api('');
                       set_thumbnail('')
-                      setthumbnailError("Image must be at least 600x400 pixels.");
+                      setthumbnailError("Image must be at least 490x320 pixels.");
                     }
 
                   };
@@ -232,7 +232,7 @@ const handleChangeVideo = async (info) => {
                   {thumbnailError}
                 </span>
               )}
-              <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 2MB and must be at least 600x400 pixels.</p>
+              <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 512KB and must be at least 490x320 pixels.</p>
 
             </Form.Item>
           </Col>

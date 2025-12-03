@@ -155,7 +155,7 @@ export default function AddLearners() {
                     beforeUpload={(file) => {
                       console.log(file)
                       const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
-                      const isLt2M = file.size <= 2 * 1024 * 1024;
+                      const isLt512KB = file.size <= 512 * 1024;
                       if (!isJpgOrPng) {
                         set_image_api('');
                         set_image('')
@@ -163,10 +163,10 @@ export default function AddLearners() {
                         return false;
                       }
 
-                      if (!isLt2M) {
+                      if (!isLt512KB) {
                         set_image_api('');
                         set_image('')
-                        setimageError("Thumbnail must be smaller than or equal to 2MB.");
+                        setimageError("Thumbnail must be smaller than or equal to 512KB.");
                         return false;
                       }
                       const img = new Image();
@@ -175,7 +175,7 @@ export default function AddLearners() {
                       img.onload = () => {
                         const { width, height } = img;
                         // Example: Minimum 300x300 pixels
-                        if (width === 600 && height === 400) {
+                        if (width === 490 && height === 320) {
                           setimageError(""); // Clear errors if valid
 
                           // Set preview and file for API
@@ -185,7 +185,7 @@ export default function AddLearners() {
                         } else {
                           set_image_api('');
                           set_image('')
-                          setimageError("Image must be at least 600x400 pixels.");
+                          setimageError("Image must be at least 490x320 pixels.");
                         }
 
                       };
@@ -226,7 +226,7 @@ export default function AddLearners() {
                     </span>
                   )}
 
-                  <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 2MB and must be at least 600x400 pixels.</p>
+                  <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 512KB and must be at least 490x320 pixels.</p>
                 </Form.Item>
 
                 <Row gutter={16}>

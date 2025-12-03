@@ -9,6 +9,7 @@ import {
   Upload,
   message,
   App,
+  Checkbox,
 } from "antd";
 import { LeftOutlined, Loading3QuartersOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
@@ -31,6 +32,7 @@ export default function EditLearner() {
   const [first_name, set_first_name] = useState("");
   const [last_name, set_last_name] = useState("");
   const [email, setEmail] = useState("");
+  const [email_send, set_email_send] = useState(false);
   const [country_code, set_country_code] = useState("IN");
   const [contact_no, set_contact_no] = useState("");
   const [address_line_1, set_address_line1] = useState("");
@@ -98,6 +100,8 @@ export default function EditLearner() {
     FORM_DATA.append("designation", designation);
     FORM_DATA.append("pin_code", pin_code);
     FORM_DATA.append("image", image_api);
+    FORM_DATA.append("email_send", email_send);
+
     try {
       const response = await EDIT_LEARNER(FORM_DATA);
       if (response?.data?.status) {
@@ -151,13 +155,13 @@ export default function EditLearner() {
                    beforeUpload={(file) => {
                     console.log(file)
                     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
-                    const isLt2M = file.size <= 2 * 1024 * 1024;
+                    const isLt512KB = file.size <= 512 * 1024;
                     if (!isJpgOrPng) {
                       setimageError("Only JPG/PNG files are allowed.");
                       return false;
                     }
 
-                    if (!isLt2M) {
+                    if (!isLt512KB) {
                       setimageError("Thumbnail must be smaller than or equal to 2MB.");
                       return false;
                     }
@@ -167,7 +171,7 @@ export default function EditLearner() {
                     img.onload = () => {
                       const { width, height } = img;
                       // Example: Minimum 600X400 pixels
-                      if (width === 600 && height === 400) {
+                      if (width === 490 && height === 320) {
                             setimageError(""); // Clear errors if valid
 
                             // Set preview and file for API
@@ -175,7 +179,7 @@ export default function EditLearner() {
                             set_image_api(file);
                            
                       } else {
-                            setimageError("Image must be at least 600x400 pixels.");
+                            setimageError("Image must be at least 490x320 pixels.");
                       }
                     
                     };
@@ -216,7 +220,7 @@ export default function EditLearner() {
                   </span>
                 )}
 
-                 <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 2MB and must be at least 600x400 pixels.</p>
+                 <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 512KB and must be at least 490x320 pixels.</p>
               </Form.Item>
 
               <Row gutter={16}>
@@ -345,6 +349,15 @@ export default function EditLearner() {
                   <span style={{ color: "red" }}>{errors?.pin_code}</span>
                 )}
               </Form.Item>
+
+                 <Form.Item>
+                  <Checkbox
+                    checked={email_send}
+                    onChange={(e) => set_email_send(e.target.checked)}
+                  >
+                    Send email to user (notify user about creation as learner)
+                  </Checkbox>
+                </Form.Item>
 
               <Form.Item>
                 {loading ? (

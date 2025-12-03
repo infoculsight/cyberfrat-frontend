@@ -23,12 +23,17 @@ function Courses() {
   const [current_page, set_current_page] = useState("");
   const [total_pages, set_total_pages] = useState("");
   const [total_courses, set_total_courses] = useState(0);
-  const [search_query_title, set_search_query_title] = useState("");
+  const [search_field, set_search_field] = useState("title"); // 'title' or 'tags'
+  const [search_query, set_search_query] = useState("");
   const [isPublished, setIsPublished] = useState({});
 
+  // API call to fetch courses
   const LIST_API = async () => {
     setLoading(true);
     const FORM_DATA = new FormData();
+    if (search_field === "title") FORM_DATA.append("title", search_query);
+    else FORM_DATA.append("tag", search_query);
+
     const API_CALL = await COURSE_LIST(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_courses(API_CALL.data?.data);
@@ -46,12 +51,15 @@ function Courses() {
     LIST_API();
   }, []);
 
-  const pagination_on_change = async (data) => {
+  // Pagination handler
+  const pagination_on_change = async (page) => {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
-    FORM_DATA.append("page", data);
-    FORM_DATA.append("title", search_query_title);
-    const API_CALL = await COURSE_LIST(FORM_DATA);  
+    FORM_DATA.append("page", page);
+    if (search_field === "title") FORM_DATA.append("title", search_query);
+    else FORM_DATA.append("tag", search_query);
+
+    const API_CALL = await COURSE_LIST(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_courses(API_CALL.data?.data);
       set_current_page(API_CALL?.data?.current_page);
@@ -63,14 +71,15 @@ function Courses() {
     }
   };
 
-  const fetchResultsTitle = useCallback((value) => {
-    debounce(async () => {
+  // Debounced search function
+  const debouncedFetchResults = useCallback(
+    debounce(async (value, field) => {
       try {
-        set_search_query_title(value);
         set_pagination_loader(true);
         const FORM_DATA = new FormData();
+        if (field === "title") FORM_DATA.append("title", value);
+        else FORM_DATA.append("tag", value);
 
-        FORM_DATA.append("title", value);
         const API_CALL = await COURSE_LIST(FORM_DATA);
         if (API_CALL?.data?.status) {
           set_courses(API_CALL.data?.data);
@@ -83,32 +92,41 @@ function Courses() {
         }
       } catch (err) {
         console.error("API Error:", err);
+        set_pagination_loader(false);
       }
-    }, 500)(); // Call debounce immediately
-  }, []);
+    }, 500),
+    []
+  );
 
+  // Input handler
   const handleInput = (e) => {
     const value = e.target.value;
-    fetchResultsTitle(value);
+    set_search_query(value); // update input immediately
+    debouncedFetchResults(value, search_field);
+  };
+
+  // Select field change handler
+  const handleSelectChange = (value) => {
+    set_search_field(value);
+    set_search_query(""); // reset input when field changes
   };
 
   const selectBefore = (
-    <Select defaultValue="Title" disabled>
-      <Select.Option value="Title">Title</Select.Option>
+    <Select value={search_field} onChange={handleSelectChange}>
+      <Select.Option value="title">Title</Select.Option>
+      <Select.Option value="tag">Tags</Select.Option>
     </Select>
   );
 
+  // Publish course
   const publishCourse = async (course_id) => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("id", course_id);
 
     try {
       const response = await COURSE_STATUS(FORM_DATA);
-      console.log("COURSE_STATUS response:", response);
-
       if (response?.status) {
         message.success("Course published successfully!");
-
         setIsPublished((prev) => ({
           ...prev,
           [course_id]: true,
@@ -124,7 +142,7 @@ function Courses() {
     }
   };
 
-
+  // Delete course
   const deleteCourse = async (course_id) => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("id", course_id);
@@ -133,7 +151,7 @@ function Courses() {
       const response = await DELETE_COURSE(FORM_DATA);
       if (response?.status) {
         message.success("Course deleted successfully");
-        await LIST_API(); // Refresh course list
+        await LIST_API();
       } else {
         message.error(response?.message || "Failed to delete course");
       }
@@ -143,11 +161,11 @@ function Courses() {
     }
   };
 
-
   return (
     <div className="lms-body">
       <Card>
-        <h2>Courses
+        <h2>
+          Courses
           <Button
             type="primary"
             size="large"
@@ -156,48 +174,48 @@ function Courses() {
           >
             Create Course
           </Button>
-
-        </h2><br></br>
+        </h2>
+        <br />
         <Row gutter={[16, 16]} align="middle">
           <Col xs={24} sm={24} md={18} lg={12}>
             <Input
               addonBefore={selectBefore}
-              placeholder="Search by title"
+              placeholder={
+                search_field === "title"
+                  ? "Search by title"
+                  : "Search by tags"
+              }
               onChange={handleInput}
               size="large"
               style={{ width: "100%" }}
+              value={search_query}
             />
           </Col>
-
-
         </Row>
 
         {loading && pagination_loader ? (
           <CulsightPageLoader />
         ) : (
           <>
-
             <div className="courses-card" style={{ marginTop: "20px" }}>
               <Row gutter={[30, 40]}>
                 {courses?.length > 0 ? (
-                  <>
-                    {courses?.map((items) => (
-                      <Col lg={8} md={8} sm={12} xs={24} key={items?.id}>
-                        <CourseBox
-                          id={btoa(items?.id)}
-                          course_title={items?.title}
-                          course_image={items?.thumbnail}
-                          course_ribbon={items?.ribbon}
-                          course_status={items?.status}
-                          chapters_count={items?.chapters_count}
-                          users_count={items?.users_count}
-                          publishCourse={(id) => publishCourse(items?.id)}
-                          isPublished={isPublished[items?.id] === true}
-                          deleteCourse={() => deleteCourse(items?.id)}
-                        />
-                      </Col>
-                    ))}
-                  </>
+                  courses.map((items) => (
+                    <Col lg={8} md={8} sm={12} xs={24} key={items?.id}>
+                      <CourseBox
+                        id={btoa(items?.id)}
+                        course_title={items?.title}
+                        course_image={items?.thumbnail}
+                        course_ribbon={items?.ribbon}
+                        course_status={items?.status}
+                        chapters_count={items?.chapters_count}
+                        users_count={items?.users_count}
+                        publishCourse={() => publishCourse(items?.id)}
+                        isPublished={isPublished[items?.id] === true}
+                        deleteCourse={() => deleteCourse(items?.id)}
+                      />
+                    </Col>
+                  ))
                 ) : (
                   <Col lg={24} md={24} sm={24} xs={24}>
                     <p
@@ -216,27 +234,22 @@ function Courses() {
             </div>
 
             {total_pages > 0 ? (
-              <>
-                <div style={{ float: "right", marginTop: "20px" }}>
-                  <Pagination
-                    current={current_page}
-                    total={total_courses}
-                    pageSize={9}
-                    onChange={pagination_on_change}
-                  />
-                </div>
-              </>
+              <div style={{ float: "right", marginTop: "20px" }}>
+                <Pagination
+                  current={current_page}
+                  total={total_courses}
+                  pageSize={9}
+                  onChange={pagination_on_change}
+                />
+              </div>
             ) : (
-              <>
-                <div style={{ textAlign: "center", color: "red" }}>
-                  <h2>No Courses Found</h2>
-                </div>
-              </>
+              <div style={{ textAlign: "center", color: "red" }}>
+                <h2>No Courses Found</h2>
+              </div>
             )}
           </>
         )}
       </Card>
-
     </div>
   );
 }

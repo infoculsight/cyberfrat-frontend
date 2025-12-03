@@ -155,7 +155,15 @@ function Smtp() {
     {
       title: "Smtp For",
       dataIndex: "smtp_for",
-      render: (text, record) => <span>{record.smtp_for}</span>,
+      render: (text, record) => {
+        const labels = {
+          courses: "Courses",
+          packages: "Packages",
+          live_test: "Live Test"
+        };
+
+        return <span>{labels[record.smtp_for] || record.smtp_for}</span>;
+      }
     },
     {
       title: "Status",
