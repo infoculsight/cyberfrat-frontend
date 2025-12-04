@@ -2,7 +2,7 @@ import { Button, Card, Col, Input, Modal, Pagination, Row, Spin, Table, Checkbox
 import React, { useCallback, useEffect, useState } from "react";
 import PackageBox from "../../components/PackageBox";
 import { useNavigate } from "react-router-dom";
-import { BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE, DOWNLOAD_ALL_PACKAGE_REPORT, LIST_PACKAGE } from "../../apis/apis";
+import { BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE, LIST_PACKAGE } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import { LoadingOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
@@ -18,7 +18,6 @@ function Packages() {
   const [total_pages, set_total_pages] = useState("");
   const [total_packages, set_total_packages] = useState(0);
   const [search_query_title, set_search_query_title] = useState("");
-
   const [is_model_open, set_is_model_open] = useState(false);
   const [reset_trigger, set_reset_trigger] = useState(0);
   const [selectedPackages, setSelectedPackages] = useState([]);
@@ -136,11 +135,12 @@ function Packages() {
     };
   
   
-  
 
   return (
     <div className="lms-body">
       <Card>
+
+
         <Row
           gutter={[16, 16]}
           style={{ marginBottom: "20px" }}

@@ -19,7 +19,7 @@ import { Option } from "antd/es/mentions";
 import { LeftOutlined, LoadingOutlined, UploadOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { LIST_PACKAGE_LEARNERS, LEARNER_PACKAGE_STATUS, BULK_ASSIGN_PACKAGE, DOWNLOAD_PACKAGE_LEARNER_REPORT, BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE } from "../../apis/apis";
+import { LIST_PACKAGE_LEARNERS, LEARNER_PACKAGE_STATUS, BULK_ASSIGN_PACKAGE, BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE } from "../../apis/apis";
 import moment from "moment";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
