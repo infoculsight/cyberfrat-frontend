@@ -382,7 +382,7 @@ function Settings() {
                     </Form.Item>
 
                     <Form.Item style={{ textAlign: "center" }}>
-                      <Button type="primary" htmlType="submit" style={{ width: "160px", fontWeight: "bold" }}>
+                      <Button type="primary" htmlType="submit">
                         Save Changes
                       </Button>
                     </Form.Item>

@@ -1,24 +1,24 @@
 import React from 'react';
-import GIF from "../assests/02176467793810900000000000000000000ffffac1514363c9e40-ezgif.com-video-to-gif-converter.gif"
+import GIF from "../assests/Black White Simple Modern Neon Griddy Bold Technology Pixel Electronics Store Logo (5).mp4"
 
 function CulsightPageLoader() {
   return (
     <div style={{ display: "block", textAlign: "center", padding: "50px" }}>
-      <div style={{
+      {/* <div style={{
         display: "inline-block",
         padding: "20px",
         minWidth: "180px",
         boxShadow: "0px 0px 8px #ccc",
         borderRadius: "8px"
-      }}>
+      }}> */}
         
-        <img 
+        <video
           src={GIF}  
           alt="loading"
-          style={{ width: "80px", height: "80px" }}
+          style={{ width: "120px", height: "120px",borderRadius:"10px" }}
         />
-
-      </div>
+{/* 
+      </div> */}
     </div>
   );
 }
