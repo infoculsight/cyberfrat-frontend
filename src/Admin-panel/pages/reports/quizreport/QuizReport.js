@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Table, Button, Row, Col, Input, Pagination, Spin } from "antd";
+import { Table, Button, Row, Col, Input, Pagination, Spin, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import { QUIZ_REPORT } from "../../../apis/apis";
 import debounce from "lodash.debounce";
@@ -108,12 +108,21 @@ const QuizReport = () => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button
-          type="link"
-          onClick={() => navigate(`/report/quiz-report/${btoa(record.learner_id)}`)}
-        >
-          View Report
-        </Button>
+        <>
+          <Space>
+            <Button
+              type="link"
+              onClick={() => navigate(`/report/quiz-report/${btoa(record.learner_id)}`)}
+            >
+              View Report
+            </Button>
+            <Button
+              size="small" variant="solid" color="red"
+            >
+              Download Report
+            </Button>
+          </Space>
+        </>
       ),
     },
   ];
