@@ -1225,3 +1225,41 @@ export const BULK_ADD_LEARNER_TEMPLATE = async (body) => {
     throw error;
   }
 };
+
+
+
+export const LIST_DOWNLOAD_QUIZ_TEST_REPORT = async (body) => {
+    try {
+        const response = await Axios.post('list-download-quiz-test-report/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const LIST_DOWNLOAD_PACKAGE_REPORT = async (body) => {
+    try {
+        const response = await Axios.post('list-download-package-report/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const LIST_DOWNLOAD_COURSE_REPORT = async (body) => {
+    try {
+        const response = await Axios.post('list-download-course-report/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const LIST_DOWNLOAD_LIVE_TEST_REPORT = async (body) => {
+    try {
+        const response = await Axios.post('list-download-live-test-report/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};

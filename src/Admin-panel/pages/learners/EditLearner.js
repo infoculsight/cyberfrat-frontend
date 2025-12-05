@@ -49,8 +49,8 @@ export default function EditLearner() {
 
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
-      {loading ? <Loading3QuartersOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload</div>
+      {loading ? <Loading3QuartersOutlined /> : <PlusOutlined style={{ color: "#fff" }} />}
+      <div style={{ marginTop: 8,color:"#fff" }}>Upload</div>
     </button> 
   );
 
@@ -61,8 +61,7 @@ export default function EditLearner() {
       const EDIT_API_RESPONSE = await VIEW_LEARNER(FORM_DATA);
       if (EDIT_API_RESPONSE?.data?.status) {
         const response_data = EDIT_API_RESPONSE?.data?.data;
-        console.log(response_data);
-
+        
         set_first_name(response_data?.first_name);
         if (response_data?.image) {
           set_image(response_data.image);

@@ -188,6 +188,7 @@ export default function EditSmtp() {
                     <Select.Option value="courses">Courses</Select.Option>
                     <Select.Option value="packages">Packages</Select.Option>
                     <Select.Option value="list_test">List Test</Select.Option>
+                    <Select.Option value="profile_update">Profile Update</Select.Option>            
                   </Select>
                   {errors?.smtp_for ? (
                     <span style={{ color: "red" }}>{errors?.smtp_for}</span>

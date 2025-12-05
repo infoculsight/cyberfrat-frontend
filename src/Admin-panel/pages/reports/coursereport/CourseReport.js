@@ -160,8 +160,8 @@ const CourseReport = () => {
 
 
   return (
-    <div style={{ padding: 20 }}>
-
+   
+<>
       <Row gutter={[16, 16]} align="middle">
         <Col xs={24} sm={24} md={18} lg={20}>
           <Input
@@ -229,8 +229,8 @@ const CourseReport = () => {
           )}
         </>
       )}
+</>
 
-    </div>
   );
 };
 

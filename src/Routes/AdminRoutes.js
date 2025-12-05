@@ -49,8 +49,12 @@ import EditAnnouncment from "../Admin-panel/pages/announcment/EditAnnouncment";
 import Smtp from "../Admin-panel/pages/smtp/Smtp";
 import AddSmtp from "../Admin-panel/pages/smtp/AddSmtp";
 import EditSmtp from "../Admin-panel/pages/smtp/EditSmtp"
+import CourseDownload from "../Admin-panel/pages/downloads/CourseDownload";
+import PackageDownload from "../Admin-panel/pages/downloads/PackageDownload";
+import QuizDownload from "../Admin-panel/pages/downloads/QuizDownload";
+import LiveTestDownload from "../Admin-panel/pages/downloads/LiveTestDownload";
 
-    
+
 
 function AdminRoutes() {
   return (
@@ -60,7 +64,7 @@ function AdminRoutes() {
         <Route path="learners/:page?" element={<Learners />} />
         <Route path="add-learner" element={<AddLearners />} />
         <Route path="edit-learner/:id" element={<EditLearner />} />
-        <Route path="learner-courses/:learner_id" element={<LearnerCourses/>}/>
+        <Route path="learner-courses/:learner_id" element={<LearnerCourses />} />
         <Route path="learners-group" element={<LmsLearnersGroup />} />
         <Route path="assign-learner/:id" element={<AssignLmsLearners />} />
         <Route path="instructors" element={<Instructors />} />
@@ -97,13 +101,19 @@ function AdminRoutes() {
           <Route path="quiz-report-details/:learner_id/:chapter_id" element={<QuizLearnerReportDetails />} />
         </Route>
 
-        <Route path="download" element={<Downloads />} />
+        <Route path="download" element={<Downloads />} >
+          <Route path="course-report" element={<CourseDownload />} />
+          <Route path="package-report" element={<PackageDownload />} />
+          <Route path="livetest-report" element={<LiveTestDownload />} />
+          <Route path="quiz-report" element={<QuizDownload/>} />
+        </Route>
+        
         <Route path="announcment/:page?" element={<Announcment />} />
         <Route path="add-announcment/" element={<AddAnnouncment />} />
         <Route path="edit-announcment/:id" element={<EditAnnouncment />} />
         <Route path="smtp" element={<Smtp />} />
         <Route path="add-smtp" element={<AddSmtp />} />
-        <Route path="edit-smtp/:id" element={<EditSmtp />} />      
+        <Route path="edit-smtp/:id" element={<EditSmtp />} />
         <Route path="media" element={<ThemeMedia />} />
         <Route path="report" element={<Reports />} />
         <Route path="notification" element={<AdminNotification />} />
@@ -112,7 +122,7 @@ function AdminRoutes() {
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
-  );   
+  );
 }
 
 export default AdminRoutes;

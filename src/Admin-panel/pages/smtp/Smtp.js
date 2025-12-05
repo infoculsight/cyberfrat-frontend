@@ -159,7 +159,8 @@ function Smtp() {
         const labels = {
           courses: "Courses",
           packages: "Packages",
-          live_test: "Live Test"
+          live_test: "Live Test",
+          profile_update:"Profile Update"
         };
 
         return <span>{labels[record.smtp_for] || record.smtp_for}</span>;
