@@ -97,7 +97,7 @@ function PackageDownload() {
       render: (text, record) => {
 
         const typeMap = {
-          course_learners: "Course",
+          package_learners: "Package",
         };
         const displayType = typeMap[record.report_type] || record.report_type;
         return <span>{displayType}</span>;
@@ -217,10 +217,10 @@ function PackageDownload() {
               />
               <style>
                 {`
-    .no-search-pagination .ant-select-selection-search-input {
-      display: none !important;
-    }
-  `}
+                  .no-search-pagination .ant-select-selection-search-input {
+                    display: none !important;
+                  }
+                `}
               </style>
             </div>
           ) : (

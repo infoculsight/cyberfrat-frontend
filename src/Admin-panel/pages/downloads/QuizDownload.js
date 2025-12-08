@@ -1,6 +1,5 @@
 import {
   Button,
-  Card,
   Col,
   Input,
   Pagination,
@@ -25,7 +24,6 @@ function QuizDownload() {
   const [total_pages, set_total_pages] = useState(0);
   const [search_query_title, set_search_query_title] = useState("");
   const [page_size, set_page_size] = useState(10)
-
 
   const LIST_API = async (page = 1, perPage = page_size) => {
     const FORM_DATA = new FormData();
@@ -96,7 +94,7 @@ function QuizDownload() {
       render: (text, record) => {
 
         const typeMap = {
-          course_learners: "Course",
+          quiz_test: "Quiz Report",
         };
         const displayType = typeMap[record.report_type] || record.report_type;
         return <span>{displayType}</span>;
@@ -216,10 +214,10 @@ function QuizDownload() {
               />
               <style>
                 {`
-    .no-search-pagination .ant-select-selection-search-input {
-      display: none !important;
-    }
-  `}
+                  .no-search-pagination .ant-select-selection-search-input {
+                    display: none !important;
+                  }
+                `}
               </style>
             </div>
           ) : (

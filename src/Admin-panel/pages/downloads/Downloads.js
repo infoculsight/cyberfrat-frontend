@@ -10,27 +10,27 @@ function Downloads() {
   const location = useLocation();
 
   const currentPath = location.pathname.split('/')[2];
-  const currentTab = currentPath || 'course-report';
+  const currentTab = currentPath || 'course-download';
 
   const tabKeyMap = {
-    'course-report': '1',
-    'package-report': '2',
-    'livetest-report': '4',
-    'quiz-report': '5',
+    'course-download': '1',
+    'package-download': '2',
+    'livetest-download': '4',
+    'quiz-download': '5',
   };
 
   const keyTabMap = {
-    '1': 'course-report',
-    '2': 'package-report',
-    '4': 'livetest-report',
-    '5': 'quiz-report',
+    '1': 'course-download',
+    '2': 'package-download',
+    '4': 'livetest-download',
+    '5': 'quiz-download',
 
   };
 
   // Redirect default
   React.useEffect(() => {
     if (location.pathname === '/download') {
-      navigate('/download/course-report', { replace: true });
+      navigate('/download/course-download', { replace: true });
     }
   }, [location.pathname, navigate]);
 
@@ -47,7 +47,7 @@ function Downloads() {
         <Tabs activeKey={tabKeyMap[currentTab]} onChange={handleTabChange}>
           {visibleTabs.includes('1') && <TabPane tab="Course Reports" key="1" />}
           {visibleTabs.includes('2') && <TabPane tab="Package Reports" key="2" />}
-          {visibleTabs.includes('4') && <TabPane tab="Live Test Report" key="4" />}
+          {/* {visibleTabs.includes('4') && <TabPane tab="Live Test Report" key="4" />} */}
           {visibleTabs.includes('5') && <TabPane tab="Quiz Report" key="5" />}
         </Tabs>
         <Outlet />

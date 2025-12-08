@@ -95,7 +95,7 @@ function LiveTestDownload() {
       render: (text, record) => {
 
         const typeMap = {
-          course_learners: "Course",
+          live_test: "Live Test",
         };
         const displayType = typeMap[record.report_type] || record.report_type;
         return <span>{displayType}</span>;
@@ -215,10 +215,10 @@ function LiveTestDownload() {
               />
               <style>
                 {`
-    .no-search-pagination .ant-select-selection-search-input {
-      display: none !important;
-    }
-  `}
+                  .no-search-pagination .ant-select-selection-search-input {
+                    display: none !important;
+                  }
+                `}
               </style>
             </div>
           ) : (

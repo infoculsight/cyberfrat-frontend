@@ -102,10 +102,10 @@ function AdminRoutes() {
         </Route>
 
         <Route path="download" element={<Downloads />} >
-          <Route path="course-report" element={<CourseDownload />} />
-          <Route path="package-report" element={<PackageDownload />} />
-          <Route path="livetest-report" element={<LiveTestDownload />} />
-          <Route path="quiz-report" element={<QuizDownload/>} />
+          <Route path="course-download" element={<CourseDownload />} />
+          <Route path="package-download" element={<PackageDownload />} />
+          <Route path="livetest-download" element={<LiveTestDownload />} />
+          <Route path="quiz-download" element={<QuizDownload/>} />
         </Route>
         
         <Route path="announcment/:page?" element={<Announcment />} />
