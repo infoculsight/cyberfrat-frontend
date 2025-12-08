@@ -92,20 +92,16 @@ function QuizLearnerReportDetails() {
                       {item.option_details?.map((opt, i) => (
                         <Tag
                           key={i}
-                          color={
-                            opt.value
-                              ? "green"
-                              : item.submitted && !opt.value
-                              ? "red"
-                              : "default"
-                          }
+                          color={opt.value ? "gold" : "default"}
                           style={{ marginBottom: "6px" }}
                         >
                           {opt.label}
                         </Tag>
                       ))}
                     </div>
-
+                   <div style={{ marginTop: 8, fontSize: "14px", color: "green" }}>
+                      <b>Right Answer:</b> {item.correct_answer}
+                    </div>
                     <div style={{ marginTop: 8, fontSize: "12px", color: "#888" }}>
                       ⏱ Time Spent: {item.time_spend}s
                     </div>
