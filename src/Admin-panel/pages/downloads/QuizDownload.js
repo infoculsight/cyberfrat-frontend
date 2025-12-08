@@ -59,23 +59,17 @@ function QuizDownload() {
 
   const columns = [
     {
-      title: "Title",
-      dataIndex: "report_view",
+      title: "Name",
+      dataIndex: "name",
       render: (text, record) => {
-        try {
-
-          let titleMatch = record.report_view.match(/'title':\s*'([^']+)'/);
-          let nameMatch = record.report_view.match(/'name':\s*'([^']+)'/);
-
-          let value = titleMatch ? titleMatch[1] : nameMatch ? nameMatch[1] : "N/A";
-
-          if (value && value !== "N/A") {
-            value = value.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
-          }
-          return <span>{value}</span>;
-        } catch (e) {
-          return <span>N/A</span>;
-        }
+        <span>{record.name}</span>
+      },
+    },
+      {
+      title: "Email",
+      dataIndex: "email",
+      render: (text, record) => {
+        <span>{record.email}</span>
       },
     },
     {
@@ -94,7 +88,7 @@ function QuizDownload() {
       render: (text, record) => {
 
         const typeMap = {
-          quiz_test: "Quiz Report",
+          quiz_report: "Quiz Report",
         };
         const displayType = typeMap[record.report_type] || record.report_type;
         return <span>{displayType}</span>;
