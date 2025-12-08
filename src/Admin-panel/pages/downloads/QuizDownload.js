@@ -58,18 +58,40 @@ function QuizDownload() {
   }, []);
 
   const columns = [
-    {
+   {
       title: "Name",
-      dataIndex: "name",
+      dataIndex: "report_view",
       render: (text, record) => {
-        <span>{record.name}</span>
+        try {
+          let nameMatch = record.report_view.match(/'name':\s*'([^']+)'/);
+
+          let value = nameMatch ? nameMatch[1] : "N/A";
+
+          if (value && value !== "N/A") {
+            value = value.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+          }
+          return <span>{value}</span>;
+        } catch (e) {
+          return <span>N/A</span>;
+        }
       },
     },
-      {
+        {
       title: "Email",
-      dataIndex: "email",
+      dataIndex: "report_view",
       render: (text, record) => {
-        <span>{record.email}</span>
+        try {
+          let nameMatch = record.report_view.match(/'email':\s*'([^']+)'/);
+
+          let value = nameMatch ? nameMatch[1] : "N/A";
+
+          if (value && value !== "N/A") {
+            value = value.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+          }
+          return <span>{value}</span>;
+        } catch (e) {
+          return <span>N/A</span>;
+        }
       },
     },
     {
