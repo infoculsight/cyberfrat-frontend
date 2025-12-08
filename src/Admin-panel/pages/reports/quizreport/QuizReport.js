@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Table, Button, Row, Col, Input, Pagination, Spin, Space } from "antd";
+import { Table, Button, Row, Col, Input, Pagination, Spin, Space, App } from "antd";
 import { useNavigate } from "react-router-dom";
-import { QUIZ_REPORT } from "../../../apis/apis";
+import { DOWNLOAD_QUIZ_REPORT, QUIZ_REPORT } from "../../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
 import { LoadingOutlined } from "@ant-design/icons";
 
 const QuizReport = () => {
   const navigate = useNavigate();
+  const { notification } = App.useApp();
   const [loader, setLoader] = useState(true);
   const [pagination_loader, set_pagination_loader] = useState(false);
   const [table_data, set_table_data] = useState([]);
@@ -118,6 +119,7 @@ const QuizReport = () => {
             </Button>
             <Button
               size="small" variant="solid" color="red"
+              onClick={() => DOWNLOAD_REPORT_ACTION(record.learner_id)}
             >
               Download Report
             </Button>
@@ -126,6 +128,27 @@ const QuizReport = () => {
       ),
     },
   ];
+
+
+  
+    const DOWNLOAD_REPORT_ACTION = async (learner_id) => {
+    
+  
+      const FORM_DATA = new FormData();
+      FORM_DATA.append("learner_id", learner_id);
+  
+      const API_CALL = await DOWNLOAD_QUIZ_REPORT(FORM_DATA);
+      if (API_CALL?.data?.status) {
+        notification.success({
+          message: "Successful",
+          description: "Check the Download tab for your report",
+        });
+  
+      } else {
+        console.log("error");
+        setLoader(false);
+      }
+    };
 
   return (
     <>

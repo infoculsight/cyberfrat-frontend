@@ -1004,6 +1004,17 @@ export const QUIZ_ANSWER_DETAILS= async (body) => {
     }
 };
 
+
+export const DOWNLOAD_QUIZ_REPORT= async (body) => {
+    try {
+        const response = await Axios.post('download-quiz-report/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
 export const DOWNLOAD_REPORT= async (body) => {
     try {
         const response = await Axios.post('download-report/', body);
