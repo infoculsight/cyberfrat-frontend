@@ -119,30 +119,36 @@ function UserNotification() {
     LIST_API();
   }, []);
 
-  const formatTime = (timestamp) => {
-    if (!timestamp) return "";
-    const createdTimeUTC = new Date(timestamp.replace(" ", "T") + "Z");
-    const nowUTC = new Date();
-    const diffMs = nowUTC - createdTimeUTC;
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMinutes / 60);
-    if (diffHours < 4) {
-      if (diffMinutes < 1) return "Just now";
-      if (diffMinutes < 60)
-        return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
-      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-    }
-    const istDate = new Date(createdTimeUTC.getTime() + 5.5 * 60 * 60 * 1000);
-    return istDate.toLocaleString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-      timeZone: "Asia/Kolkata",
-    });
-  };
+ const formatTime = (timestamp) => {
+  if (!timestamp) return "";
+
+  const createdTimeUTC = new Date(timestamp);   // ← FIX
+  const nowUTC = new Date();
+
+  const diffMs = nowUTC - createdTimeUTC;
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMinutes / 60);
+
+  // Show relative time if within 4 hours
+  if (diffHours < 4) {
+    if (diffMinutes < 1) return "Just now";
+    if (diffMinutes < 60)
+      return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
+    return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+  }
+
+  // Convert to IST
+  return createdTimeUTC.toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Kolkata",
+  });
+};
+
 
   return (
     <div>
