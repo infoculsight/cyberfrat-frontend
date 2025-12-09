@@ -4,6 +4,7 @@ import {
   Input,
   Pagination,
   Row,
+  Select,
   Spin,
   Table,
 } from "antd";
@@ -22,7 +23,7 @@ function QuizDownload() {
   const [table_data, set_table_data] = useState([]);
   const [current_page, set_current_page] = useState(1);
   const [total_pages, set_total_pages] = useState(0);
-  const [search_query_title, set_search_query_title] = useState("");
+  const [searchType, setSearchType] = useState("name");
   const [page_size, set_page_size] = useState(10)
 
   const LIST_API = async (page = 1, perPage = page_size) => {
@@ -40,10 +41,14 @@ function QuizDownload() {
     }
   };
 
+    useEffect(() => {
+    LIST_API();
+  }, []);
+
+  
   const GET_DOWNLOAD_REPORT_ACTION = async (id) => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("id", id);
-
     const API_CALL = await GET_DOWNLOAD_REPORT(FORM_DATA);
     if (API_CALL?.data?.status) {
       window.location = API_CALL?.data?.url
@@ -53,12 +58,10 @@ function QuizDownload() {
     }
   };
 
-  useEffect(() => {
-    LIST_API();
-  }, []);
+
 
   const columns = [
-   {
+    {
       title: "Name",
       dataIndex: "report_view",
       render: (text, record) => {
@@ -76,7 +79,7 @@ function QuizDownload() {
         }
       },
     },
-        {
+    {
       title: "Email",
       dataIndex: "report_view",
       render: (text, record) => {
@@ -146,53 +149,69 @@ function QuizDownload() {
   };
 
 
-
-  const fetchResultsTitle = useCallback((value) => {
+  const fetchResults = useCallback((value, type) => {
     debounce(async () => {
       try {
-        set_search_query_title(value);
-        set_current_page(1);
         set_pagination_loader(true);
+
         const FORM_DATA = new FormData();
         FORM_DATA.append("per_page", page_size);
-        FORM_DATA.append("title", value);
+
+        // Dynamic search key (name or email)
+        FORM_DATA.append(type, value);
+
         const API_CALL = await LIST_DOWNLOAD_QUIZ_TEST_REPORT(FORM_DATA);
+
         if (API_CALL?.data?.status) {
           set_table_data(API_CALL.data?.data);
           set_current_page(API_CALL?.data?.current_page);
           set_total_pages(API_CALL?.data?.total_pages);
-          set_pagination_loader(false);
-        } else {
-          set_pagination_loader(false);
         }
+
+        set_pagination_loader(false);
       } catch (err) {
         console.error("API Error:", err);
+        set_pagination_loader(false);
       }
-    }, 500)(); // Call debounce immediately
+    }, 500)();
   }, [page_size]);
+
 
   const handleInput = (e) => {
     const value = e.target.value;
+
     if (!value) {
-      LIST_API(1, page_size); // force current page_size
+      LIST_API(1, page_size);
     } else {
-      fetchResultsTitle(value);
+      fetchResults(value, searchType);
     }
   };
+
 
   return (
     <>
       <Row>
         <Col xs={24} sm={24} md={18} lg={20}>
           <Input
-            addonBefore={<span>Title</span>}
-            onChange={handleInput}
-            placeholder="Search by title"
             size="large"
+            placeholder={`Search by ${searchType}`}
+            onChange={handleInput}
+            addonBefore={
+              <Select
+                value={searchType}
+                onChange={(value) => setSearchType(value)}
+                options={[
+                  { label: "Name", value: "name" },
+                  { label: "Email", value: "email" }
+                ]}
+              />
+            }
             style={{ width: "100%" }}
           />
         </Col>
       </Row>
+
+
 
       {loader ? (
         <CulsightPageLoader />
