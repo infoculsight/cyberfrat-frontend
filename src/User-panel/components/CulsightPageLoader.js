@@ -1,26 +1,16 @@
-import React from 'react';
-import GIF from "../assests/Black White Simple Modern Neon Griddy Bold Technology Pixel Electronics Store Logo (5).mp4"
+import { Spin } from 'antd'
+import React from 'react'
+import { LoadingOutlined } from "@ant-design/icons";
 
 function CulsightPageLoader() {
   return (
-    <div style={{ display: "block", textAlign: "center", padding: "50px" }}>
-      {/* <div style={{
-        display: "inline-block",
-        padding: "20px",
-        minWidth: "180px",
-        boxShadow: "0px 0px 8px #ccc",
-        borderRadius: "8px"
-      }}> */}
-        
-        <video
-          src={GIF}  
-          alt="loading"
-          style={{ width: "120px", height: "120px",borderRadius:"10px" }}
-        />
-{/* 
-      </div> */}
+    <div style={{ display: "bloack", textAlign: "center", padding: "50px" }}>
+      <div style={{ display: "inline-block", padding: "20px", minWidth: "180px", boxShadow: "0px 0px 8px #ccc", borderRadius: "8px" }}>
+        <Spin indicator={<LoadingOutlined spin style={{color:"#e9c70ada"}}/>} size="large" />
+        <h2 style={{ marginTop: "25px", color: "#e9c70ada" }}>CyberFrat</h2>
+      </div>
     </div>
-  );
+  )
 }
 
 export default CulsightPageLoader;

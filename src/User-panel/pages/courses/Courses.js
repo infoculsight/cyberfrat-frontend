@@ -132,7 +132,6 @@ function Courses() {
                             <Select
                               value={search_by}
                               onChange={(value) => set_search_by(value)}
-                              style={{ width: 120 }}
                             >
                               <Select.Option value="title">Title</Select.Option>
                               <Select.Option value="tag">Tags</Select.Option>
