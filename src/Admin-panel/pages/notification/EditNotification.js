@@ -136,6 +136,9 @@ function EditNotification() {
                 { value: 'course_completion', label: 'Course Completion' },
                 { value: 'test_submit', label: 'Test Submit' },
                 { value: 'course_expire', label: 'Course Expire' },
+                {value:'certificate_issued', label:"Certificate Issued"},
+                {value:'quiz_uploaded',label:"Quiz Uploaded"} ,
+                {value:'livetest_assign',label:"Live Test Assign"}
               ]}
             />{errors?.notification_type && (
                   <span style={{ color: "red" }}>{errors.notification_type}</span>

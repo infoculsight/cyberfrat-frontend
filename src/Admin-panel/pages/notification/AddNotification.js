@@ -118,7 +118,8 @@ function AddNotification() {
                   { value: 'test_submit', label: 'Test Submit' },
                   { value: 'course_expire', label: 'Course Expire' },
                   {value:'certificate_issued', label:"Certificate Issued"},
-                  {value:'quiz_uploaded',label:"Quiz Uploaded"} 
+                  {value:'quiz_uploaded',label:"Quiz Uploaded"} ,
+                  {value:'livetest_assign',label:"Live Test Assign"}
                 ].filter(opt => available_dropdown.includes(opt.value))}
               />
               {errors?.notification_type && (
