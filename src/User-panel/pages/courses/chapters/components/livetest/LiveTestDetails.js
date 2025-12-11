@@ -1,8 +1,9 @@
-import { Button, Col, Row } from "antd";
+import { Button, Col, Row, Grid } from "antd";
 import { useEffect, useState, useRef } from "react";
-import { VIEW_LIVE_TEST_DETAILS, VIEW_QUIZ_SETTING } from "../../../../../apis/apis";
+import { VIEW_LIVE_TEST_DETAILS } from "../../../../../apis/apis";
 import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 
+const { useBreakpoint } = Grid;
 
 export default function LiveTestDetails({
   set_quiz_test_id,
@@ -16,6 +17,8 @@ export default function LiveTestDetails({
   display_question,
 }) {
 
+  const screens = useBreakpoint();
+
   const [loading, setLoading] = useState(false);
   const [title, set_title] = useState("");
   const [time_limit, set_time_limit] = useState(null);
@@ -27,7 +30,6 @@ export default function LiveTestDetails({
 
   const timerRef = useRef(null);
 
-  // 🔹 Fetch Quiz Settings
   useEffect(() => {
     const VIEW_API = async () => {
       setLoading(true);
@@ -37,10 +39,10 @@ export default function LiveTestDetails({
 
       if (response?.data?.status) {
         const data = response.data.data;
+
         set_title(data?.title);
         set_quiz_title(data?.title);
         set_time_limit(parseInt(data?.time_limit));
-        
 
         if (!data?.expired && !data?.test_submitted) {
           set_quiz_test_id(data?.id);
@@ -53,7 +55,6 @@ export default function LiveTestDetails({
 
         if (data?.time_limit) {
           const seconds = parseInt(data.time_limit) * 60;
-          console.log("⏳ Initial time:", seconds);
           setRemainingTime(seconds);
         }
       }
@@ -63,16 +64,14 @@ export default function LiveTestDetails({
     VIEW_API();
   }, [live_test_id]);
 
-  // 🔹 Countdown Logic
   useEffect(() => {
     if (!show_options) return;
     if (!time_limit) return;
     if (submit_true || expired) return;
     if (remainingTime === null) return;
 
-    console.log("✅ Timer started with", remainingTime, "seconds");
-
     clearInterval(timerRef.current);
+
     timerRef.current = setInterval(() => {
       setRemainingTime((prev) => {
         if (prev === null) return null;
@@ -83,10 +82,11 @@ export default function LiveTestDetails({
           window.close();
           return 0;
         }
+
         const total = time_limit * 60;
         const spent = total - (prev - 1);
         set_time_spend(spent);
-        console.log("⌛ Remaining:", prev - 1, " | Spent:", spent);
+
         return prev - 1;
       });
     }, 1000);
@@ -94,12 +94,9 @@ export default function LiveTestDetails({
     return () => clearInterval(timerRef.current);
   }, [show_options, time_limit, submit_true, expired, remainingTime]);
 
-  // 🔹 Format time helper
   const formatTime = (seconds) => {
     if (seconds === null) return "--:--";
-    const m = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, "0");
+    const m = Math.floor(seconds / 60).toString().padStart(2, "0");
     const s = (seconds % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
   };
@@ -113,63 +110,84 @@ export default function LiveTestDetails({
           {time_limit ? (
             <div
               className="section-details section-details-right-padding"
-              style={{ minHeight: "auto" }}
+              style={{
+                minHeight: "auto",
+                padding: screens.xs ? "10px" : "20px",
+              }}
             >
-              <Row>
-                <Col span={12}>
-                  <p>
+              {/* Responsive Row */}
+              <Row gutter={[16, 16]}>
+                <Col
+                  xs={24}
+                  sm={12}
+                  style={{ textAlign: screens.xs ? "center" : "left" }}
+                >
+                  <p style={{ marginBottom: "5px" }}>
                     <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
                       Time Limit:{" "}
                     </span>
                     {time_limit} min
-                    <br />
-                    {remainingTime !== null && (
-                      <span style={{ color: "orange", fontWeight: "bold" }}>
-                        Remaining Time: {formatTime(remainingTime)}
-                      </span>
-                    )}
                   </p>
+
+                  {remainingTime !== null && (
+                    <p
+                      style={{
+                        color: "orange",
+                        fontWeight: "bold",
+                        fontSize: screens.xs ? "16px" : "18px",
+                      }}
+                    >
+                      Remaining Time: {formatTime(remainingTime)}
+                    </p>
+                  )}
                 </Col>
-                <Col span={12}>
-                  <div style={{ float: "right" }}>
-                   
-                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Total Questions:{" "}
-                    </span>
-                    {display_question}
-                  </div>
+
+                <Col
+                  xs={24}
+                  sm={12}
+                  style={{
+                    textAlign: screens.xs ? "center" : "right",
+                  }}
+                >
+                  <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                    Total Questions:{" "}
+                  </span>
+                  {display_question}
                 </Col>
               </Row>
 
+              {/* Submitted Message */}
               {submitted ? (
                 <h3
                   style={{
-                    padding: "50px",
+                    padding: screens.xs ? "20px" : "50px",
                     textAlign: "center",
                     color: "green",
                     border: "1px solid green",
-                    fontSize: "42px",
+                    fontSize: screens.xs ? "22px" : "42px",
+                    marginTop: "20px",
                   }}
                 >
-                  Text submitted
+                  Test submitted
                   <br />
                   <Button
                     type="primary"
                     size="small"
                     onClick={() => window.close()}
+                    style={{ marginTop: "10px" }}
                   >
                     Close
                   </Button>
-                 
                 </h3>
               ) : expired ? (
                 <h3
                   style={{
-                    padding: "50px",
+                    padding: screens.xs ? "20px" : "50px",
                     textAlign: "center",
                     color: "red",
                     border: "1px solid red",
-                    fontSize: "42px",
+                    fontSize: screens.xs ? "22px" : "42px",
+                    marginTop: "20px",
                   }}
                 >
                   Test Expired
@@ -178,6 +196,7 @@ export default function LiveTestDetails({
                     type="primary"
                     size="small"
                     onClick={() => window.close()}
+                    style={{ marginTop: "10px" }}
                   >
                     Close
                   </Button>
@@ -187,10 +206,10 @@ export default function LiveTestDetails({
           ) : (
             <h3
               style={{
-                padding: "50px",
+                padding: screens.xs ? "20px" : "50px",
                 textAlign: "center",
                 color: "red",
-                fontSize: "42px",
+                fontSize: screens.xs ? "22px" : "42px",
               }}
             >
               Data Empty
@@ -199,6 +218,7 @@ export default function LiveTestDetails({
                 type="primary"
                 size="small"
                 onClick={() => window.close()}
+                style={{ marginTop: "10px" }}
               >
                 Close
               </Button>
