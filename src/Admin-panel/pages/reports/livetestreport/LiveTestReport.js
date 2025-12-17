@@ -1,4 +1,4 @@
-import { Button, Col, message, Pagination, Row, Table, Spin } from 'antd'
+import { Button, Col, message, Pagination, Row, Table, Spin, App } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react'
 import { GENERATE_LIVE_TEST_RESULT, LIST_LIVE_SUBMISSION } from '../../../apis/apis';
@@ -6,6 +6,7 @@ import CulsightPageLoader from '../../../components/CulsightPageLoader';
 
 function LiveTestReport(props) {
     const { model_row } = props
+    const { notification } = App.useApp();
     const [loader, setLoader] = useState(true);
     const [dataSource, set_dataSource] = useState([])
     const [page_size, set_page_size] = useState(10)
@@ -62,25 +63,39 @@ function LiveTestReport(props) {
     useEffect(() => {
         if (model_row?.id) LIST_API(1, page_size);
     }, [model_row, page_size]);
-
     const handleGenerateResults = async () => {
         try {
             setLoader(true);
-            for (let record of dataSource) {
-                const submission = record?.live_test_answer_submission_by_chapter;
-                if (!submission) continue;
-                const formData = new FormData();
-                formData.append("learner_id", record?.learner_id);
-                formData.append("live_test_id", model_row?.id);
-                formData.append("total_question", submission?.total_question ?? 0);
-                formData.append("total_time", submission?.time_spend ?? 0);
-                formData.append("total_marks", submission?.total_marks ?? 0);
-                formData.append("correct_answers", submission?.correct_answers ?? 0);
-                formData.append("wrong_answers", submission?.wrong_answers ?? 0);
-                formData.append("total_score", submission?.total_score ?? 0);
-                await GENERATE_LIVE_TEST_RESULT(formData);
+
+            const requests = dataSource
+                .filter(record => record?.live_test_answer_submission_by_chapter)
+                .map(record => {
+                    const submission = record.live_test_answer_submission_by_chapter;
+
+                    const formData = new FormData();
+                    formData.append("learner_id", record.learner_id);
+                    formData.append("live_test_id", model_row?.id);
+                    formData.append("total_question", submission.total_question ?? 0);
+                    formData.append("total_time", submission.time_spend ?? 0);
+                    formData.append("total_marks", submission.total_marks ?? 0);
+                    formData.append("correct_answers", submission.correct_answers ?? 0);
+                    formData.append("wrong_answers", submission.wrong_answers ?? 0);
+                    formData.append("total_score", submission.total_score ?? 0);
+                    return GENERATE_LIVE_TEST_RESULT(formData);
+                });
+
+            if (!requests.length) {
+                message.warning("No submissions found to generate results.");
+                return;
             }
-            message.success("Results generated successfully!");
+
+            const responses = await Promise.all(requests);
+
+            notification.success({
+                message: "Successful",
+                description: "Live test results generated successfully.",
+            });
+
         } catch (error) {
             console.error(error);
             message.error("Failed to generate results!");
@@ -89,11 +104,13 @@ function LiveTestReport(props) {
         }
     };
 
+
     const pagination_on_change = async (page, size) => {
         set_pagination_loader(true);
         await LIST_API(page, size);
         set_pagination_loader(false);
     };
+
 
     return (
         <div className='lms-body'>
@@ -102,15 +119,15 @@ function LiveTestReport(props) {
                     <Row>
                         <Col span={12}>
                             <h4><span style={{ color: "orange" }}>Test title: </span>{model_row?.title}</h4>
-                            <h4><span style={{ color: "orange" }}>Chapter title: </span>{model_row?.chapter_title}</h4>
-                            <h4><span style={{ color: "orange" }}>Course title: </span>{model_row?.course_title}</h4>
+                            {/* <h4><span style={{ color: "orange" }}>Chapter title: </span>{model_row?.chapter_title}</h4>
+                            <h4><span style={{ color: "orange" }}>Course title: </span>{model_row?.course_title}</h4> */}
                         </Col>
                         <Col span={12}>
                             <Button type="primary" style={{ float: "right" }} onClick={handleGenerateResults}>Generate Results</Button>
                         </Col>
                     </Row>
 
-                    <Row>
+                    <Row style={{ marginTop: "10px" }}>
                         <Col span={24}>
                             <Button style={{ float: "right", marginBottom: "15px" }}>Export as CSV</Button>
                         </Col>
