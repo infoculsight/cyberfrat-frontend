@@ -95,7 +95,7 @@ function UserNotification() {
         case 'test_expire':
         case 'result_declaration':
         case 'test_submit':
-          path = 'list-live-test/' + btoa(item?.meta?.id);
+          path = 'list-live-test'
           break;
         case 'course_completion':
           path = '/courses/complete' + btoa(item?.meta?.id);
@@ -119,35 +119,35 @@ function UserNotification() {
     LIST_API();
   }, []);
 
- const formatTime = (timestamp) => {
-  if (!timestamp) return "";
+  const formatTime = (timestamp) => {
+    if (!timestamp) return "";
 
-  const createdTimeUTC = new Date(timestamp);   // ← FIX
-  const nowUTC = new Date();
+    const createdTimeUTC = new Date(timestamp);   // ← FIX
+    const nowUTC = new Date();
 
-  const diffMs = nowUTC - createdTimeUTC;
-  const diffMinutes = Math.floor(diffMs / (1000 * 60));
-  const diffHours = Math.floor(diffMinutes / 60);
+    const diffMs = nowUTC - createdTimeUTC;
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMinutes / 60);
 
-  // Show relative time if within 4 hours
-  if (diffHours < 4) {
-    if (diffMinutes < 1) return "Just now";
-    if (diffMinutes < 60)
-      return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
-    return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-  }
+    // Show relative time if within 4 hours
+    if (diffHours < 4) {
+      if (diffMinutes < 1) return "Just now";
+      if (diffMinutes < 60)
+        return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+    }
 
-  // Convert to IST
-  return createdTimeUTC.toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "Asia/Kolkata",
-  });
-};
+    // Convert to IST
+    return createdTimeUTC.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "Asia/Kolkata",
+    });
+  };
 
 
   return (
@@ -188,14 +188,17 @@ function UserNotification() {
               <List.Item>
                 <List.Item.Meta
                   title={
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <strong>{item.title} - <span style={{ color: "orange" }}>{item?.meta?.title}</span></strong>
-                      <Button
-                        type='text'
-                        icon={<CloseOutlined />}
-                        onClick={() => remove_notification(item.id)}
-                      />
-                    </div>
+                    <>
+                      <span style={{ fontSize: "13px", color: "#999" }}>{formatTime(item.created_at)} </span>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <strong>{item.title} - <span style={{ color: "orange" }}>{item?.meta?.title}</span></strong>
+                        <Button
+                          type='text'
+                          icon={<CloseOutlined />}
+                          onClick={() => remove_notification(item.id)}
+                        />
+                      </div>
+                    </>
                   }
                   description={
                     <>
@@ -210,7 +213,7 @@ function UserNotification() {
                           >
                             View
                           </Button>
-                          <span style={{ fontSize: "13px", color: "#999" }}>{formatTime(item.created_at)} </span>
+
                         </Space>
                       )}
                     </>
