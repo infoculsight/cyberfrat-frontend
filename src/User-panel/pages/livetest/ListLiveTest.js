@@ -1,8 +1,8 @@
-import { Button, Card, Col, Input, Row, Space, Table, Pagination, Spin } from "antd";
+import { Button, Card, Col, Input, Row, Space, Table, Pagination, Spin, Modal } from "antd";
 import { EyeFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { formatToIST } from "../../../helper/CommonHelper";
-import { LIST_LIVE_TESTS } from "../../apis/apis";
+import { LIST_LIVE_TESTS, VIEW_LIVE_TEST_DETAILS } from "../../apis/apis";
 import { useCallback, useEffect, useState } from "react";
 import debounce from "lodash.debounce";
 
@@ -16,6 +16,20 @@ function ListLiveTest() {
   const [pagination_loader, set_pagination_loader] = useState(false);
   const [search_query_value, set_search_query_value] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedLiveTestId, setSelectedLiveTestId] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // modal data states
+  const [title, set_title] = useState("");
+  const [quiz_title, set_quiz_title] = useState("");
+  const [time_limit, set_time_limit] = useState(0);
+  const [expired, set_expired] = useState(false);
+  const [submitted, set_submitted] = useState(false);
+  const [passing_percentage, set_passing_percentage] = useState(0);
+  const [number_of_retake, set_number_of_retake] = useState(0);
+
 
   // Handle resize for responsiveness
   useEffect(() => {
@@ -141,9 +155,11 @@ function ListLiveTest() {
             <Button
               type="primary"
               size="small"
-              onClick={() =>
-                openFullscreenWindow("/live-test/" + btoa(record.live_test_id))
-              }
+              onClick={() => {
+                setSelectedLiveTestId(record.live_test_id);
+                setIsModalOpen(true);
+              }}
+
             >
               <EyeFilled />
             </Button>
@@ -163,6 +179,35 @@ function ListLiveTest() {
       ),
     },
   ];
+
+
+  useEffect(() => {
+    if (!selectedLiveTestId) return;
+
+    const VIEW_API = async () => {
+      setLoading(true);
+      const FORM_DATA = new FormData();
+      FORM_DATA.append("live_test_id", selectedLiveTestId);
+
+      const response = await VIEW_LIVE_TEST_DETAILS(FORM_DATA);
+
+      if (response?.data?.status) {
+        const data = response.data.data;
+
+        set_title(data?.title);
+        set_quiz_title(data?.title);
+        set_time_limit(parseInt(data?.time_limit));
+        set_expired(data?.expired);
+        set_submitted(data?.test_submitted);
+        set_passing_percentage(data?.passing_percentage);
+        set_number_of_retake(data?.no_of_retake);
+      }
+      setLoading(false);
+    };
+
+    VIEW_API();
+  }, [selectedLiveTestId]);
+
 
   return (
     <div className="lms-body">
@@ -247,9 +292,10 @@ function ListLiveTest() {
                       <Button
                         type="primary"
                         size="small"
-                        onClick={() =>
-                          openFullscreenWindow("/live-test/" + btoa(record.live_test_id))
-                        }
+                        onClick={() => {
+                          setSelectedLiveTestId(record.live_test_id);
+                          setIsModalOpen(true);
+                        }}
                         style={{ marginTop: "10px" }}
                       >
                         <EyeFilled />
@@ -274,6 +320,39 @@ function ListLiveTest() {
           </div>
         )}
 
+        <Modal
+          title="Live Test Details"
+          open={isModalOpen}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setSelectedLiveTestId(null);
+          }}
+          footer={null}
+          width={600}
+        >
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "30px" }}>
+              <Spin size="large" />
+            </div>
+          ) : (
+            <>
+              <p style={{ textAlign: "center", margin: "30px" }}>You can attempt this test a maximum of {number_of_retake} times. Currently, you are on your second attempt. The time limit for the test is {time_limit} minutes, and you must score at least {passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
+
+              {!expired && !submitted && (
+                <div style={{ textAlign: "center", marginTop: "20px" }}>
+                  <Button
+                    type="primary"
+                    onClick={() =>
+                      navigate("/live-test/" + btoa(selectedLiveTestId))
+                    }
+                  >
+                    Start Test
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+        </Modal>
 
 
       </Card>

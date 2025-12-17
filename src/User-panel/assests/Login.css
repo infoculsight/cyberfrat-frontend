@@ -97,3 +97,12 @@ p.reset-text{
     line-height: 22px !important;
     margin-top: 28px !important;
 }
+
+.forgot-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -20px;
+
+  margin-bottom: 20px;
+}
+

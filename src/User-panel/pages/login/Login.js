@@ -81,7 +81,13 @@ const Login = () => {
                                     <EyeInvisibleOutlined className="password-eye" onClick={togglePasswordVisibility} />
                                 )}
                             </div>
-                            <Link to="/forget-password" className="lms-link right" style={{ position: "relative", top: "-18px", left: "145px", color: "#fff" }}>Forgot Password?</Link>
+                            <div className="forgot-wrapper">
+                                <Link to="/forget-password" className="forgot-link" style={{color:"white"}}>
+                                    Forgot Password?
+                                </Link>
+                            </div>
+
+
 
                             {loader ? <>
                                 <Button type="primary" style={{ width: "100%", height: "42px" }}> <Spin indicator={<LoadingOutlined spin />} style={{ color: "#FFF" }} size="small" /></Button>
@@ -93,7 +99,7 @@ const Login = () => {
                         <div className="login-footer">
                             <div style={{ marginLeft: "15px" }}>Copyright <CopyrightOutlined /> {new Date().getFullYear()} CyberFrat </div>
                             {/* <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div> */}
-                            <div style={{ marginRight: "15px" }}>  <Link to="/terms-policy" className="lms-link" style={{color:"#fff"}}>Terms & Policies</Link></div>
+                            <div style={{ marginRight: "15px" }}>  <Link to="/terms-policy" className="lms-link" style={{ color: "#fff" }}>Terms & Policies</Link></div>
                         </div>
                     </div>
 
