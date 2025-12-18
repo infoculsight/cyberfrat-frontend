@@ -10,6 +10,7 @@ export default function QuizTest() {
   const [quiz_test_id, set_quiz_test_id] = useState("");
   const [time_spend, set_time_spend] = useState("");
   const [submit_true, set_submit_true] = useState(false);
+  const [min_time_before_submit , set_min_time_before_submit] = useState("")
   const [quiz_title, set_quiz_title] = useState("");
 
   return (
@@ -53,16 +54,21 @@ export default function QuizTest() {
           time_spend={time_spend}
           submit_true={submit_true}
           set_quiz_title={set_quiz_title}
+          min_time_before_submit = {min_time_before_submit}
+          set_min_time_before_submit = {set_min_time_before_submit}
         />
+        <div style={{marginTop:"30px"}}>
         {quiz_test_id &&
           <QuizTestQuestionView
             set_submit_true={set_submit_true}
             time_spend={time_spend}
             chapter_id={chapter_id}
             quiz_test_id={quiz_test_id}
+            min_time_before_submit = {min_time_before_submit}
           />
 
         }
+        </div>
 
       </Card>
 
