@@ -27,8 +27,8 @@ function ListLiveTest() {
   const [time_limit, set_time_limit] = useState(0);
   const [expired, set_expired] = useState(false);
   const [submitted, set_submitted] = useState(false);
-  const [passing_percentage, set_passing_percentage] = useState(0);
-  const [number_of_retake, set_number_of_retake] = useState(0);
+  const [available_from ,set_available_from] = useState("")
+  const [available_till ,set_available_till] = useState("")
 
 
   // Handle resize for responsiveness
@@ -199,8 +199,9 @@ function ListLiveTest() {
         set_time_limit(parseInt(data?.time_limit));
         set_expired(data?.expired);
         set_submitted(data?.test_submitted);
-        set_passing_percentage(data?.passing_percentage);
-        set_number_of_retake(data?.no_of_retake);
+        set_available_from(data?.available_from);
+        set_available_till(data?.available_till)
+       
       }
       setLoading(false);
     };
@@ -336,7 +337,8 @@ function ListLiveTest() {
             </div>
           ) : (
             <>
-              <p style={{ textAlign: "center", margin: "30px" }}>You can attempt this test a maximum of {number_of_retake} times. Currently, you are on your second attempt. The time limit for the test is {time_limit} minutes, and you must score at least {passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.</p>
+              <p style={{ textAlign: "center", margin: "30px" }}> The time limit for the test is {time_limit} minutes, and you must score at least 60% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required. This test will be available from {formatToIST(available_from)} to {formatToIST(available_till)}.
+                Please ensure you attempt and complete the test within this availability period.</p>
 
               {!expired && !submitted && (
                 <div style={{ textAlign: "center", marginTop: "20px" }}>
