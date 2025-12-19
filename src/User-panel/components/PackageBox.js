@@ -11,7 +11,7 @@ export default function PackageBox(props) {
     <div>
       <Card
         //style={{ width: 300 }}
-        style={{ width: "100%", borderRadius: 8,height:"350px" }}
+        style={{ width: "100%", borderRadius: 8 }}
         cover={
 
           <div style={{ width: "100%", position: "relative" }}>

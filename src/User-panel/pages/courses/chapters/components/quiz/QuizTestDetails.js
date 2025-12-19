@@ -23,7 +23,6 @@ export default function QuizTestDetails({
   const [remainingTime, setRemainingTime] = useState(null);
   const [expired, set_expired] = useState(false);
   const [submitted, set_submitted] = useState(false);
-
   const timerRef = useRef(null);
 
   useEffect(() => {
@@ -97,8 +96,6 @@ export default function QuizTestDetails({
   };
 
   
-
-
   const submit_question = async () => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("chapter_id", atob(chapter_id));
