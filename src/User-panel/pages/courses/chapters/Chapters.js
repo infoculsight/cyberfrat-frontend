@@ -216,6 +216,8 @@ const handleChapterClick = async (chapter, index) => {
     link.click();
   };
 
+  
+
   const check_quiz_status = async (chapter_id) => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("chapter_id", chapter_id);
@@ -346,7 +348,7 @@ const handleChapterClick = async (chapter, index) => {
                       backgroundColor:
                         currentChapter?.id === item?.id
                           ? balck_theme
-                            ? "rgb(46 46 46)"
+                            ? "rgba(236, 218, 63, 0.41)"
                             : "rgb(243 242 242)"
                           : "transparent",
                       opacity:
