@@ -183,79 +183,57 @@ function Settings() {
     }
   };
 
-  const handlePasswordSubmit = async () => {
-    // Clear previous errors
-    set_error({ current_password: "", new_password: "", confirm_password: "" });
+ const handlePasswordSubmit = async () => {
 
-    if (newPassword !== confirmPassword) {
-      const msg = "New password and Confirm password do not match!";
-      set_error({ ...error, confirm_password: msg });
+  set_error({ new_password: "", confirm_password: "" });
+  setPasswordLoading(true);
 
-      notification.error({
-        message: "Error",
-        description: msg,
-      });
-      return;
-    }
+  const FORM_DATA = new FormData();
+  FORM_DATA.append("email", email);
+  FORM_DATA.append("new_password", newPassword);
+  FORM_DATA.append("confirm_password", confirmPassword);
 
-    setPasswordLoading(true);
+try {
+  const response = await RESET_PASSWORD(FORM_DATA);
 
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("email", email);
-    FORM_DATA.append("current_password", currentPassword);
-    FORM_DATA.append("new_password", newPassword);
-    FORM_DATA.append("confirm_password", confirmPassword);
+  if (response?.data?.status) {
+    notification.success({
+      message: "Password Updated Successfully",
+    });
 
-    try {
-      const response = await RESET_PASSWORD(FORM_DATA);
+    setIsModalOpen(false);
+    setNewPassword("");
+    setConfirmPassword("");
+    set_error({ new_password: "", confirm_password: "", current_password: "" });
 
-      if (response?.data?.status) {
-        notification.success({
-          message: "Password Updated Successfully",
-          description: "Your password has been updated. Please login again.",
-        });
+  } else {
+    const errors = response?.data?.errors || {};
 
-        setIsModalOpen(false);
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-        set_error({ current_password: "", new_password: "", confirm_password: "" });
+    // Correctly set all backend errors
+    set_error({
+      current_password: errors.current_password || "",
+      new_password: errors.new_password || "",
+      confirm_password: errors.confirm_password || "",
+    });
 
-        logout();
-      } else {
-        const errors = response?.data?.errors;
-        if (errors) {
-          set_error({
-            current_password: errors.current_password || "",
-            new_password: errors.new_password || "",
-            confirm_password: errors.confirm_password || "",
-          });
+    const errorMsg = Object.values(errors).join(" | ") || response?.data?.message || "Something went wrong!";
+    notification.error({
+      message: "Error",
+      description: errorMsg,
+    });
+  }
+} catch (err) {
+  const backendError = err?.response?.data?.message || "Server error! Please try again.";
+  notification.error({
+    message: "Error",
+    description: backendError,
+  });
+} finally {
+  setPasswordLoading(false);
+}
 
-          const errorMsg = Object.values(errors).join(" | ");
-          notification.error({
-            message: "Error",
-            description: errorMsg,
-          });
-        } else {
-          const backendError = response?.data?.message || "Something went wrong!";
-          notification.error({
-            message: "Error",
-            description: backendError,
-          });
-        }
-      }
-    } catch (err) {
-      const backendError =
-        err?.response?.data?.message || "Server error! Please try again.";
+};
 
-      notification.error({
-        message: "Error",
-        description: backendError,
-      });
-    }
-
-    setPasswordLoading(false);
-  };
 
   return (
     <div className="lms-body" style={{ padding: "10px" }}>
