@@ -26,7 +26,8 @@ function AssignPackageLearners(props) {
   const [current_page, set_current_page] = useState("");
   const [total_learners, set_total_learners] = useState("");
 
-  const [page_size, set_page_size] = useState(10); 
+  const [page_size, set_page_size] = useState(10);
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   const [search_paceholder, set_search_paceholder] = useState("Search by name");
   const [search_query_name, set_search_query_name] = useState("");
@@ -40,7 +41,7 @@ function AssignPackageLearners(props) {
     const fetchData = async () => {
       const FORM_DATA = new FormData();
       FORM_DATA.append("package_id", atob(props.package_id));
-      FORM_DATA.append("per_page", page_size); 
+      FORM_DATA.append("per_page", page_size);
 
       const API_CALL = await ASSIGN_PACKAGE(FORM_DATA);
 
@@ -55,7 +56,7 @@ function AssignPackageLearners(props) {
     };
 
     fetchData();
-  }, [props.package_id, page_size]);  
+  }, [props.package_id, page_size]);
 
   const selectBefore = (
     <Select
@@ -145,7 +146,7 @@ function AssignPackageLearners(props) {
       set_pagination_loader(true);
       const FORM_DATA = new FormData();
       FORM_DATA.append("name", value);
-      FORM_DATA.append("per_page", page_size);  
+      FORM_DATA.append("per_page", page_size);
       FORM_DATA.append("package_id", atob(props.package_id));
       const API_CALL = await ASSIGN_PACKAGE(FORM_DATA);
 
@@ -237,32 +238,36 @@ function AssignPackageLearners(props) {
               <Pagination
                 current={current_page}
                 total={total_learners}
-                pageSize={page_size}                 
+                pageSize={page_size}
                 onChange={pagination_on_change}
-                showSizeChanger                      
-                pageSizeOptions={["10", "20", "50", "100"]} 
+                showSizeChanger
+                pageSizeOptions={["10", "20", "50", "100"]}
                 onShowSizeChange={(current, size) => {
                   set_page_size(size);
-                  pagination_on_change(1, size);      
+                  pagination_on_change(1, size);
                 }}
-                      style={{ display: "inline-block" }}
-                           className="no-search-pagination"
+                style={{ display: "inline-block" }}
+                className="no-search-pagination"
               />
-                  <style>
-                           {`
+              <style>
+                {`
                              .no-search-pagination .ant-select-selection-search-input {
                                display: none !important;
                              }
                            `}
-                         </style>
+              </style>
             </div>
           </>
         )}
 
+        const [confirmLoading, setConfirmLoading] = useState(false);
+
         <Modal
           title="Confirm Assignment"
           open={isModalVisible}
+          confirmLoading={confirmLoading}
           onOk={async () => {
+            setConfirmLoading(true);
             const FORM_DATA = new FormData();
             FORM_DATA.append("package_id", atob(props.package_id));
             FORM_DATA.append("learner_id", selectedLearner?.id);
@@ -285,13 +290,14 @@ function AssignPackageLearners(props) {
             } catch (error) {
               notification.error({
                 message: "API Error",
-                description:
-                  "Something went wrong while assigning the learner.",
+                description: "Something went wrong while assigning the learner.",
                 placement: "topRight",
               });
+            } finally {
+              setConfirmLoading(false);
+              setIsModalVisible(false);
+              setSelectedLearner(null);
             }
-            setIsModalVisible(false);
-            setSelectedLearner(null);
           }}
           onCancel={() => {
             setIsModalVisible(false);
@@ -308,7 +314,8 @@ function AssignPackageLearners(props) {
             to this package?
           </p>
         </Modal>
-        
+
+
       </Card>
     </div>
   );

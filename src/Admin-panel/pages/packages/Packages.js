@@ -117,7 +117,7 @@ function Packages() {
         const link = document.createElement("a");
    
         link.href = url;
-        link.download = "bulk_add_package_learners_template.xlsx"; // ✅ XLSX
+        link.download = "bulk_add_package_learners_template.csv"; // ✅ XLSX
         document.body.appendChild(link);
         link.click();
         link.remove();

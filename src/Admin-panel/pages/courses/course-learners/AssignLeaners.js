@@ -37,6 +37,8 @@ function AssignLeaners(props) {
   const [selectedLearner, setSelectedLearner] = useState(null);
   const [page_size, set_page_size] = useState(10);
   const [accessDetails, setAccessDetails] = useState({});
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  
 
   // LIST API
   useEffect(() => {
@@ -278,7 +280,9 @@ function AssignLeaners(props) {
         <Modal
           title="Confirm Assign"
           open={isModalVisible}
+          confirmLoading={confirmLoading}
           onOk={async () => {
+            setConfirmLoading(true);
             const FORM_DATA = new FormData();
             FORM_DATA.append("course_id", atob(props.course_id));
             FORM_DATA.append("learner_id", selectedLearner?.id);
@@ -324,7 +328,7 @@ function AssignLeaners(props) {
               });
               console.error("API error:", error);
             }
-
+            setConfirmLoading(false);
             setIsModalVisible(false);
             setSelectedLearner(null);
             setAccessDetails({});

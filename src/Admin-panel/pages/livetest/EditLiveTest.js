@@ -10,6 +10,7 @@ import {
     DatePicker,
     Radio,
     App,
+    TimePicker,
 } from "antd";
 import { useEffect, useState } from "react";
 import { EDIT_LIVE_TEST, VIEW_LIVE_TEST } from "../../apis/apis";
@@ -213,14 +214,22 @@ function EditLiveTest() {
                                         )}
                                     </Form.Item>
 
-                                    <Form.Item label="Time Limit (in Minutes)">
-                                        <Input
-                                            placeholder="Enter Time Limit"
-                                            value={time_limit}
-                                            onChange={(e) => set_time_limit(e.target.value)}
+                                   
+                                    <Form.Item label="Time Limit">
+                                        <TimePicker
+                                            style={{ width: "100%" }}
+                                            format="HH:mm"
+                                            value={time_limit ? dayjs().startOf("day").add(time_limit, "minute") : null}
+                                            onChange={(time) => {
+                                                if (time) {
+                                                    set_time_limit(time.diff(dayjs().startOf("day"), "minute"));
+                                                } else {
+                                                    set_time_limit("");
+                                                }
+                                            }}
                                         />
                                         {errors?.time_limit && (
-                                            <span style={{ color: "red" }}>{errors.time_limit}</span>
+                                            <span style={{ color: "red" }}>{errors?.time_limit}</span>
                                         )}
                                     </Form.Item>
 

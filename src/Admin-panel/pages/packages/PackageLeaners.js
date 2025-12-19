@@ -166,18 +166,18 @@ function PackageLeaners(props) {
       dataIndex: "email",
       render: (text, record) => <span>{record.email}</span>,
     },
-    {
-      title: "Joined On",
-      key: "joining_on",
-      render: (text, record) => (
-        <div>
-          <div>{moment(record.joining_on).format("YYYY-MM-DD")}</div>
-          <div style={{ fontSize: "12px", color: "#888" }}>
-            {moment(record.joining_on).format("hh:mm A")}
-          </div>
-        </div>
-      ),
-    },
+    // {
+    //   title: "Joined On",
+    //   key: "joining_on",
+    //   render: (text, record) => (
+    //     <div>
+    //       <div>{moment(record.joining_on).format("YYYY-MM-DD")}</div>
+    //       <div style={{ fontSize: "12px", color: "#888" }}>
+    //         {moment(record.joining_on).format("hh:mm A")}
+    //       </div>
+    //     </div>
+    //   ),
+    // },
     {
       title: "Status",
       key: "status",
@@ -329,7 +329,7 @@ function PackageLeaners(props) {
         const link = document.createElement("a");
    
         link.href = url;
-        link.download = "bulk_add_package_learners_template.xlsx"; // ✅ XLSX
+        link.download = "bulk_add_package_learners_template.csv"; // ✅ XLSX
         document.body.appendChild(link);
         link.click();
         link.remove();

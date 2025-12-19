@@ -11,6 +11,7 @@ import {
   Space,
   Spin,
   Switch,
+  TimePicker,
 } from "antd";
 import { LoadingOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
@@ -21,6 +22,8 @@ import {
 } from "../../../../../apis/apis";
 import CustomRichTextEditor from "../../../../../components/CustomTextEditor";
 import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
+import dayjs from "dayjs";
+
 
 function QuizSetting({ course_id, chapter_id }) {
   const { notification } = App.useApp();
@@ -207,14 +210,18 @@ function QuizSetting({ course_id, chapter_id }) {
                 )}
               </Form.Item>
               <Form.Item label="Time Limit (in Minutes)">
-                <Input
-                  placeholder="Enter Time Limit"
-                  value={time_limit}
-                  onChange={(e) => set_time_limit(e.target.value)}
+                <TimePicker
+                  style={{ width: "100%" }}
+                  format="HH:mm"
+                  value={time_limit ? dayjs().startOf("day").add(time_limit, "minute") : null}
+                  onChange={(time) => {
+                    if (time) {
+                      set_time_limit(time.diff(dayjs().startOf("day"), "minute"));
+                    } else {
+                      set_time_limit("");
+                    }
+                  }}
                 />
-                {errors?.time_limit && (
-                  <span style={{ color: "red" }}>{errors.time_limit}</span>
-                )}
               </Form.Item>
               <Form.Item label="Number Of Retake">
                 <Input
@@ -271,18 +278,20 @@ function QuizSetting({ course_id, chapter_id }) {
                   </span>
                 )}
               </Form.Item>
-              
+
               <Form.Item label="Minimum Time Before Submit">
-                <Input
-                  placeholder="Enter Time"
-                  value={min_time_before_submit}
-                  onChange={(e) => set_min_time_before_submit(e.target.value)}
+                <TimePicker
+                  style={{ width: "100%" }}
+                  format="HH:mm"
+                  value={min_time_before_submit ? dayjs().startOf("day").add(time_limit, "minute") : null}
+                  onChange={(time) => {
+                    if (time) {
+                      set_min_time_before_submit(time.diff(dayjs().startOf("day"), "minute"));
+                    } else {
+                      set_min_time_before_submit("");
+                    }
+                  }}
                 />
-                {errors?.min_time_before_submit && (
-                  <span style={{ color: "red" }}>
-                    {errors.min_time_before_submit}
-                  </span>
-                )}
               </Form.Item>
 
               {/* Advanced Setting Toggle */}

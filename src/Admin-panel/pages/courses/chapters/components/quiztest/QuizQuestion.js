@@ -246,7 +246,7 @@ const QuizQuestion = (props) => {
         const link = document.createElement("a");
    
         link.href = url;
-        link.download = "bulk_import_quiz_questions_template.xlsx"; // ✅ XLSX
+        link.download = "bulk_import_quiz_questions_template.csv"; 
         document.body.appendChild(link);
         link.click();
         link.remove();

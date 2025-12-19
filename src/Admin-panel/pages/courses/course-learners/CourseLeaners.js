@@ -17,7 +17,7 @@ import { Option } from "antd/es/mentions";
 import { ArrowDownOutlined, ArrowUpOutlined, LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { LIST_COURSE_LEANERS, LEANERS_COURSE_STATUS, GET_DOWNLOAD_REPORT, DOWNLOAD_COURSE_REPORT, BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE } from "../../../apis/apis";
+import { LIST_COURSE_LEANERS, LEANERS_COURSE_STATUS, BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE } from "../../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
 import AssignLeaners from "./AssignLeaners";
@@ -313,7 +313,7 @@ function CourseLearners(props) {
         const link = document.createElement("a");
    
         link.href = url;
-        link.download = "bulk_add_course_learners_template.xlsx"; // ✅ XLSX
+        link.download = "bulk_add_course_learners_template.csv"; 
         document.body.appendChild(link);
         link.click();
         link.remove();

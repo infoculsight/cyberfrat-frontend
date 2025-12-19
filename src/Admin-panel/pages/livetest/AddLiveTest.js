@@ -10,12 +10,14 @@ import {
     DatePicker,
     Radio,
     App,
+    TimePicker,
 } from "antd";
 import { useState } from "react";
 import { Add_LIVE_TEST } from "../../apis/apis";
 import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 function AddLiveTest() {
 
@@ -184,16 +186,23 @@ function AddLiveTest() {
                                         )}
                                     </Form.Item>
 
-                                   <Form.Item label="Time Limit (in Minutes)">
-                                                   <Input
-                                                     placeholder="Enter Time Limit"
-                                                     value={time_limit}
-                                                     onChange={(e) => set_time_limit(e.target.value)}
-                                                   />
-                                                   {errors?.time_limit && (
-                                                     <span style={{ color: "red" }}>{errors.time_limit}</span>
-                                                   )}
-                                                 </Form.Item>
+                                    <Form.Item label="Time Limit">
+                                        <TimePicker
+                                            style={{ width: "100%" }}
+                                            format="HH:mm"
+                                            value={time_limit ? dayjs().startOf("day").add(time_limit, "minute") : null}
+                                            onChange={(time) => {
+                                                if (time) {
+                                                    set_time_limit(time.diff(dayjs().startOf("day"), "minute"));
+                                                } else {
+                                                    set_time_limit("");
+                                                }
+                                            }}
+                                        />
+                                        {errors?.time_limit && (
+                                            <span style={{ color: "red" }}>{errors?.time_limit}</span>
+                                        )}
+                                    </Form.Item>
 
                                     <h2>Test Open Window</h2>
                                     <Form.Item label="Available From">

@@ -8,7 +8,7 @@ import {
   Row,
   Select,
 } from "antd";
-import React, { useCallback, useEffect, useState } from "react";
+import  { useCallback, useEffect, useState } from "react";
 import CourseBox from "../../components/CourseBox";
 import { useNavigate } from "react-router-dom";
 import { COURSE_LIST, COURSE_STATUS, DELETE_COURSE } from "../../apis/apis";
@@ -193,7 +193,7 @@ function Courses() {
           </Col>
         </Row>
 
-        {loading && pagination_loader ? (
+        {loading  ? (
           <CulsightPageLoader />
         ) : (
           <>

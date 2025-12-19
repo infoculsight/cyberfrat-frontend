@@ -17,6 +17,7 @@ import React, { useEffect, useState } from "react";
 import { ASSIGN_LIVE_TEST_LEARNER } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
+import ConfirmationAssignLiveTest from "./ConfirmationAssignLiveTest"
 
 function AssignLeanersToLiveTest(props) {
   const { notification } = App.useApp();
@@ -37,7 +38,7 @@ function AssignLeanersToLiveTest(props) {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
-
+  const [confirmLoading, setConfirmLoading] = useState(false);
   const [accessDetails, setAccessDetails] = useState({});
 
   // FIRST LOAD API
@@ -292,7 +293,9 @@ function AssignLeanersToLiveTest(props) {
         <Modal
           title="Confirm Assign"
           open={isModalVisible}
+          confirmLoading={confirmLoading}
           onOk={async () => {
+            setConfirmLoading(true);
             const FORM_DATA = new FormData();
             FORM_DATA.append("live_test_id", atob(props.live_test_id));
             FORM_DATA.append("learner_id", selectedLearner?.id);
@@ -327,7 +330,7 @@ function AssignLeanersToLiveTest(props) {
                 placement: "topRight",
               });
             }
-
+            setConfirmLoading(false);
             setIsModalVisible(false);
             setSelectedLearner(null);
             setAccessDetails({});
@@ -338,7 +341,13 @@ function AssignLeanersToLiveTest(props) {
           }}
           okText="Assign"
           cancelText="Cancel"
-        ></Modal>
+        >
+          <ConfirmationAssignLiveTest
+            first_name={selectedLearner?.first_name}
+            last_name={selectedLearner?.last_name}
+            onAccessDetailsChange={(data) => setAccessDetails(data)}
+          />
+        </Modal>
       </Card>
     </div>
   );

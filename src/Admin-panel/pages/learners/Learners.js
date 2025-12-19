@@ -399,7 +399,7 @@ const handlePasswordSubmit = async () => {
       const link = document.createElement("a");
  
       link.href = url;
-      link.download = "bulk_add_learners_template.xlsx"; // ✅ XLSX
+      link.download = "bulk_add_learners_template.csv"; 
       document.body.appendChild(link);
       link.click();
       link.remove();
