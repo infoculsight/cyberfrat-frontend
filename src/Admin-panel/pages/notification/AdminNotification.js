@@ -123,7 +123,6 @@ function AdminNotification() {
         {record.notification_type === 'test_submit' && 'Test Submit'}
         {record.notification_type === 'course_expire' && 'Course Expire'}
         {record.notification_type === 'certificate_issued' && 'Certificate Issue'}
-        {record.notification_type === 'certificate_issued' && 'Certificate Issue'}
         {record.notification_type === 'quiz_uploaded' && 'Quiz Uploaded'}
         {record.notification_type === 'livetest_assign' && 'Live Test Assign'}
       </span>,
