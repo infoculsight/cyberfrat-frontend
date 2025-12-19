@@ -5,6 +5,7 @@ import { formatToIST } from "../../../helper/CommonHelper";
 import { LIST_LIVE_TESTS } from "../../apis/apis";
 import { useCallback, useEffect, useState } from "react";
 import debounce from "lodash.debounce";
+import CulsightPageLoader from "../../components/CulsightPageLoader";
 
 function LiveTest() {
   const navigate = useNavigate();
@@ -163,23 +164,25 @@ function LiveTest() {
             />
           </Col>
         </Row>
-
-        <Table
-          columns={columns}
-          dataSource={table_data}
-          style={{ marginTop: "15px" }}
-          loading={loader || pagination_loader}
-          pagination={false}
-          rowKey="id"
-        />
-        <div style={{ float: "right", marginTop: "20px" }}>
-          <Pagination
-            current={current_page}
-            total={total_pages}
-            pageSize={10}
-            onChange={pagination_on_change}
+        {loader ? <><CulsightPageLoader /></> : <>
+          <Table
+            columns={columns}
+            dataSource={table_data}
+            style={{ marginTop: "15px" }}
+            loading={loader || pagination_loader}
+            pagination={false}
+            rowKey="id"
           />
-        </div>
+          <div style={{ float: "right", marginTop: "20px" }}>
+            <Pagination
+              current={current_page}
+              total={total_pages}
+              pageSize={10}
+              onChange={pagination_on_change}
+            />
+          </div>
+        </>}
+
 
       </Card>
     </div>

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { DOWNLOAD_QUIZ_REPORT, QUIZ_REPORT } from "../../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
-import { LoadingOutlined } from "@ant-design/icons";
+import { DownCircleFilled, DownloadOutlined, EyeFilled, LoadingOutlined } from "@ant-design/icons";
 
 const QuizReport = () => {
   const navigate = useNavigate();
@@ -112,16 +112,17 @@ const QuizReport = () => {
         <>
           <Space>
             <Button
-              type="link"
+              type="primary"
+              size="small"
               onClick={() => navigate(`/report/quiz-report/${btoa(record.learner_id)}`)}
             >
-              View Report
+          <EyeFilled />
             </Button>
             <Button
-              size="small" variant="solid" color="red"
+              size="small" variant="solid" color="green"
               onClick={() => DOWNLOAD_REPORT_ACTION(record.learner_id)}
             >
-              Download Report
+              <DownloadOutlined />
             </Button>
           </Space>
         </>

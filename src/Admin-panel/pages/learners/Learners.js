@@ -43,75 +43,63 @@ function Learners() {
     confirm_password: ""
   });
 
-  const handlePasswordSubmit = async () => {
-    // Clear previous errors
-    set_error({ current_password: "", new_password: "", confirm_password: "" });
+const handlePasswordSubmit = async () => {
+  set_error({ new_password: "", confirm_password: "" });
+  setPasswordLoading(true);
 
-    if (new_password !== confirm_password) {
-      const msg = "New password and Confirm password do not match!";
-      set_error({ ...error, confirm_password: msg });
+  const FORM_DATA = new FormData();
+  FORM_DATA.append("email", selectedLearner.email);
+  FORM_DATA.append("new_password", new_password);
+  FORM_DATA.append("confirm_password", confirm_password);
+
+  try {
+    const response = await CHANGE_LEARNER_PASSWORD(FORM_DATA);
+
+    if (response?.data?.status) {
+      notification.success({
+        message: " Successfull",
+        description:response?.data?.message
+      });
+
+      setIsModalOpen(false);
+      set_new_password("");
+      set_confirm_password("");
+      set_error({ new_password: "", confirm_password: "" });
+
+    } else {
+      const backendErrors = response?.data?.errors || {};
+      const backendMessage = response?.data?.message || "Something went wrong";
+      
+      set_error({
+        new_password: backendErrors?.new_password || "",
+        confirm_password: backendErrors?.confirm_password || "",
+      });
 
       notification.error({
         message: "Error",
-        description: msg,
-      });
-      return;
-    }
-
-    setPasswordLoading(true);
-
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("email", selectedLearner.email);
-    FORM_DATA.append("new_password", new_password);
-    FORM_DATA.append("confirm_password", confirm_password);
-
-    try {
-      const response = await CHANGE_LEARNER_PASSWORD(FORM_DATA);
-
-      if (response?.data?.status) {
-        notification.success({
-          message: "Password Updated Successfully",
-        });
-
-        setIsModalOpen(false);
-
-        set_new_password("");
-        set_confirm_password("");
-        set_error({ new_password: "", confirm_password: "" });
-
-      } else {
-        const errors = response?.data?.errors;
-        if (errors) {
-          set_error({
-            new_password: errors.new_password || "",
-            confirm_password: errors.confirm_password || "",
-          });
-
-          const errorMsg = Object.values(errors).join(" | ");
-          notification.error({
-            message: "Error",
-            description: errorMsg,
-          });
-        } else {
-          const backendError = response?.data?.message;
-          notification.error({
-            message: "Error",
-            description: backendError,
-          });
-        }
-      }
-    } catch (err) {
-      const backendError =
-        err?.response?.data?.message;
-
-      notification.error({
-        message: "Error",
-        description: backendError,
+        description: backendMessage,
       });
     }
+  } catch (err) {
+    const backendErrors = err?.response?.data?.errors || {};
+    const backendMessage = err?.response?.data?.message || "Server error";
 
+    set_error({
+      new_password: backendErrors?.new_password || "",
+      confirm_password: backendErrors?.confirm_password || "",
+    });
+
+    notification.error({
+      message: "Error",
+      description: backendMessage,
+    });
+  } finally {
     setPasswordLoading(false);
-  };
+  }
+};
+
+
+
 
   const showModal = () => {
     set_is_model_open(true);
@@ -210,8 +198,7 @@ function Learners() {
         set_onchange_call(onchange_call ? false : true)
 
       } else {
-        // setLoader(false);
-
+        //setLoader(false);
       }
     } catch (error) {
       message.error(
@@ -606,12 +593,16 @@ function Learners() {
 
             <Form.Item label="New Password">
               <Input.Password value={new_password} onChange={(e) => set_new_password(e.target.value)} />
-              {error.new_password && <p style={{ color: "red" }}>{error.new_password}</p>}
+             {error.new_password && (
+  <p style={{ color: "red" }}>{error.new_password}</p>
+)}
             </Form.Item>
 
             <Form.Item label="Confirm Password">
               <Input.Password value={confirm_password} onChange={(e) => set_confirm_password(e.target.value)} />
-              {error.confirm_password && <p style={{ color: "red" }}>{error.confirm_password}</p>}
+             {error.confirm_password && (
+  <p style={{ color: "red" }}>{error.confirm_password}</p>
+)}
             </Form.Item>
 
             <Form.Item>

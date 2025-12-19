@@ -73,6 +73,11 @@ const { learner_id } = useParams();
   };
 
   const columns = [
+
+        {
+      title: "Course Name",
+      render: (text, record) => <span>{record.course_name}</span>,
+    },
     {
       title: "Chapter Name",
       render: (text, record) => (
@@ -81,10 +86,7 @@ const { learner_id } = useParams();
         </span>
       ),
     },
-      {
-      title: "Course Name",
-      render: (text, record) => <span>{record.course_name}</span>,
-    },
+  
     {
       title: "Attempts",
       render: (text, record) => <span>{record.attempts}</span>,
