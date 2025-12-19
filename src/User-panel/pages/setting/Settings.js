@@ -190,6 +190,7 @@ function Settings() {
 
   const FORM_DATA = new FormData();
   FORM_DATA.append("email", email);
+   FORM_DATA.append("current_password", currentPassword)
   FORM_DATA.append("new_password", newPassword);
   FORM_DATA.append("confirm_password", confirmPassword);
 
@@ -198,12 +199,14 @@ try {
 
   if (response?.data?.status) {
     notification.success({
-      message: "Password Updated Successfully",
+      message: "Successfull",
+      description:response?.data?.message
     });
 
     setIsModalOpen(false);
     setNewPassword("");
     setConfirmPassword("");
+    setCurrentPassword("");
     set_error({ new_password: "", confirm_password: "", current_password: "" });
 
   } else {
