@@ -171,6 +171,7 @@ export default function AddSmtp() {
                     <Select.Option value="packages">Packages</Select.Option>
                     <Select.Option value="list_test">List Test</Select.Option>
                     <Select.Option value="profile_update">Profile Update</Select.Option>
+                    <Select.Option value="portal_setting">Portal Setting</Select.Option>
                   </Select>
                   {errors?.smtp_for ? (
                     <span style={{ color: "red" }}>{errors?.smtp_for}</span>

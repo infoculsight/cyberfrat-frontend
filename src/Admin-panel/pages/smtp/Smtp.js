@@ -160,7 +160,8 @@ function Smtp() {
           courses: "Courses",
           packages: "Packages",
           live_test: "Live Test",
-          profile_update:"Profile Update"
+          profile_update:"Profile Update",
+          portal_setting:"Portal Setting"
         };
 
         return <span>{labels[record.smtp_for] || record.smtp_for}</span>;
