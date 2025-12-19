@@ -87,7 +87,7 @@ export default function Chapters() {
   }, [fetchChapterList]);
 
   const selectBefore = (
-    <Select defaultValue="Title" disabled>
+    <Select defaultValue="Title">
       <Option value="Title">Title</Option>
     </Select>
   );
@@ -136,7 +136,7 @@ export default function Chapters() {
             />
           </Col>
           <Col xs={24} sm={24} md={4} lg={4}>
-             <Button
+            <Button
             variant="solid"
             color="green"
             size="large"
