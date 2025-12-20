@@ -11,6 +11,7 @@ import ForgetPassword from "./User-panel/pages/login/ForgetPassword";
 import ResetPassword from "./User-panel/pages/login/ResetPassword";
 import ResetPasswordMessage from "./User-panel/pages/login/ResetPasswordMessage";
 import VerifyEmail from "./User-panel/pages/login/VerifyEmail";
+import TermsAndPolicies from "./User-panel/pages/login/TermsAndPolicies";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -68,6 +69,7 @@ function App() {
           ) : (
             <>
               <Route path="/" element={<Login />} />
+              <Route path="/terms-policy" element={<TermsAndPolicies />} />
               <Route path="/forget-password" element={<ForgetPassword />} />
               <Route path="/reset-password/:token" element={<ResetPassword />} />
               <Route
@@ -77,7 +79,7 @@ function App() {
               <Route path="/verify-email/:token" element={<VerifyEmail />} />
             </>
           )}
-          <Route path="*" element={<NotFound />} />
+          {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
       </AntdApp>
     </ConfigProvider>

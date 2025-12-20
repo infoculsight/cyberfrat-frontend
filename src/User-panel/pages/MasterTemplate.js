@@ -25,7 +25,7 @@ const MasterTemplate = () => {
   const { modal } = App.useApp();
   const [user, setUser] = useState(null);
   const [master_loder, set_master_loder] = useState(true);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedKeys, setSelectedKeys] = useState([]);
@@ -36,19 +36,19 @@ const MasterTemplate = () => {
   const screens = useBreakpoint();
   const isMobile = !screens.md;
 
-useEffect(() => {
-  const localUser = localStorage.getItem("user");
-  if (localUser) {
-    setUser(JSON.parse(localUser));
-    set_master_loder(false);
-  } else {
-    getUser().then(usr => {
-      setUser(usr);
+  useEffect(() => {
+    const localUser = localStorage.getItem("user");
+    if (localUser) {
+      setUser(JSON.parse(localUser));
       set_master_loder(false);
-      localStorage.setItem("user", JSON.stringify(usr));
-    });
-  }
-}, []);
+    } else {
+      getUser().then(usr => {
+        setUser(usr);
+        set_master_loder(false);
+        localStorage.setItem("user", JSON.stringify(usr));
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const pathToKey = {
@@ -123,11 +123,11 @@ useEffect(() => {
       icon: <AccountBookOutlined />,
       label: "My Packages",
     },
-    {
-      key: "4",
-      icon: <AccountBookOutlined />,
-      label: "All Packages",
-    },
+    // {
+    //   key: "4",
+    //   icon: <AccountBookOutlined />,
+    //   label: "All Packages",
+    // },
     {
       key: "8",
       icon: <SnippetsOutlined />,
@@ -203,89 +203,89 @@ useEffect(() => {
           )}
 
           <Layout>
-           <Header
-  style={
-    balck_theme
-      ? {
-          padding: "0 10px",
-          backgroundColor: "#141414",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }
-      : {
-          padding: "0 10px",
-          backgroundColor: "#fff",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }
-  }
->
-  
-  <div style={{ display: "flex", alignItems: "center" }}>
-    <Button
-      type="text"
-      icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-      onClick={() => setCollapsed(!collapsed)}
-      style={{
-        fontSize: "16px",  
-        width: 48,
-        height: 48,
-        color: balck_theme ? "#fff" : "#141414",
-      }}
-    />
-    {!isMobile && (
-      <span style={{ fontWeight: "bold", fontSize: "20px" }}>Learner Panel</span>
-    )}
-  </div>
+            <Header
+              style={
+                balck_theme
+                  ? {
+                    padding: "0 10px",
+                    backgroundColor: "#141414",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }
+                  : {
+                    padding: "0 10px",
+                    backgroundColor: "#fff",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }
+              }
+            >
 
-  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <Button
+                  type="text"
+                  icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                  onClick={() => setCollapsed(!collapsed)}
+                  style={{
+                    fontSize: "16px",
+                    width: 48,
+                    height: 48,
+                    color: balck_theme ? "#fff" : "#141414",
+                  }}
+                />
+                {!isMobile && (
+                  <span style={{ fontWeight: "bold", fontSize: "20px" }}>Learner Panel</span>
+                )}
+              </div>
 
-    {!isMobile && <ThemeSetting set_theme_style={set_balck_theme} />}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
 
- 
-    <UserNotification />
+                {!isMobile && <ThemeSetting set_theme_style={set_balck_theme} />}
 
 
-    {!isMobile && <UserDropdown user={user} />}
+                <UserNotification />
 
-    {isMobile && (
-      <Dropdown
-        placement="bottomRight"
-        trigger={["click"]}
-        dropdownRender={() => (
-          <div
-            style={{
-              padding: "12px",
-              background: balck_theme ? "#222121ff" : "#fff",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-              borderRadius: 8,
-              width: 220,
-            }}
-          >
-            <Row gutter={[12, 12]} justify="center">
-              <Col span={24}>
-                <ThemeSetting set_theme_style={set_balck_theme} />
-              </Col>
-              <Col span={24}>
-                <UserDropdown user={user} />
-              </Col>
-            </Row>
-          </div>
-        )}
-      >
-        <Button
-          type="text"
-          icon={<SettingFilled />}
-          style={{
-            color: balck_theme ? "#fff" : "#141414",
-          }}
-        />
-      </Dropdown>
-    )}
-  </div>
-</Header>
+
+                {!isMobile && <UserDropdown user={user} />}
+
+                {isMobile && (
+                  <Dropdown
+                    placement="bottomRight"
+                    trigger={["click"]}
+                    dropdownRender={() => (
+                      <div
+                        style={{
+                          padding: "12px",
+                          background: balck_theme ? "#222121ff" : "#fff",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                          borderRadius: 8,
+                          width: 220,
+                        }}
+                      >
+                        <Row gutter={[12, 12]} justify="center">
+                          <Col span={24}>
+                            <ThemeSetting set_theme_style={set_balck_theme} />
+                          </Col>
+                          <Col span={24}>
+                            <UserDropdown user={user} />
+                          </Col>
+                        </Row>
+                      </div>
+                    )}
+                  >
+                    <Button
+                      type="text"
+                      icon={<SettingFilled style={{ fontSize: '25px' }} />}
+                      style={{
+                        color: balck_theme ? "#fff" : "#141414",
+                      }}
+                    />
+                  </Dropdown>
+                )}
+              </div>
+            </Header>
 
             <Content
               style={
@@ -294,7 +294,7 @@ useEffect(() => {
                   : { backgroundColor: "#e6e6e6ff" }
               }
             >
-              <Outlet context={{ user, setUser }}/>
+              <Outlet context={{ user, setUser }} />
             </Content>
           </Layout>
         </Layout>

@@ -6,8 +6,8 @@ function CulsightPageLoader() {
   return (
     <div style={{ display: "bloack", textAlign: "center", padding: "50px" }}>
       <div style={{ display: "inline-block", padding: "20px", minWidth: "180px", boxShadow: "0px 0px 8px #ccc", borderRadius: "8px" }}>
-        <Spin indicator={<LoadingOutlined spin />} size="large" />
-        <h2 style={{ marginTop: "25px", color: "#e9c70ada" }}>Cyberfrat</h2>
+        <Spin indicator={<LoadingOutlined spin style={{color:"#e9c70ada"}}/>} size="large" />
+        <h2 style={{ marginTop: "25px", color: "#e9c70ada" }}>CyberFrat</h2>
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
-import { App, Button, Card, Spin, Tag, Typography } from "antd";
+import { Card, Spin, Tag, Typography } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DownloadOutlined, LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 const { Text } = Typography;
 export default function PackageBox(props) {
   const Navigate = useNavigate();
@@ -77,13 +77,13 @@ export default function PackageBox(props) {
               </Text>
 
 
-             {props.showAssignTag && (
-    props?.assign ? (
-      <Tag color="gold" size="small">Assigned</Tag>
-    ) : (
-      <Tag color="red" variant="solid" size="small">UnAssigned</Tag>
-    )
-  )}
+              {props.showAssignTag && (
+                props?.assign ? (
+                  <Tag color="gold" size="small">Assigned</Tag>
+                ) : (
+                  <Tag color="red" variant="solid" size="small">UnAssigned</Tag>
+                )
+              )}
 
             </div>
           }

@@ -18,6 +18,7 @@ function Packages() {
 
 
   const LIST_API = async () => {
+    setLoading(true)
     const FORM_DATA = new FormData();
     const API_CALL = await LIST_PACKAGE(FORM_DATA);
     if (API_CALL?.data?.status) {

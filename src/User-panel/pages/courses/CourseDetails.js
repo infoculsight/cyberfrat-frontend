@@ -1,69 +1,39 @@
 import {
-  App,
-  Avatar,
   Button,
   Card,
   Col,
-  List,
-  Pagination,
   Row,
   Spin,
 } from "antd";
-import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { LIST_COMMENT, ADD_COMMENT, VIEW_COURSE } from "../../apis/apis";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {  VIEW_COURSE } from "../../apis/apis";
 import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
-import CustomRichTextEditor from "../../components/CustomTextEditor";
+//import CustomRichTextEditor from "../../components/CustomTextEditor";
 
 function CourseDetails(props) {
   const { id } = useParams();
-  const { notification, message } = App.useApp();
+  const location = useLocation();
+  //const { notification, message } = App.useApp();
   const Navigate = useNavigate();
   const [page_loader, set_page_loader] = useState(true);
-  const [card_loader, set_card_loader] = useState(true);
   const [image_loader, set_image_loader] = useState(false)
   const [course_data, set_course_data] = useState({});
-  const [description, set_description] = useState("");
-  const [comments, set_comments] = useState([]);
-  const [current_page, set_current_page] = useState(1);
-  const [total_comments, set_total_comments] = useState(0);
-  const [total_pages, set_total_pages] = useState(1);
+  // const [card_loader, set_card_loader] = useState(true);
+  //const [description, set_description] = useState("");
+  // const [comments, set_comments] = useState([]);
+  // const [current_page, set_current_page] = useState(1);
+  // const [total_comments, set_total_comments] = useState(0);
+  // const [total_pages, set_total_pages] = useState(1);
 
-  // 🔹 Format time (IST) + Relative time (under 4 hours)
-  const formatTime = (timestamp) => {
-    if (!timestamp) return "";
-    // Convert server string "2025-10-14 10:41:40" → Date object in IST
-    const createdTimeUTC = new Date(timestamp.replace(" ", "T") + "Z");
-    const nowUTC = new Date();
-
-    const diffMs = nowUTC - createdTimeUTC;
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMinutes / 60);
-
-    if (diffHours < 4) {
-      if (diffMinutes < 1) return "Just now";
-      if (diffMinutes < 60)
-        return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
-      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-    }
-
-    // 🔸 Convert to IST
-    const istDate = new Date(createdTimeUTC.getTime() + 5.5 * 60 * 60 * 1000);
-    const formatted = istDate.toLocaleString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-      timeZone: "Asia/Kolkata",
-    });
-
-    return formatted; // e.g., "14 Oct 2025, 3:41 PM"
+  const handleBack = () => {
+    if (location.state?.from) Navigate(location.state.from);
+    else Navigate(-1);
   };
 
-  // 🔹 Fetch course details
+
+  // Fetch course details
   useEffect(() => {
     const VIEW_API = async () => {
       const FORM_DATA = new FormData();
@@ -77,78 +47,38 @@ function CourseDetails(props) {
     VIEW_API();
   }, [id]);
 
-  // 🔹 Fetch comments list
-  const fetchCommentList = useCallback(
-    async (page = 1) => {
-      const FORM_DATA = new FormData();
-      FORM_DATA.append("view_id", atob(id));
-      FORM_DATA.append("page", page);
-      FORM_DATA.append("comment_type", "course");
+  // Fetch comments list
+  // const fetchCommentList = useCallback(
+  //   async (page = 1) => {
+  //     const FORM_DATA = new FormData();
+  //     FORM_DATA.append("view_id", atob(id));
+  //     FORM_DATA.append("page", page);
+  //     FORM_DATA.append("comment_type", "course");
 
-      try {
-        const API_CALL = await LIST_COMMENT(FORM_DATA);
-        if (API_CALL?.data?.status) {
-          const data = API_CALL.data;
-          set_comments(data.comments || []);
-          set_current_page(data.page || 1);
-          set_total_comments(data.total_comments || 0);
-          set_total_pages(data.total_pages || 1);
-        } else {
-          set_comments([]);
-        }
-      } catch (error) {
-        console.error("Network error:", error);
-      } finally {
-        set_card_loader(false);
-      }
-    },
-    [id]
-  );
+  //     try {
+  //       const API_CALL = await LIST_COMMENT(FORM_DATA);
+  //       if (API_CALL?.data?.status) {
+  //         const data = API_CALL.data;
+  //         set_comments(data.comments || []);
+  //         set_current_page(data.page || 1);
+  //         set_total_comments(data.total_comments || 0);
+  //         set_total_pages(data.total_pages || 1);
+  //       } else {
+  //         set_comments([]);
+  //       }
+  //     } catch (error) {
+  //       console.error("Network error:", error);
+  //     } finally {
+  //       set_card_loader(false);
+  //     }
+  //   },
+  //   [id]
+  // );
 
-  useEffect(() => {
-    fetchCommentList();
-  }, [fetchCommentList]);
+  // useEffect(() => {
+  //   fetchCommentList();
+  // }, [fetchCommentList]);
 
-  // 🔹 Add new comment
-  const onFinish = async () => {
-    if (!description.trim()) {
-      message.warning("Please write a comment first.");
-      return;
-    }
-
-    set_card_loader(true);
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("view_id", atob(id));
-    FORM_DATA.append("description", description);
-    FORM_DATA.append("comment_type", "course");
-
-    try {
-      const response = await ADD_COMMENT(FORM_DATA);
-      if (response?.data?.status) {
-        notification.success({
-          message: "Success",
-          description: response?.data?.message,
-        });
-        set_description("");
-        fetchCommentList(1);
-      } else {
-        message.error(response?.data?.message || "Failed to add comment");
-      }
-    } catch (error) {
-      message.error(
-        "Server Error: " + (error?.response?.data?.message || "Unknown error")
-      );
-    } finally {
-      set_card_loader(false);
-    }
-  };
-
-  // 🔹 Handle pagination
-  const pagination_on_change = (page) => {
-    set_card_loader(true);
-    set_current_page(page);
-    fetchCommentList(page);
-  };
 
   return (
     <div className="lms-body">
@@ -158,9 +88,9 @@ function CourseDetails(props) {
         <div>
           <Card>
             <Row>
-              <Col span={12}>
+              <Col lg={12} xs={12} sm={12}>
                 <h3
-                  onClick={() => Navigate("/courses")}
+                  onClick={handleBack}
                   style={{
                     marginTop: "-10px",
                     marginBottom: "5px",
@@ -170,7 +100,7 @@ function CourseDetails(props) {
                   <LeftOutlined /> Go Back
                 </h3>
               </Col>
-              <Col span={12}>
+              <Col lg={12} xs={12} sm={12}>
                 <Button
                   style={{
                     float: "right",
@@ -186,17 +116,18 @@ function CourseDetails(props) {
                     });
                   }}
                 >
-                  Start Learning
+                  Start Learning 
                 </Button>
               </Col>
             </Row>
-            <Row>
-              <Col span={14} style={{ paddingRight: "30px" }}>
+
+            <Row gutter={30}>
+              <Col  lg={12} xs={24} sm={24} style={{ marginBottom: "30px" }}>
                 <div style={{ width: "100%", position: "relative", borderRadius: 8, overflow: "hidden" }}>
                   <div
                     style={{
                       width: "100%",
-                      height: 400,
+                      aspectRatio: "16 / 9",
                       position: "relative",
                       display: "flex",
                       alignItems: "center",
@@ -225,10 +156,10 @@ function CourseDetails(props) {
                     />
                   </div>
                 </div>
-
               </Col>
-              <Col span={10}>
-                <h2 style={{textTransform: "capitalize"}}>{course_data.title}</h2>
+
+              <Col  lg={12} xs={24} sm={24}>
+                <h2 style={{ textTransform: "capitalize" }}>{course_data.title}</h2>
                 <p>
                   <b style={{ color: "#e9c70ada" }}>Instructor:</b>{" "}
                   {course_data.instructor_display_name}
@@ -241,15 +172,14 @@ function CourseDetails(props) {
                   <b style={{ color: "#e9c70ada" }}>Duration:</b>{" "}
                   {course_data.course_duration}
                 </p>
-
-
               </Col>
             </Row>
 
             <h3 style={{ color: "#e9c70ada" }}>Description</h3>
-             <div dangerouslySetInnerHTML={{ __html: course_data.description }} />
-            {/* 🔹 Comment Section */}
-            <div style={{ marginTop: "30px" }} >
+            <div dangerouslySetInnerHTML={{ __html: course_data.description }} />
+
+            {/* Comment Section */}
+            {/* <div style={{ marginTop: "30px" }} >
               <CustomRichTextEditor
                 editorLabel="Course Discussions"
                 value={description}
@@ -302,7 +232,8 @@ function CourseDetails(props) {
                   />
                 </div>
               )}
-            </div>
+            </div> */}
+
           </Card>
         </div>
       )}

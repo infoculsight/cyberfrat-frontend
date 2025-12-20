@@ -58,6 +58,22 @@ function LiveTestResult(props) {
     }
   };
 
+  const formatTime = (seconds = 0) => {
+    if (seconds < 60) {
+      return `${seconds} sec`;
+    }
+    else if (seconds < 3600) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes} min ${remainingSeconds} sec`;
+    }
+    else {
+      const hours = Math.floor(seconds / 3600);
+      const remainingMinutes = Math.floor((seconds % 3600) / 60);
+      return `${hours} hr ${remainingMinutes} min`;
+    }
+  };
+
 
 
   return (
@@ -91,8 +107,9 @@ function LiveTestResult(props) {
                 <Tag color="red">{wrongCount}</Tag>
               </Col>
               <Col span={8}>
-                <b>Total Time:</b> {liveTestData.total_time || 0}s
+                <b>Total Time:</b> {formatTime(liveTestData.total_time)}
               </Col>
+
               <Col span={8}>
                 <b>Total Marks:</b> {liveTestData.total_marks || 0}
               </Col>
@@ -104,7 +121,7 @@ function LiveTestResult(props) {
             <Row>
               <Col span={24}>
                 <Card style={{ height: "50px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginTop: "-14px" }}>
+                  <div style={{ display: "flex", marginTop: "-14px" }}>
                     <h3>Passing Status :</h3>
                     <Tag
                       color={liveTestData.passing_status ? "green" : "red"}
@@ -112,6 +129,7 @@ function LiveTestResult(props) {
                         fontSize: "14px",
                         padding: "4px 16px",
                         borderRadius: "8px",
+                        marginLeft:"30px"
                       }}
                     >
                       {liveTestData.passing_status ? "Passed" : "Failed"}
@@ -166,7 +184,7 @@ function LiveTestResult(props) {
                           )}
                         </Col>
 
-                
+
                         <Col
                           span={24}
                           style={{ marginTop: 4, color: "green" }}

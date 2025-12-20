@@ -42,8 +42,7 @@ function UsersRoutes() {
         <Route path="list-live-test" element ={<ListLiveTest />} />
         <Route path="live-test-result/:live_test_id" element ={<LiveTestResult />} />
         <Route path="/quiz-result/:chapter_id" element={<QuizResult />} />
-
-
+        
         <Route path="*" element={<NotFound />} />
       </Route>
       <Route path={"/live-test/:live_test_id"} element ={<LiveTest />} />

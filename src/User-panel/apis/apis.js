@@ -755,6 +755,15 @@ export const LIST_LIVE_TESTS= async (body) => {
 };
 
 
+export const RESET_PASSWORD= async (body) => {
+    try {
+        const response = await Axios.post('reset-password/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 
 
 

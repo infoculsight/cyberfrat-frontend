@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Popconfirm, Row, Tag } from "antd";
+import { Button, Card, Col, message, Popconfirm, Row, Tag, Tooltip } from "antd";
 import {
   ADD_QUIZ_ANSWER,
   List_QUIZ_QUESTION,
@@ -10,7 +10,7 @@ import QuizTestQuestionOptionsRview from "./QuizTestQuestionOptionsRview";
 import QuizResult from "./QuizResult";
 
 const QuizTestQuestionView = (props) => {
-  const { chapter_id, time_spend, set_submit_true } = props;
+  const { chapter_id, time_spend, set_submit_true, min_time_before_submit } = props;
   const chapter_id_new = atob(chapter_id);
   const [items, setItems] = useState([]);
   const [show_result, set_show_result] = useState(false);
@@ -24,9 +24,6 @@ const QuizTestQuestionView = (props) => {
   const [attempted_questions, set_attempted_questions] = useState([]);
   const [review_questions, set_review_questions] = useState([]);
   const [rview_view, set_review_view] = useState(false);
-
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,23 +40,19 @@ const QuizTestQuestionView = (props) => {
         set_question_id(response_data?.data[0]?.id);
         set_total_questions(response_data?.total_questions);
         set_question_type(response_data?.data[0]?.type);
-        set_review_questions(response_data?.review_questions)
+        set_review_questions(response_data?.review_questions);
         const options = response_data?.data[0]?.option_details
           ? JSON.parse(response_data?.data[0]?.option_details).map((opt) => ({
             ...opt,
             selected: opt.selected ?? false,
           }))
           : [];
-
         set_option_details(options);
         set_page_loader(false);
       }
     };
     fetchData();
-
   }, [current_page, props.quiz_test_id, props.chapter_id, rview_view]);
-
-
 
   const submit_question = async () => {
     const FORM_DATA = new FormData();
@@ -71,237 +64,287 @@ const QuizTestQuestionView = (props) => {
       if (API_RESPONSE?.data?.status) {
         set_test_submitted(true);
         set_current_page(1);
-        set_submit_true(true)
+        set_submit_true(true);
       }
     } catch (error) {
       console.error("Answer submit failed:", error);
     }
   };
 
+  if (page_loader) {
+    return <CulsightPageLoader />;
+  }
+
+
+  const minSubmitSeconds = min_time_before_submit
+    ? parseInt(min_time_before_submit) * 60
+    : 0;
+
+  const spentSeconds = Number(time_spend) || 0;
+
+  const canSubmit = spentSeconds >= minSubmitSeconds;
+
+  const remainingMinTime = Math.max(
+    minSubmitSeconds - spentSeconds,
+    0
+  );
+
+
+  const formatTime = (seconds) => {
+    if (seconds <= 0) return "00:00";
+    const m = Math.floor(seconds / 60).toString().padStart(2, "0");
+    const s = (seconds % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  };
 
 
   return (
-    <div style={{ marginTop: "20px" }}>
-      {show_result ? <> <QuizResult chapter_id={chapter_id} /></> : <>
-        {test_submitted ? (
-          <h3
-            style={{
-              padding: "50px",
-              textAlign: "center",
-              color: "green",
-              border: "1px solid green",
-              fontSize: "42px",
-            }}
+    <div>
+      {show_result ? (
+        <QuizResult chapter_id={chapter_id} />
+      ) : test_submitted ? (
+        <div
+          style={{
+            padding: 50,
+            textAlign: "center",
+            color: "green",
+            border: "1px solid green",
+            fontSize: 42,
+          }}
+        >
+          Quiz Test submitted <br />
+          <Button type="primary" size="small" onClick={() => window.close()}>
+            Close
+          </Button>
+          <Button
+            type="primary"
+            size="small"
+            style={{ marginLeft: 15 }}
+            onClick={() => set_show_result(true)}
           >
-            Quiz Test submitted <br></br>
-            <Button type="primary" size="small" onClick={() => window.close()}>Close</Button>
-            <Button
-              type="primary"
-              size="small"
-              style={{marginLeft:"15px"}}
-              onClick={() => set_show_result(true)}
-            >
-              View Result
-            </Button>
-          </h3>
-        ) : (
-          <>
-            <Card>
-              {rview_view ? <>
-                <h2 style={{ textAlign: "center", marginBottom: "15px" }}>Review All Quiz Answer</h2>
-                <Row gutter={20}>
-                  <Col span={24}>
-                    {review_questions?.length > 0 && review_questions.map((item, index) => (
-                      <>
-                        <h3 style={{ marginBottom: "20px", marginTop: "20px" }}>{`Ques ${index + 1}. ${item?.question_text}`}</h3>
-                        <QuizTestQuestionOptionsRview
-                          chapter_id={chapter_id_new}
-                          question_id={question_id}
-                          options={JSON.parse(item.option_details)}
-                          setOptions={set_option_details}
-                          optionChoice={question_type}
-                       
-                        />
-                      </>
-                    ))}
-                    <div style={{ textAlign: "center", marginTop: "20px", marginBottom: "15px" }}>
-                      <Popconfirm
-                        title="Submit Quiz Test"
-                        okText="Cancel"
-                        description={
-                          <div>
-                            <p>Are you sure you want to submit the Quiz test?</p>
-                            <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "10px" }}>
-                              <Button
-                                type="primary"
-                                size="small"
-                                onClick={submit_question}
-                              >
-                                Yes
-                              </Button>
-                              
-
-                            </div>
-                          </div>
-                        }
-                        showCancel={false} // hide default cancel button
-                      >
-                        <Button variant="solid" color="green">
-                          Submit
-                        </Button>
-
-                      </Popconfirm>
-                      <Button
-
-                        variant="solid" color="#c9ac0ce0" style={{ marginLeft: "15px" }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          set_review_view(false)
-                        }}
-                      >
-                        Back To Quiz
-                      </Button>
-
+            View Result
+          </Button>
+        </div>
+      ) : (
+        <Card>
+          {rview_view ? (
+            <>
+              <h2 style={{ textAlign: "center", marginBottom: 15 }}>
+                Review All Quiz Answer
+              </h2>
+              <Row gutter={[16, 16]}>
+                <Col span={24}>
+                  {review_questions?.map((item, index) => (
+                    <div key={index} style={{ marginBottom: 20 }}>
+                      <h3>{`Ques ${index + 1}. ${item?.question_text}`}</h3>
+                      <QuizTestQuestionOptionsRview
+                        chapter_id={chapter_id_new}
+                        question_id={question_id}
+                        options={JSON.parse(item.option_details)}
+                        setOptions={set_option_details}
+                        optionChoice={question_type}
+                      />
                     </div>
-                  </Col>
-                </Row>
-              </> : <>
-                <Row gutter={20}>
-                  <Col span={18}>
-                    <h3 style={{ marginBottom: "20px" }}>{`Ques ${current_page}. ${items?.question_text}`}</h3>
-                    <QuizTestQuestionOptions
-                      chapter_id={chapter_id_new}
-                      question_id={question_id}
-                      options={option_details}
-                      setOptions={set_option_details}
-                      optionChoice={question_type}
-                    
-                    />
-                  </Col>
-                  <Col span={6}>
-                    <h3 style={{ marginBottom: "20px" }}>Review Questions</h3>
-                    <Card style={{ height: "100%", width: "100%", marginLeft: "5px" }}>
-                      {review_questions?.length > 0 && review_questions.map((item, index) => (
-                        <Tag
-                          key={index}
-                          color={current_page === item?.number ? "#c9ac0ce0" : item?.color === "green" ? "#49aa19" : item?.color}
-                          onClick={() =>
-                            set_current_page(item.number)
-                          }
-                          style={{
-                            cursor: "pointer",
-                            userSelect: "none",
-                            margin: "4px",
-                          }}
-                        >
-                          {item?.color === 'white' ? <>
-                            <span style={{ color: "rgba(0, 0, 0, 1)", fontWeight: "bold" }}>Q{item.number}</span>
-                          </> : <>
-                            <span style={{ color: "rgba(255, 255, 255, 1)", fontWeight: "bold" }}>Q{item.number}</span>
-                          </>}
-
-                        </Tag>
-                      ))}
-                      <hr />
-                      <div style={{ fontSize: "12px" }}>
-
-                        <span style={{ fontSize: "14px", display: "inline-block", marginBottom: "10px" }}> Guide Color</span> <br></br>
-                        <span style={{ backgroundColor: "white", color: "black", fontSize: "10px", fontWeight: "bold", padding: "3px 8px", borderRadius: "4px", marginBottom: "5px", display: "inline-block" }}>Q</span> Not Answered<br></br>
-                        <span style={{ backgroundColor: "#49aa19", color: "white", fontSize: "10px", fontWeight: "bold", padding: "3px 8px", borderRadius: "4px", marginBottom: "5px", display: "inline-block" }}>Q</span> Answered<br></br>
-                        <span style={{ backgroundColor: "#c9ac0ce0", color: "white", fontSize: "10px", fontWeight: "bold", padding: "3px 8px", borderRadius: "4px", marginBottom: "5px", display: "inline-block" }}>Q</span> Current Question
-                      </div>
-                    </Card>
-
-
-
-
-                  </Col>
-                </Row>
-
-
-                <div
-                  style={{
-                    display: "flex",
-                    marginTop: "15px",
-                    paddingLeft: "370px",
-                    gap: "20px",
-                  }}
-                >
-                  {current_page > 1 ? (
-                    <Button
-                      variant="solid"
-                      color="black"
-                      onClick={() =>
-                        set_current_page(parseInt(current_page) - 1)
-                      }
-                    >
-                      Previous
-                    </Button>
-                  ) : (
-                    <Button disabled variant="solid" color="green">
-                      Previous
-                    </Button>
-                  )}
-
-                  {current_page >= 1 && current_page < total_questions ? (
-                    <Button
-                      variant="solid"
-                      color="orange"
-                      onClick={() =>
-                        set_current_page(
-                          parseInt(current_page) + 1 !== current_page &&
-                          parseInt(current_page) + 1
-                        )
-                      }
-                    >
-                      Next
-                    </Button>
-                  ) : (
+                  ))}
+                  <div
+                    style={{
+                      textAlign: "center",
+                      marginTop: 20,
+                      marginBottom: 15,
+                      display: "flex",
+                      justifyContent: "center",
+                      flexWrap: "wrap",
+                      gap: 10,
+                    }}
+                  >
                     <Popconfirm
-                      title="Submit Quiz Test"
+                      title={canSubmit ? "Submit Quiz Test" : null}
                       okText="Cancel"
                       description={
-                        <div>
-                          <p>Are you sure you want to submit the Quiz test?</p>
-                          <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "10px" }}>
-                            <Button
-                              type="primary"
-                              size="small"
-                              onClick={submit_question}
-                            >
+                        canSubmit ? (
+                          <div style={{justifyContent:"center"}}>
+                            <p>Are you sure you want to submit the Quiz test?</p>
+                            <Button type="primary" size="small" onClick={submit_question}>
                               Yes
                             </Button>
-
-                            <Button
-                              variant="solid"
-                              color="green"
-                              size="small"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                set_review_view(true)
-                              }}
-                            >
-                              Review
-                            </Button>
-                           
+                          
                           </div>
-                        </div>
+                        ) : (
+                          <p style={{ color: "red", fontWeight: "bold", textAlign: "center" }}>
+                            ⏳ You can submit after {" "}
+                            {formatTime(remainingMinTime)}
+                          </p>
+                        )
                       }
-                      showCancel={false} // hide default cancel button
+                      showCancel={false}
                     >
-                      <Button variant="solid" color="green">
-                        Submit
-                      </Button>
+                      <Tooltip
+                        title={
+                          !canSubmit
+                            ? `⏳ Submit available after ${formatTime(remainingMinTime)}`
+                            : ""
+                        }
+                      >
+                        <Button
+                          variant="solid"
+                          color="green"
+                          onClick={() => {
+                            if (!canSubmit) {
+                              message.warning(
+                                `⏳ You can submit after ${formatTime(remainingMinTime)}`
+                              );
+                            } else {
+                             
+                            }
+                          }}
+                        >
+                          Submit
+                        </Button>
+                      </Tooltip>
+
                     </Popconfirm>
 
+                    <Button
+                      variant="solid"
+                      color="#c9ac0ce0"
+                      onClick={() => set_review_view(false)}
+                    >
+                      Back To Quiz
+                    </Button>
+                  </div>
+                </Col>
+              </Row>
+            </>
+          ) : (
+            <>
+              <Row gutter={[16, 16]}>
+                <Col xs={24} md={18} >
+                  <h3 style={{ marginBottom: 20 }}>{`Ques ${current_page}. ${items?.question_text}`}</h3>
+                  <QuizTestQuestionOptions
+                    chapter_id={chapter_id_new}
+                    question_id={question_id}
+                    options={option_details}
+                    setOptions={set_option_details}
+                    optionChoice={question_type}
+                  />
+                </Col>
+                <Col xs={24} md={6}>
+                  <h3 style={{ marginBottom: 20 }}>Review Questions</h3>
+                  <Card style={{ width: "100%", marginLeft: 0, height: "100%" }}>
+                    {review_questions?.map((item, index) => (
+                      <Tag
+                        key={index}
+                        color={current_page === item?.number ? "#c9ac0ce0" : item?.color === "green" ? "#49aa19" : item?.color}
+                        onClick={() => set_current_page(item.number)}
+                        style={{
+                          cursor: "pointer",
+                          userSelect: "none",
+                          margin: 4,
+                        }}
+                      >
+                        <span
+                          style={{
+                            color: item?.color === 'white' ? "black" : "white",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Q{item.number}
+                        </span>
+                      </Tag>
+                    ))}
+                    <hr />
+                    <div style={{ fontSize: 12 }}>
+                      <span style={{ fontSize: 14, display: "inline-block", marginBottom: 10 }}> Guide Color</span> <br />
+                      <span style={{ backgroundColor: "white", color: "black", fontSize: 10, fontWeight: "bold", padding: "3px 8px", borderRadius: 4, marginBottom: 5, display: "inline-block" }}>Q</span> Not Answered<br />
+                      <span style={{ backgroundColor: "#49aa19", color: "white", fontSize: 10, fontWeight: "bold", padding: "3px 8px", borderRadius: 4, marginBottom: 5, display: "inline-block" }}>Q</span> Answered<br />
+                      <span style={{ backgroundColor: "#c9ac0ce0", color: "white", fontSize: 10, fontWeight: "bold", padding: "3px 8px", borderRadius: 4, marginBottom: 5, display: "inline-block" }}>Q</span> Current Question
+                    </div>
+                  </Card>
+                </Col>
+              </Row>
 
-                  )}
-                </div>
-              </>}
-            </Card>
-          </>
-        )}
-      </>}
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                  marginTop: 15,
+                  gap: 20,
+                }}
+              >
+                <Button
+                  variant="solid"
+                  color="black"
+                  disabled={current_page <= 1}
+                  onClick={() => set_current_page(parseInt(current_page) - 1)}
+                  style={{ marginTop: "-15px" }}
+                >
+                  Previous
+                </Button>
+
+                {current_page < total_questions ? (
+                  <Button
+                    variant="solid"
+                    color="orange"
+                    onClick={() => set_current_page(parseInt(current_page) + 1)}
+                    style={{ marginTop: "-15px" }}
+                  >
+                    Next
+                  </Button>
+                ) : (
+                  <Popconfirm
+                    title={canSubmit ? "Submit Quiz Test" : null}
+                    description={
+                      canSubmit ? (
+                        <div>
+                          <p>Are you sure you want to submit?</p>
+                          <Button type="primary" size="small" onClick={submit_question}>
+                            Yes
+                          </Button>
+                          <Button  style={{ marginLeft:"5px"}} variant="solid" color="green" size="small" onClick={() => set_review_view(true)}> Review </Button>
+                        </div>
+                      ) : (
+                        <p style={{ color: "red", fontWeight: "bold" }}>
+                          ⏳ You can submit after {" "}
+                          {formatTime(remainingMinTime)}
+                        </p>
+                      )
+                    }
+                    showCancel={false}
+                  >
+                    <Tooltip
+                      title={
+                        !canSubmit
+                          ? `⏳ Submit available after ${formatTime(remainingMinTime)}`
+                          : ""
+                      }
+                    >
+                      <Button
+                        variant="solid"
+                        color="green"
+                        onClick={() => {
+                          if (!canSubmit) {
+                            message.warning(
+                              `⏳ You can submit after ${formatTime(remainingMinTime)}`
+                            );
+                          } else {
+                          
+                          }
+                        }}
+                         style={{ marginTop: "-15px" }}
+                      >
+                        Submit
+                      </Button>
+                    </Tooltip>
+
+                  </Popconfirm>
+
+                )}
+              </div>
+            </>
+          )}
+        </Card>
+      )}
     </div>
   );
 };

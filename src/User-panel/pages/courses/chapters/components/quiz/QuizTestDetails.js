@@ -3,13 +3,13 @@ import { useEffect, useState, useRef } from "react";
 import { ADD_QUIZ_ANSWER, VIEW_QUIZ_SETTING } from "../../../../../apis/apis";
 import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 
-
 export default function QuizTestDetails({
   set_quiz_test_id,
   show_options,
   chapter_id,
   set_time_spend,
-  time_spend,
+  set_min_time_before_submit,
+  min_time_before_submit,
   submit_true,
   set_quiz_title,
 }) {
@@ -23,10 +23,8 @@ export default function QuizTestDetails({
   const [remainingTime, setRemainingTime] = useState(null);
   const [expired, set_expired] = useState(false);
   const [submitted, set_submitted] = useState(false);
-
   const timerRef = useRef(null);
 
-  // 🔹 Fetch Quiz Settings
   useEffect(() => {
     const VIEW_API = async () => {
       setLoading(true);
@@ -40,7 +38,7 @@ export default function QuizTestDetails({
         set_quiz_title(data?.title);
         set_time_limit(parseInt(data?.time_limit));
         set_display_question(data?.display_question);
-
+        set_min_time_before_submit(data?.min_time_before_submit);
         if (!data?.expired && !data?.test_submitted) {
           set_quiz_test_id(data?.id);
         }
@@ -52,7 +50,6 @@ export default function QuizTestDetails({
 
         if (data?.time_limit) {
           const seconds = parseInt(data.time_limit) * 60;
-          console.log("⏳ Initial time:", seconds);
           setRemainingTime(seconds);
         }
       }
@@ -62,14 +59,11 @@ export default function QuizTestDetails({
     VIEW_API();   
   }, [chapter_id]);
 
-  // 🔹 Countdown Logic
   useEffect(() => {
     if (!show_options) return;
     if (!time_limit) return;
     if (submit_true || expired) return;
     if (remainingTime === null) return;
-
-    console.log("✅ Timer started with", remainingTime, "seconds");
 
     clearInterval(timerRef.current);
     if(remainingTime === 0){
@@ -92,7 +86,6 @@ export default function QuizTestDetails({
     return () => clearInterval(timerRef.current);
   }, [show_options, time_limit, submit_true, expired, remainingTime]);
 
-  // 🔹 Format time helper
   const formatTime = (seconds) => {
     if (seconds === null) return "--:--";
     const m = Math.floor(seconds / 60)
@@ -101,6 +94,8 @@ export default function QuizTestDetails({
     const s = (seconds % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
   };
+
+  
   const submit_question = async () => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("chapter_id", atob(chapter_id));
@@ -128,8 +123,8 @@ export default function QuizTestDetails({
               className="section-details section-details-right-padding"
               style={{ minHeight: "auto" }}
             >
-              <Row>
-                <Col span={12}>
+              <Row >
+                <Col xs={24} sm={24} lg={12}>
                   <p>
                     <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
                       Time Limit:{" "}
@@ -143,32 +138,30 @@ export default function QuizTestDetails({
                     )}
                   </p>
                 </Col>
-                <Col span={12}>
-                  <div style={{ float: "right" }}>
-                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Passing Percentage:{" "}
-                    </span>
-                    {passing_percentage}% <br />
-                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Retake Allowed:{" "}
-                    </span>
-                    {number_of_retake} <br />
-                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Total Questions:{" "}
-                    </span>
-                    {display_question}
-                  </div>
+                <Col xs={24} sm={24} lg={12}>
+                  <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                    Passing Percentage:{" "}
+                  </span>
+                  {passing_percentage}% <br />
+                  <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                    Retake Allowed:{" "}
+                  </span>
+                  {number_of_retake} <br />
+                  <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
+                    Total Questions:{" "}
+                  </span>
+                  {display_question}
                 </Col>
               </Row>
 
               {submitted ? (
                 <h3
                   style={{
-                    padding: "50px",
+                    padding: "50px 20px",
                     textAlign: "center",
                     color: "green",
                     border: "1px solid green",
-                    fontSize: "42px",
+                    fontSize: "32px",
                   }}
                 >
                   Quiz submitted
@@ -177,20 +170,19 @@ export default function QuizTestDetails({
                     type="primary"
                     size="small"
                     onClick={() => window.close()}
+                    style={{ marginTop: "10px" }}
                   >
                     Close
                   </Button>
-                 
-                  ;
                 </h3>
               ) : expired ? (
                 <h3
                   style={{
-                    padding: "50px",
+                    padding: "50px 20px",
                     textAlign: "center",
                     color: "red",
                     border: "1px solid red",
-                    fontSize: "42px",
+                    fontSize: "32px",
                   }}
                 >
                   Quiz Test Expired
@@ -199,6 +191,7 @@ export default function QuizTestDetails({
                     type="primary"
                     size="small"
                     onClick={() => window.close()}
+                    style={{ marginTop: "10px" }}
                   >
                     Close
                   </Button>
@@ -208,10 +201,10 @@ export default function QuizTestDetails({
           ) : (
             <h3
               style={{
-                padding: "50px",
+                padding: "50px 20px",
                 textAlign: "center",
                 color: "red",
-                fontSize: "42px",
+                fontSize: "32px",
               }}
             >
               Data Empty
@@ -220,6 +213,7 @@ export default function QuizTestDetails({
                 type="primary"
                 size="small"
                 onClick={() => window.close()}
+                style={{ marginTop: "10px" }}
               >
                 Close
               </Button>

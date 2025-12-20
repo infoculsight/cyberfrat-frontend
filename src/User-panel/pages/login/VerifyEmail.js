@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from "react";
 import "../../assests/Login.css"
 import { Button } from "antd";
-import { InfoCircleOutlined, CopyrightOutlined, } from "@ant-design/icons";
+import { CopyrightOutlined, } from "@ant-design/icons";
 import Logo from "../../assests/CFGold_Logo.png"
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { EMAIL_VERIFY } from "../../apis/apis";
@@ -19,7 +19,7 @@ const VerifyEmail = () => {
     const Navigate = useNavigate();
     const [form_hidden, set_form_hidden] = useState(false);
 
-
+   useEffect(() => {
     const EMAIL_VERIFY_API = async () => {
         const FORM_DATA = new FormData();
         FORM_DATA.append("token", token);
@@ -37,9 +37,9 @@ const VerifyEmail = () => {
             setLoader(false);
         }
     };
-    useEffect(() => {
+ 
         EMAIL_VERIFY_API()
-    }, [])
+    }, [token])
 
     return (
         <>
@@ -60,12 +60,11 @@ const VerifyEmail = () => {
                         </div>
                     </>}
 
-                    <div className="login-footer">
-                        <div>Copyright <CopyrightOutlined /></div>
-                        <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div>
-
-                        <div>  <Link className="lms-link">Terms & Policies</Link></div>
-                    </div>
+                   <div className="login-footer">
+                            <div style={{marginLeft:"15px"}}>Copyright <CopyrightOutlined /> {new Date().getFullYear()} CyberFrat </div>
+                            {/* <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div> */}
+                            <div style={{marginRight:"15px"}}>  <Link to="/terms-policy" className="lms-link">Terms & Policies</Link></div>
+                        </div>
                 </>}
             </div>
         </>

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import "../../assests/Login.css"
 import { Button, Spin } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone, InfoCircleOutlined, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
+import { EyeInvisibleOutlined, EyeTwoTone, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
 import Logo from "../../assests/CFGold_Logo.png"
 import { Link } from "react-router-dom";
 import { AxiosFirst } from "../../config/config";
@@ -38,7 +38,7 @@ const Login = () => {
                 else if (res?.data?.temporary_password) {
                     set_user_id(res?.data?.user_id)
                     set_temporary_password(true)
-                    
+
                 }
                 else {
                     window.location.href = "/";
@@ -81,23 +81,27 @@ const Login = () => {
                                     <EyeInvisibleOutlined className="password-eye" onClick={togglePasswordVisibility} />
                                 )}
                             </div>
-                            <Link to="/forget-password" className="lms-link right" style={{ position: "relative", top: "-18px", left: "145px", color: "#fff" }}>Forgot Password?</Link>
-                           
-                                {loader ? <>
-                                    <Button type="primary"style={{ width: "100%", height: "42px" }}> <Spin indicator={<LoadingOutlined spin />} style={{ color: "#FFF" }} size="small" /></Button>
-                                </> : <>
-                                    <Button type="primary" onClick={LOGIN_ACCOUNT} style={{ width: "100%", height: "42px" }}>  Sign In </Button>
-                                </>}
-                         
+                            <div className="forgot-wrapper">
+                                <Link to="/forget-password" className="forgot-link" style={{color:"white"}}>
+                                    Forgot Password?
+                                </Link>
+                            </div>
+
+
+
+                            {loader ? <>
+                                <Button type="primary" style={{ width: "100%", height: "42px" }}> <Spin indicator={<LoadingOutlined spin />} style={{ color: "#FFF" }} size="small" /></Button>
+                            </> : <>
+                                <Button type="primary" onClick={LOGIN_ACCOUNT} style={{ width: "100%", height: "42px" }}>  Sign In </Button>
+                            </>}
+
                         </div>
                         <div className="login-footer">
-                            <div>Copyright <CopyrightOutlined /></div>
-                            <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div>
-
-                            <div>  <Link className="lms-link">Terms & Policies</Link></div>
+                            <div style={{ marginLeft: "15px" }}>Copyright <CopyrightOutlined /> {new Date().getFullYear()} CyberFrat </div>
+                            {/* <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div> */}
+                            <div style={{ marginRight: "15px" }}>  <Link to="/terms-policy" className="lms-link" style={{ color: "#fff" }}>Terms & Policies</Link></div>
                         </div>
                     </div>
-
 
                 </>}
 

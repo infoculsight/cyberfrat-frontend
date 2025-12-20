@@ -5,10 +5,10 @@
 import React, { useEffect, useState } from "react";
 import "../../assests/Login.css"
 import { Button, Spin } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone, InfoCircleOutlined, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
+import { EyeInvisibleOutlined, EyeTwoTone, CopyrightOutlined, LoadingOutlined, } from "@ant-design/icons";
 import Logo from "../../assests/CFGold_Logo.png"
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { LOGIN_API, NEW_PASSWORD_SET, RESET_PASSWORD_TOKEN_CHECK } from "../../apis/apis";
+import {  NEW_PASSWORD_SET, RESET_PASSWORD_TOKEN_CHECK } from "../../apis/apis";
 
 
 const ResetPassword = () => {
@@ -20,7 +20,7 @@ const ResetPassword = () => {
     const [password, setPassword] = useState('');
     const [cpassword, setCPassword] = useState('');
     const [form_hidden, set_form_hidden] = useState(true);
-    const [message, set_message] = useState("");
+
     const [error, setError] = useState([]);
 
     const togglePasswordVisibility = () => {
@@ -165,12 +165,11 @@ const ResetPassword = () => {
                     <div style={{ position: "relative", marginTop: "80px", width: "100%", display: "block" }}>{error ? <><p style={{ position: "absolute", width: "100%", top: "-46px", color: "red", fontWeight: "bold" }}>{error}</p></> : ''}</div>
                 </div>
 
-                <div className="login-footer">
-                    <div>Copyright <CopyrightOutlined /></div>
-                    <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div>
-
-                    <div>  <Link className="lms-link">Terms & Policies</Link></div>
-                </div>
+                 <div className="login-footer">
+                            <div style={{marginLeft:"15px"}}>Copyright <CopyrightOutlined /> {new Date().getFullYear()} CyberFrat </div>
+                            {/* <div>  <Link className="lms-link">Security Tips <InfoCircleOutlined /></Link></div> */}
+                            <div style={{marginRight:"15px"}}>  <Link to="/terms-policy" className="lms-link">Terms & Policies</Link></div>
+                        </div>
             </div>
         </>
     )
