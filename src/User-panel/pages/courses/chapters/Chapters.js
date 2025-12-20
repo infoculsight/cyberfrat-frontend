@@ -198,20 +198,8 @@ export default function Chapters() {
     }
     const success = await UPDATE_CURRENT_CHAPTER_API(chapter.id, atob(course_id));
     if (success) {
-      if (chapter.scorm) {
-        set_single_progress(100);
-      } else {
-        set_single_progress(parseInt(chapter.progress) || 0);
-      }
-        if (chapter.quiz_available) {
-        set_single_progress(100);
-      } else {
-        set_single_progress(parseInt(chapter.progress) || 0);
-      }
-      setCurrentChapter(chapter);
 
       fetchEnabledChapters();
-
 
       if (window.innerWidth <= 768) {
         setShowChapterList(false);
@@ -385,7 +373,7 @@ export default function Chapters() {
                                   <>
                                     {!course_status ? (
                                       <Progress
-                                        percent={item.scorm ? 100 : item?.progress || 0}
+                                        percent={item?.progress}
                                         status="active"
                                         strokeColor="#FFD700"
                                       />
@@ -406,7 +394,7 @@ export default function Chapters() {
                                       <CheckCircleFilled className="check-pro" />
                                     )}
                                     <Progress
-                                      percent={item.scorm ? 100 : item?.progress || 0}
+                                      percent={single_progress}
                                       status="active"
                                       strokeColor="#FFD700"
                                     />
@@ -415,12 +403,36 @@ export default function Chapters() {
                                 )}
                               </>
                             ) : (
-                              <Progress
-                                percent={item.scorm ? 100 : item?.progress || 0}
-                                status="active"
-                                strokeColor="#FFD700"
-                              />
+                              <>
+                                {item?.get_tracking_chapter_data ? <>
+                                  {!item?.video_id ? <>
+                                    <Progress
+                                      percent={100}
+                                      status="active"
+                                      strokeColor="#FFD700"
+                                    />
 
+                                  </> : <>
+                                    <Progress
+                                      percent={item?.progress}
+                                      status="active"
+                                      strokeColor="#FFD700"
+                                    />
+
+
+                                  </>}
+
+                                </> : <>
+
+                                  <Progress
+                                    percent={item?.progress}
+                                    status="active"
+                                    strokeColor="#FFD700"
+                                  />
+
+                                </>}
+
+                              </>
                             )}
                             <span style={{ fontSize: "10px" }}>
                               {item.video_id && "Video"} {item.scorm && " PDF"}{" "}
