@@ -3,7 +3,7 @@
 import { UserManager } from 'oidc-client';
 
 const config = {
-  authority: 'https://auth.cyberfrat.com/realms/DEVELOPMENT', // Keycloak server URL + realm
+  authority: 'https://auth.cyberfrat.com/realms/CYBERFRAT', // Keycloak server URL + realm
   client_id: 'LMS_FRONTEND',       // Keycloak client id
   redirect_uri: window.location.origin + '/callback',  // redirect URI jahan Keycloak redirect karega
   response_type: 'code',
