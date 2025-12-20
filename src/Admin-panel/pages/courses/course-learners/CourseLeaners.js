@@ -60,8 +60,6 @@ function CourseLearners(props) {
   };
 
 
-
-
   const showModal = () => {
     setAssignKey((prev) => prev + 1);
     setIsModalVisible(true);
@@ -301,34 +299,34 @@ function CourseLearners(props) {
     }
   };
 
- const DOWNLOAD_TEMPLATE = async () => {
-      try {
-        const response = await BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE();
-   
-        const blob = new Blob([response.data], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-   
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-   
-        link.href = url;
-        link.download = "bulk_add_course_learners_template.csv"; 
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-   
-        notification.success({
-          message: "Template Downloaded",
-          description: "Excel template downloaded successfully",
-        });
-      } catch (error) {
-        notification.error({
-          message: "Download Failed",
-          description: "Something went wrong",
-        });
-      }
-    };
+  const DOWNLOAD_TEMPLATE = async () => {
+    try {
+      const response = await BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE();
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "bulk_add_course_learners_template.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      notification.success({
+        message: "Template Downloaded",
+        description: "Excel template downloaded successfully",
+      });
+    } catch (error) {
+      notification.error({
+        message: "Download Failed",
+        description: "Something went wrong",
+      });
+    }
+  };
 
   return (
     <div className="lms-body">
@@ -343,9 +341,9 @@ function CourseLearners(props) {
 
 
 
-        <Row gutter={[16, 16]}>
+        <Row gutter={[16, 16]} align="middle">
           {/* Search Input */}
-          <Col xs={24} sm={24} md={12} lg={12}>
+          <Col xs={24} sm={24} md={10} lg={10}>
             <Input
               addonBefore={selectBefore}
               placeholder={search_paceholder}
@@ -354,45 +352,46 @@ function CourseLearners(props) {
             />
           </Col>
 
-          {/* Complete Report Button */}
-          <Col xs={24} sm={12} md={4} lg={4}>
+          {/* Download Template */}
+          <Col xs={24} sm={12} md={5} lg={5}>
             <Button
               variant="solid"
               color="green"
               size="large"
               icon={<ArrowDownOutlined />}
-              style={{ width: "100%" }}
+              className="responsive-btn"
               onClick={DOWNLOAD_TEMPLATE}
             >
               Download Template
             </Button>
           </Col>
 
-          {/* Bulk Enroll Button */}
-          <Col xs={24} sm={12} md={4} lg={4}>
+          {/* Bulk Enroll */}
+          <Col xs={24} sm={12} md={5} lg={5}>
             <Button
               type="primary"
               size="large"
               icon={<ArrowUpOutlined />}
-              style={{ width: "100%" }}
-              onClick={showEnrollModal}
+              className="responsive-btn"
+              onClick={showEnrollModal} onCancel={CancelEnrollModal}
             >
               Bulk Enroll
             </Button>
           </Col>
 
-          {/* Assign Learners Button */}
+          {/* Assign Learners */}
           <Col xs={24} sm={24} md={4} lg={4}>
             <Button
               type="primary"
               size="large"
-              style={{ width: "100%" }}
+              className="responsive-btn"
               onClick={showModal}
             >
               Assign Learners
             </Button>
           </Col>
         </Row>
+
 
         {loader ? (
           <CulsightPageLoader />

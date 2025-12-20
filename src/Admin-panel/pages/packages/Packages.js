@@ -10,7 +10,7 @@ import BulkAssignPackage from "./BulkAssignPackage";
 
 function Packages() {
   const Navigate = useNavigate();
-    const { notification } = App.useApp();
+  const { notification } = App.useApp();
   const [packages, set_packages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination_loader, set_pagination_loader] = useState(false);
@@ -105,36 +105,36 @@ function Packages() {
     fetchResultsTitle(value);
   };
 
-   const DOWNLOAD_TEMPLATE = async () => {
-      try {
-        const response = await BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE();
-   
-        const blob = new Blob([response.data], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-   
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-   
-        link.href = url;
-        link.download = "bulk_add_package_learners_template.csv"; // ✅ XLSX
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-   
-        notification.success({
-          message: "Template Downloaded",
-          description: "Excel template downloaded successfully",
-        });
-      } catch (error) {
-        notification.error({
-          message: "Download Failed",
-          description: "Something went wrong",
-        });
-      }
-    };
-  
-  
+  const DOWNLOAD_TEMPLATE = async () => {
+    try {
+      const response = await BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE();
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "bulk_add_package_learners_template.csv"; // ✅ XLSX
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      notification.success({
+        message: "Template Downloaded",
+        description: "Excel template downloaded successfully",
+      });
+    } catch (error) {
+      notification.error({
+        message: "Download Failed",
+        description: "Something went wrong",
+      });
+    }
+  };
+
+
 
   return (
     <div className="lms-body">
@@ -160,6 +160,8 @@ function Packages() {
                   variant="solid"
                   color="green"
                   size="large"
+                  className="responsive-btn"
+
                   onClick={DOWNLOAD_TEMPLATE}
                 >
                   Download Template
@@ -170,6 +172,8 @@ function Packages() {
                   variant="solid"
                   color="green"
                   size="large"
+                  className="responsive-btn"
+
                   onClick={showModal}
                 >
                   Bulk Assign Package
@@ -179,6 +183,8 @@ function Packages() {
                 <Button
                   type="primary"
                   size="large"
+                  className="responsive-btn"
+
                   onClick={() => Navigate("/add-packages")}
                 >
                   Create Package

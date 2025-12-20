@@ -371,7 +371,7 @@ function PackageLeaners(props) {
             <Button
               variant="solid"
               color="green"
-              style={{ width: "100%" }}
+              className="responsive-btn"
               size="large"
               onClick={DOWNLOAD_TEMPLATE}
             >
@@ -382,7 +382,7 @@ function PackageLeaners(props) {
           <Col xs={24} sm={24} md={4} lg={4} xl={4}>
             <Button
               type="primary"
-              style={{ width: "100%" }}
+              className="responsive-btn"
               size="large"
               onClick={showbulkModal} onCancel={handleCancel}
             >
@@ -392,7 +392,7 @@ function PackageLeaners(props) {
           <Col xs={24} sm={24} md={4} lg={4} xl={4}>
             <Button
               type="primary"
-              style={{ width: "100%" }} // Full width on small screens
+              className="responsive-btn"
               size="large"
               onClick={showModal}
             >
