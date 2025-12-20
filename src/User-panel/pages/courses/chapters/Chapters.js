@@ -191,21 +191,33 @@ export default function Chapters() {
     parseInt(local_theme) === 0 ? set_balck_theme(false) : set_balck_theme(true);
   }, [fetchEnabledChapters]);
 
-const handleChapterClick = async (chapter, index) => {
-  if (hasQuiz(chapter.title) && course_watch_percent < 90) {
-    message.warning("Please complete at least 90% of each chapter before attempting the quiz.");
-    return;
-  }
-  const success = await UPDATE_CURRENT_CHAPTER_API(chapter.id, atob(course_id));
-  if (success) {
-    fetchEnabledChapters();
-
-    
-    if (window.innerWidth <= 768) {
-      setShowChapterList(false);
+  const handleChapterClick = async (chapter, index) => {
+    if (hasQuiz(chapter.title) && course_watch_percent < 90) {
+      message.warning("Please complete at least 90% of each chapter before attempting the quiz.");
+      return;
     }
-  }
-};
+    const success = await UPDATE_CURRENT_CHAPTER_API(chapter.id, atob(course_id));
+    if (success) {
+      if (chapter.scorm) {
+        set_single_progress(100);
+      } else {
+        set_single_progress(parseInt(chapter.progress) || 0);
+      }
+        if (chapter.quiz_available) {
+        set_single_progress(100);
+      } else {
+        set_single_progress(parseInt(chapter.progress) || 0);
+      }
+      setCurrentChapter(chapter);
+
+      fetchEnabledChapters();
+
+
+      if (window.innerWidth <= 768) {
+        setShowChapterList(false);
+      }
+    }
+  };
 
 
   const handleDownload = () => {
@@ -216,7 +228,7 @@ const handleChapterClick = async (chapter, index) => {
     link.click();
   };
 
-  
+
 
   const check_quiz_status = async (chapter_id) => {
     const FORM_DATA = new FormData();
@@ -372,7 +384,11 @@ const handleChapterClick = async (chapter, index) => {
                                 {item?.title?.toLowerCase().includes("quiz") ? (
                                   <>
                                     {!course_status ? (
-                                      <Progress percent={0} status="active" strokeColor="#FFD700" />
+                                      <Progress
+                                        percent={item.scorm ? 100 : item?.progress || 0}
+                                        status="active"
+                                        strokeColor="#FFD700"
+                                      />
                                     ) : (
                                       <>
                                         <CheckCircleFilled className="check-pro" />
@@ -390,19 +406,21 @@ const handleChapterClick = async (chapter, index) => {
                                       <CheckCircleFilled className="check-pro" />
                                     )}
                                     <Progress
-                                      percent={single_progress}
+                                      percent={item.scorm ? 100 : item?.progress || 0}
                                       status="active"
                                       strokeColor="#FFD700"
                                     />
+
                                   </>
                                 )}
                               </>
                             ) : (
                               <Progress
-                                percent={item?.progress || 0}
+                                percent={item.scorm ? 100 : item?.progress || 0}
                                 status="active"
                                 strokeColor="#FFD700"
                               />
+
                             )}
                             <span style={{ fontSize: "10px" }}>
                               {item.video_id && "Video"} {item.scorm && " PDF"}{" "}
@@ -471,8 +489,6 @@ const handleChapterClick = async (chapter, index) => {
                       </div>
                     </Col>
                   </Row>
-
-
                   <br />
 
                   {currentChapter?.quiz_row &&
