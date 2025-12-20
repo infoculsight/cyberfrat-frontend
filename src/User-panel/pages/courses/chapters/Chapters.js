@@ -394,7 +394,7 @@ export default function Chapters() {
                                       <CheckCircleFilled className="check-pro" />
                                     )}
                                     <Progress
-                                      percent={ item?.progress }
+                                      percent={single_progress}
                                       status="active"
                                       strokeColor="#FFD700"
                                     />
@@ -403,12 +403,36 @@ export default function Chapters() {
                                 )}
                               </>
                             ) : (
-                              <Progress
-                                percent={ item?.progress }
-                                status="active"
-                                strokeColor="#FFD700"
-                              />
+                              <>
+                                {item?.get_tracking_chapter_data ? <>
+                                  {!item?.video_id ? <>
+                                    <Progress
+                                      percent={100}
+                                      status="active"
+                                      strokeColor="#FFD700"
+                                    />
 
+                                  </> : <>
+                                    <Progress
+                                      percent={item?.progress}
+                                      status="active"
+                                      strokeColor="#FFD700"
+                                    />
+
+
+                                  </>}
+
+                                </> : <>
+
+                                  <Progress
+                                    percent={item?.progress}
+                                    status="active"
+                                    strokeColor="#FFD700"
+                                  />
+
+                                </>}
+
+                              </>
                             )}
                             <span style={{ fontSize: "10px" }}>
                               {item.video_id && "Video"} {item.scorm && " PDF"}{" "}
