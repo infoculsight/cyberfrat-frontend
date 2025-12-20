@@ -48,9 +48,8 @@ function QuizResult({ chapter_id }) {
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins < 10 ? "0" + mins : mins} mins ${
-      secs < 10 ? "0" + secs : secs
-    } sec`;
+    return `${mins < 10 ? "0" + mins : mins} mins ${secs < 10 ? "0" + secs : secs
+      } sec`;
   };
 
   return (

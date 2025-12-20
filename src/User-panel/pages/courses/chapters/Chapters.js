@@ -193,12 +193,32 @@ export default function Chapters() {
 
   const handleChapterClick = async (chapter, index) => {
     if (hasQuiz(chapter.title) && course_watch_percent < 90) {
-      message.warning("Please complete at least 90% of the course before attempting the quiz.");
+      message.warning("Please complete at least 90% of each chapter before attempting the quiz.");
       return;
     }
     const success = await UPDATE_CURRENT_CHAPTER_API(chapter.id, atob(course_id));
-    if (success) fetchEnabledChapters();
+    if (success) {
+      if (chapter.scorm) {
+        set_single_progress(100);
+      } else {
+        set_single_progress(parseInt(chapter.progress) || 0);
+      }
+        if (chapter.quiz_available) {
+        set_single_progress(100);
+      } else {
+        set_single_progress(parseInt(chapter.progress) || 0);
+      }
+      setCurrentChapter(chapter);
+
+      fetchEnabledChapters();
+
+
+      if (window.innerWidth <= 768) {
+        setShowChapterList(false);
+      }
+    }
   };
+
 
   const handleDownload = () => {
     const url = course_status;
@@ -207,6 +227,8 @@ export default function Chapters() {
     link.download = `${course_status}_Certificate.pdf`;
     link.click();
   };
+
+
 
   const check_quiz_status = async (chapter_id) => {
     const FORM_DATA = new FormData();
@@ -338,7 +360,7 @@ export default function Chapters() {
                       backgroundColor:
                         currentChapter?.id === item?.id
                           ? balck_theme
-                            ? "rgb(46 46 46)"
+                            ? "rgba(236, 218, 63, 0.41)"
                             : "rgb(243 242 242)"
                           : "transparent",
                       opacity:
@@ -362,7 +384,11 @@ export default function Chapters() {
                                 {item?.title?.toLowerCase().includes("quiz") ? (
                                   <>
                                     {!course_status ? (
-                                      <Progress percent={0} status="active" strokeColor="#FFD700" />
+                                      <Progress
+                                        percent={item.scorm ? 100 : item?.progress || 0}
+                                        status="active"
+                                        strokeColor="#FFD700"
+                                      />
                                     ) : (
                                       <>
                                         <CheckCircleFilled className="check-pro" />
@@ -380,19 +406,21 @@ export default function Chapters() {
                                       <CheckCircleFilled className="check-pro" />
                                     )}
                                     <Progress
-                                      percent={single_progress}
+                                      percent={item.scorm ? 100 : item?.progress || 0}
                                       status="active"
                                       strokeColor="#FFD700"
                                     />
+
                                   </>
                                 )}
                               </>
                             ) : (
                               <Progress
-                                percent={item?.progress || 0}
+                                percent={item.scorm ? 100 : item?.progress || 0}
                                 status="active"
                                 strokeColor="#FFD700"
                               />
+
                             )}
                             <span style={{ fontSize: "10px" }}>
                               {item.video_id && "Video"} {item.scorm && " PDF"}{" "}
@@ -461,8 +489,6 @@ export default function Chapters() {
                       </div>
                     </Col>
                   </Row>
-
-
                   <br />
 
                   {currentChapter?.quiz_row &&
@@ -504,7 +530,7 @@ export default function Chapters() {
 
 
                         <p style={{ textAlign: "center", margin: "30px" }}>
-                          You can attempt this test a maximum of {currentChapter?.quiz_row?.number_of_retake} times. The time limit for the test is {currentChapter?.quiz_row?.time_limit} minutes, and you must score at least {currentChapter?.quiz_row?.passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.
+                          You may attempt this test a maximum of {currentChapter?.quiz_row?.no_of_retake} times. The time limit for the test is {currentChapter?.quiz_row?.time_limit} minutes, and you must score at least {currentChapter?.quiz_row?.passing_percentage}% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required.
                         </p>
                         {course_status && <QuizLearnerReportDeatils chapter_id={currentChapter.id} />}
                       </div>

@@ -1,7 +1,6 @@
 import { Switch } from 'antd';
 import { SunFilled, MoonFilled } from "@ant-design/icons";
 import { useEffect, useState } from 'react';
-import { ADD_THEME_VIEW, THEME_VIEW } from '../apis/apis';
 
 function ThemeSetting() {
     const [dark_theme, set_dark_theme] = useState(0);

@@ -1,8 +1,9 @@
-import { Button, Col, Row } from "antd";
+import { Button, Col, Row, Grid } from "antd";
 import { useEffect, useState, useRef } from "react";
-import { VIEW_LIVE_TEST_DETAILS, VIEW_QUIZ_SETTING } from "../../../../../apis/apis";
+import { VIEW_LIVE_TEST_DETAILS, ADD_LIVE_TEST_ANSWERS } from "../../../../../apis/apis";
 import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 
+const { useBreakpoint } = Grid;
 
 export default function LiveTestDetails({
   set_quiz_test_id,
@@ -16,6 +17,8 @@ export default function LiveTestDetails({
   display_question,
 }) {
 
+  const screens = useBreakpoint();
+
   const [loading, setLoading] = useState(false);
   const [title, set_title] = useState("");
   const [time_limit, set_time_limit] = useState(null);
@@ -27,7 +30,6 @@ export default function LiveTestDetails({
 
   const timerRef = useRef(null);
 
-  // 🔹 Fetch Quiz Settings
   useEffect(() => {
     const VIEW_API = async () => {
       setLoading(true);
@@ -37,10 +39,10 @@ export default function LiveTestDetails({
 
       if (response?.data?.status) {
         const data = response.data.data;
+
         set_title(data?.title);
         set_quiz_title(data?.title);
         set_time_limit(parseInt(data?.time_limit));
-        
 
         if (!data?.expired && !data?.test_submitted) {
           set_quiz_test_id(data?.id);
@@ -53,7 +55,6 @@ export default function LiveTestDetails({
 
         if (data?.time_limit) {
           const seconds = parseInt(data.time_limit) * 60;
-          console.log("⏳ Initial time:", seconds);
           setRemainingTime(seconds);
         }
       }
@@ -63,30 +64,54 @@ export default function LiveTestDetails({
     VIEW_API();
   }, [live_test_id]);
 
-  // 🔹 Countdown Logic
+
+  // -------------- NEW SUBMIT FUNCTION (Same as QuizTest) --------------
+  const submit_question = async () => {
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("live_test_id", atob(live_test_id));
+    FORM_DATA.append("submitted", 1);
+    FORM_DATA.append("time_spend", time_limit * 60);
+
+    try {
+      const API_RESPONSE = await ADD_LIVE_TEST_ANSWERS(FORM_DATA);
+      if (API_RESPONSE?.data?.status) {
+        alert("⏰ Time is over!");
+        window.close();
+      }
+    } catch (error) {
+      console.error("Submit failed:", error);
+    }
+  };
+
+
+  // ------------------- TIMER (Exactly like quiz) -----------------------
   useEffect(() => {
     if (!show_options) return;
     if (!time_limit) return;
     if (submit_true || expired) return;
     if (remainingTime === null) return;
 
-    console.log("✅ Timer started with", remainingTime, "seconds");
-
     clearInterval(timerRef.current);
+
+    if (remainingTime === 0) {
+      submit_question();
+      return;
+    }
+
     timerRef.current = setInterval(() => {
       setRemainingTime((prev) => {
         if (prev === null) return null;
+
         if (prev <= 1) {
           clearInterval(timerRef.current);
-          set_expired(true);
-          alert("⏰ Time is over!");
-          window.close();
+          submit_question();  // Auto submit
           return 0;
         }
+
         const total = time_limit * 60;
         const spent = total - (prev - 1);
         set_time_spend(spent);
-        console.log("⌛ Remaining:", prev - 1, " | Spent:", spent);
+
         return prev - 1;
       });
     }, 1000);
@@ -94,15 +119,15 @@ export default function LiveTestDetails({
     return () => clearInterval(timerRef.current);
   }, [show_options, time_limit, submit_true, expired, remainingTime]);
 
-  // 🔹 Format time helper
+
+  // ------------------- FORMAT TIME -------------------
   const formatTime = (seconds) => {
     if (seconds === null) return "--:--";
-    const m = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, "0");
+    const m = Math.floor(seconds / 60).toString().padStart(2, "0");
     const s = (seconds % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
   };
+
 
   return (
     <>
@@ -111,97 +136,47 @@ export default function LiveTestDetails({
       ) : (
         <>
           {time_limit ? (
-            <div
-              className="section-details section-details-right-padding"
-              style={{ minHeight: "auto" }}
-            >
-              <Row>
-                <Col span={12}>
+            <div className="section-details section-details-right-padding">
+              <Row gutter={[16, 16]}>
+                <Col xs={24} sm={12}>
                   <p>
-                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Time Limit:{" "}
-                    </span>
-                    {time_limit} min
-                    <br />
-                    {remainingTime !== null && (
-                      <span style={{ color: "orange", fontWeight: "bold" }}>
-                        Remaining Time: {formatTime(remainingTime)}
-                      </span>
-                    )}
+                    <b style={{ color: "#6ca9ff" }}>Time Limit:</b> {time_limit}
                   </p>
+
+                  {remainingTime !== null && (
+                    <p style={{ color: "orange", fontWeight: "bold" }}>
+                      Remaining Time: {formatTime(remainingTime)}
+                    </p>
+                  )}
                 </Col>
-                <Col span={12}>
-                  <div style={{ float: "right" }}>
-                   
-                    <span style={{ color: "#6ca9ff", fontWeight: "bold" }}>
-                      Total Questions:{" "}
-                    </span>
-                    {display_question}
-                  </div>
+
+                <Col xs={24} sm={12} style={{ textAlign: "right" }}>
+                  <b style={{ color: "#6ca9ff" }}>Total Questions:</b>{" "}
+                  {display_question}
                 </Col>
               </Row>
 
               {submitted ? (
-                <h3
-                  style={{
-                    padding: "50px",
-                    textAlign: "center",
-                    color: "green",
-                    border: "1px solid green",
-                    fontSize: "42px",
-                  }}
-                >
-                  Text submitted
+                <h3 style={{ padding: "40px", color: "green", border: "1px solid green", textAlign: "center" }}>
+                  Test Submitted
                   <br />
-                  <Button
-                    type="primary"
-                    size="small"
-                    onClick={() => window.close()}
-                  >
+                  <Button type="primary" size="small" onClick={() => window.close()} style={{ marginTop: 10 }}>
                     Close
                   </Button>
-                 
                 </h3>
               ) : expired ? (
-                <h3
-                  style={{
-                    padding: "50px",
-                    textAlign: "center",
-                    color: "red",
-                    border: "1px solid red",
-                    fontSize: "42px",
-                  }}
-                >
+                <h3 style={{ padding: "40px", color: "red", border: "1px solid red", textAlign: "center" }}>
                   Test Expired
                   <br />
-                  <Button
-                    type="primary"
-                    size="small"
-                    onClick={() => window.close()}
-                  >
+                  <Button type="primary" size="small" onClick={() => window.close()} style={{ marginTop: 10 }}>
                     Close
                   </Button>
                 </h3>
               ) : null}
             </div>
           ) : (
-            <h3
-              style={{
-                padding: "50px",
-                textAlign: "center",
-                color: "red",
-                fontSize: "42px",
-              }}
-            >
+            <h3 style={{ padding: 40, color: "red", textAlign: "center" }}>
               Data Empty
-              <br />
-              <Button
-                type="primary"
-                size="small"
-                onClick={() => window.close()}
-              >
-                Close
-              </Button>
             </h3>
           )}
         </>

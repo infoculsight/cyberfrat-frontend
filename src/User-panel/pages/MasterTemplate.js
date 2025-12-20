@@ -277,7 +277,7 @@ const MasterTemplate = () => {
                   >
                     <Button
                       type="text"
-                      icon={<SettingFilled />}
+                      icon={<SettingFilled style={{ fontSize: '25px' }} />}
                       style={{
                         color: balck_theme ? "#fff" : "#141414",
                       }}

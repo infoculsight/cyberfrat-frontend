@@ -1,4 +1,4 @@
-import { Col, Input, Pagination, Row, Spin } from "antd";
+import { Col, Input, Pagination, Row, Spin, Select } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import CourseBox from "../../components/CourseBox";
 import { COURSE_LIST } from "../../apis/apis";
@@ -13,14 +13,17 @@ function CompleteCourse() {
   const [current_page, set_current_page] = useState("");
   const [total_pages, set_total_pages] = useState("");
   const [total_courses, set_total_courses] = useState(0);
-  const [search_query_title, set_search_query_title] = useState("");
+  const [search_query, set_search_query] = useState("");
 
 
+  const [search_by, set_search_by] = useState("title");
 
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
-    FORM_DATA.append("course_status", 'Completed');
+    FORM_DATA.append("course_status", "Completed");
+
     const API_CALL = await COURSE_LIST(FORM_DATA);
+
     if (API_CALL?.data?.status) {
       set_courses(API_CALL.data?.data);
       set_total_courses(API_CALL.data?.total_courses);
@@ -28,7 +31,6 @@ function CompleteCourse() {
       set_total_pages(API_CALL?.data?.total_pages);
       setLoading(false);
     } else {
-      console.log("error");
       setLoading(false);
     }
   };
@@ -37,12 +39,14 @@ function CompleteCourse() {
     LIST_API();
   }, []);
 
-  const pagination_on_change = async (data) => {
+  const pagination_on_change = async (page) => {
     set_pagination_loader(true);
+
     const FORM_DATA = new FormData();
-    FORM_DATA.append("page", data);
-    FORM_DATA.append("title", search_query_title);
-    FORM_DATA.append("course_status", 'Completed');
+    FORM_DATA.append("page", page);
+    FORM_DATA.append("course_status", "Completed");
+    FORM_DATA.append(search_by, search_query);
+
     const API_CALL = await COURSE_LIST(FORM_DATA);
 
     if (API_CALL?.data?.status) {
@@ -50,50 +54,55 @@ function CompleteCourse() {
       set_current_page(API_CALL?.data?.current_page);
       set_total_pages(API_CALL?.data?.total_pages);
       set_total_courses(API_CALL?.data?.total_courses);
-      set_pagination_loader(false);
-    } else {
-      set_pagination_loader(false);
     }
+
+    set_pagination_loader(false);
   };
 
-  const fetchResultsTitle = useCallback((value) => {
-    debounce(async () => {
-      try {
-        set_search_query_title(value);
-        set_pagination_loader(true);
-        const FORM_DATA = new FormData();
-        FORM_DATA.append("token", localStorage.getItem("token"));
-        FORM_DATA.append("title", value);
-        FORM_DATA.append("course_status", 'Completed');
-        const API_CALL = await COURSE_LIST(FORM_DATA);
-        if (API_CALL?.data?.status) {
-          set_courses(API_CALL.data?.data);
-          set_current_page(API_CALL?.data?.current_page);
-          set_total_pages(API_CALL?.data?.total_pages);
-          set_total_courses(API_CALL?.data?.total_courses);
-          set_pagination_loader(false);
-        } else {
-          set_pagination_loader(false);
-        }
-      } catch (err) {
-        console.error("API Error:", err);
+
+  const debouncedSearch = useCallback(
+    debounce(async (value) => {
+      set_pagination_loader(true);
+
+      const FORM_DATA = new FormData();
+      FORM_DATA.append("course_status", "Completed");
+      FORM_DATA.append(search_by, value);
+
+      const API_CALL = await COURSE_LIST(FORM_DATA);
+
+      if (API_CALL?.data?.status) {
+        set_courses(API_CALL.data?.data);
+        set_current_page(API_CALL?.data?.current_page);
+        set_total_pages(API_CALL?.data?.total_pages);
+        set_total_courses(API_CALL?.data?.total_courses);
       }
-    }, 500)();
-  }, []);
+
+      set_pagination_loader(false);
+    }, 500),
+    [search_by]
+  );
 
   const handleInput = (e) => {
     const value = e.target.value;
-    fetchResultsTitle(value);
+    set_search_query(value);
+    debouncedSearch(value);
   };
 
   return (
     <>
-
-      <Row gutter={[16, 16]} align="middle">
+      <Row gutter={[16, 16]} align="middle" style={{ marginBottom: 10 }}>
         <Col xs={24} sm={24} md={18} lg={20}>
           <Input
-            addonBefore={<span>Title</span>}
-            placeholder="Search by title"
+            addonBefore={
+              <Select
+                value={search_by}
+                onChange={(value) => set_search_by(value)}
+              >
+                <Select.Option value="title">Title</Select.Option>
+                <Select.Option value="tag">Tags</Select.Option>
+              </Select>
+            }
+            placeholder={`Search by ${search_by}`}
             onChange={handleInput}
             size="large"
             style={{ width: "100%" }}
@@ -140,6 +149,7 @@ function CompleteCourse() {
               )}
             </Row>
           </div>
+
           <div style={{ float: "right", marginTop: "20px" }}>
             {total_pages > 0 && (
               <Pagination
@@ -152,7 +162,6 @@ function CompleteCourse() {
           </div>
         </>
       )}
-
     </>
   );
 }

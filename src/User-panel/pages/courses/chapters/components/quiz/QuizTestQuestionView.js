@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Popconfirm, Row, Tag } from "antd";
+import { Button, Card, Col, message, Popconfirm, Row, Tag, Tooltip } from "antd";
 import {
   ADD_QUIZ_ANSWER,
   List_QUIZ_QUESTION,
@@ -10,7 +10,7 @@ import QuizTestQuestionOptionsRview from "./QuizTestQuestionOptionsRview";
 import QuizResult from "./QuizResult";
 
 const QuizTestQuestionView = (props) => {
-  const { chapter_id, time_spend, set_submit_true } = props;
+  const { chapter_id, time_spend, set_submit_true, min_time_before_submit } = props;
   const chapter_id_new = atob(chapter_id);
   const [items, setItems] = useState([]);
   const [show_result, set_show_result] = useState(false);
@@ -75,6 +75,29 @@ const QuizTestQuestionView = (props) => {
     return <CulsightPageLoader />;
   }
 
+
+  const minSubmitSeconds = min_time_before_submit
+    ? parseInt(min_time_before_submit) * 60
+    : 0;
+
+  const spentSeconds = Number(time_spend) || 0;
+
+  const canSubmit = spentSeconds >= minSubmitSeconds;
+
+  const remainingMinTime = Math.max(
+    minSubmitSeconds - spentSeconds,
+    0
+  );
+
+
+  const formatTime = (seconds) => {
+    if (seconds <= 0) return "00:00";
+    const m = Math.floor(seconds / 60).toString().padStart(2, "0");
+    const s = (seconds % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  };
+
+
   return (
     <div>
       {show_result ? (
@@ -135,36 +158,52 @@ const QuizTestQuestionView = (props) => {
                     }}
                   >
                     <Popconfirm
-                      title="Submit Quiz Test"
+                      title={canSubmit ? "Submit Quiz Test" : null}
                       okText="Cancel"
                       description={
-                        <div>
-                          <p>Are you sure you want to submit the Quiz test?</p>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "center",
-                              gap: 8,
-                              marginTop: 10,
-                              flexWrap: "wrap",
-                            }}
-                          >
-                            <Button
-                              type="primary"
-                              size="small"
-                              onClick={submit_question}
-                            >
+                        canSubmit ? (
+                          <div style={{justifyContent:"center"}}>
+                            <p>Are you sure you want to submit the Quiz test?</p>
+                            <Button type="primary" size="small" onClick={submit_question}>
                               Yes
                             </Button>
+                          
                           </div>
-                        </div>
+                        ) : (
+                          <p style={{ color: "red", fontWeight: "bold", textAlign: "center" }}>
+                            ⏳ You can submit after {" "}
+                            {formatTime(remainingMinTime)}
+                          </p>
+                        )
                       }
                       showCancel={false}
                     >
-                      <Button variant="solid" color="green">
-                        Submit
-                      </Button>
+                      <Tooltip
+                        title={
+                          !canSubmit
+                            ? `⏳ Submit available after ${formatTime(remainingMinTime)}`
+                            : ""
+                        }
+                      >
+                        <Button
+                          variant="solid"
+                          color="green"
+                          onClick={() => {
+                            if (!canSubmit) {
+                              message.warning(
+                                `⏳ You can submit after ${formatTime(remainingMinTime)}`
+                              );
+                            } else {
+                             
+                            }
+                          }}
+                        >
+                          Submit
+                        </Button>
+                      </Tooltip>
+
                     </Popconfirm>
+
                     <Button
                       variant="solid"
                       color="#c9ac0ce0"
@@ -238,7 +277,7 @@ const QuizTestQuestionView = (props) => {
                   color="black"
                   disabled={current_page <= 1}
                   onClick={() => set_current_page(parseInt(current_page) - 1)}
-                  style={{marginTop:"-15px"}}
+                  style={{ marginTop: "-15px" }}
                 >
                   Previous
                 </Button>
@@ -248,33 +287,58 @@ const QuizTestQuestionView = (props) => {
                     variant="solid"
                     color="orange"
                     onClick={() => set_current_page(parseInt(current_page) + 1)}
-                   style={{marginTop:"-15px"}}
+                    style={{ marginTop: "-15px" }}
                   >
                     Next
                   </Button>
                 ) : (
                   <Popconfirm
-                    title="Submit Quiz Test"
-                    okText="Cancel"
+                    title={canSubmit ? "Submit Quiz Test" : null}
                     description={
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-                        <p>Are you sure you want to submit the Quiz test?</p>
-                        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      canSubmit ? (
+                        <div>
+                          <p>Are you sure you want to submit?</p>
                           <Button type="primary" size="small" onClick={submit_question}>
                             Yes
                           </Button>
-                          <Button variant="solid" color="green" size="small" onClick={() => set_review_view(true)}>
-                            Review
-                          </Button>
+                          <Button  style={{ marginLeft:"5px"}} variant="solid" color="green" size="small" onClick={() => set_review_view(true)}> Review </Button>
                         </div>
-                      </div>
+                      ) : (
+                        <p style={{ color: "red", fontWeight: "bold" }}>
+                          ⏳ You can submit after {" "}
+                          {formatTime(remainingMinTime)}
+                        </p>
+                      )
                     }
                     showCancel={false}
                   >
-                    <Button variant="solid" color="green"   style={{marginTop:"-15px"}}>
-                      Submit
-                    </Button>
+                    <Tooltip
+                      title={
+                        !canSubmit
+                          ? `⏳ Submit available after ${formatTime(remainingMinTime)}`
+                          : ""
+                      }
+                    >
+                      <Button
+                        variant="solid"
+                        color="green"
+                        onClick={() => {
+                          if (!canSubmit) {
+                            message.warning(
+                              `⏳ You can submit after ${formatTime(remainingMinTime)}`
+                            );
+                          } else {
+                          
+                          }
+                        }}
+                         style={{ marginTop: "-15px" }}
+                      >
+                        Submit
+                      </Button>
+                    </Tooltip>
+
                   </Popconfirm>
+
                 )}
               </div>
             </>

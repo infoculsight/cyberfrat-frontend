@@ -8,7 +8,8 @@ export default function QuizTestDetails({
   show_options,
   chapter_id,
   set_time_spend,
-  time_spend,
+  set_min_time_before_submit,
+  min_time_before_submit,
   submit_true,
   set_quiz_title,
 }) {
@@ -22,7 +23,6 @@ export default function QuizTestDetails({
   const [remainingTime, setRemainingTime] = useState(null);
   const [expired, set_expired] = useState(false);
   const [submitted, set_submitted] = useState(false);
-
   const timerRef = useRef(null);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function QuizTestDetails({
         set_quiz_title(data?.title);
         set_time_limit(parseInt(data?.time_limit));
         set_display_question(data?.display_question);
-
+        set_min_time_before_submit(data?.min_time_before_submit);
         if (!data?.expired && !data?.test_submitted) {
           set_quiz_test_id(data?.id);
         }
@@ -95,6 +95,7 @@ export default function QuizTestDetails({
     return `${m}:${s}`;
   };
 
+  
   const submit_question = async () => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("chapter_id", atob(chapter_id));
