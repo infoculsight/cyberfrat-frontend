@@ -14,7 +14,6 @@ import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 
 function DeletedCourses() {
-
   const [courses, set_courses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination_loader, set_pagination_loader] = useState(false);
@@ -91,7 +90,7 @@ function DeletedCourses() {
   };
 
   const selectBefore = (
-    <Select defaultValue="Title" disabled>
+    <Select defaultValue="Title">
       <Select.Option value="Title">Title</Select.Option>
     </Select>
   );
@@ -172,7 +171,7 @@ function DeletedCourses() {
 
         </Row>
 
-        {loading && pagination_loader ? (
+        {loading ? (
           <CulsightPageLoader />
         ) : (
           <>
