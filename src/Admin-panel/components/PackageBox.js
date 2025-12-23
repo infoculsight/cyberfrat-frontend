@@ -79,11 +79,11 @@ export default function PackageBox(props) {
             </Button>
           </Popover>,
 
-          <Popover content={"Delete course"}>
-            <Button color="red" variant="solid" size="small">
-              <DeleteFilled />
-            </Button>
-          </Popover>,
+          // <Popover content={"Delete course"}>
+          //   <Button color="red" variant="solid" size="small">
+          //     <DeleteFilled />
+          //   </Button>
+          // </Popover>,
         ]}
       >
         <Card.Meta style={{ height: "80px" }} title={props.package_name} description={props.package_tag_line} />

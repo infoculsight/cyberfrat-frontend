@@ -82,7 +82,7 @@ function BulEnrollLearners({ course_id, isModalOpen, onSuccess }) {
                     message: "Successful",
                     description: response?.data?.message,
                 });
-                setFile(null);
+                setFile([]);
                 set_access_value('');
                 if (onSuccess) onSuccess();
 

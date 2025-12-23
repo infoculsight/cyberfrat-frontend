@@ -212,7 +212,7 @@ function QuizSetting({ course_id, chapter_id }) {
               <Form.Item label="Time Limit (in Minutes)">
                 <TimePicker
                   style={{ width: "100%" }}
-                  format="HH:mm"
+                  format="HH:mm:ss"
                   value={time_limit ? dayjs().startOf("day").add(time_limit, "minute") : null}
                   onChange={(time) => {
                     if (time) {
@@ -221,7 +221,26 @@ function QuizSetting({ course_id, chapter_id }) {
                       set_time_limit("");
                     }
                   }}
+                  panelRender={(panel) => (
+                    <div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-around",
+                          fontWeight: 600,
+                          padding: "8px 0",
+                          borderBottom: "1px solid #f0f0f0",
+                        }}
+                      >
+                        <span>HH</span>
+                        <span>MM</span>
+                        <span>SS</span>
+                      </div>
+                      {panel}
+                    </div>
+                  )}
                 />
+
               </Form.Item>
               <Form.Item label="Number Of Retake">
                 <Input

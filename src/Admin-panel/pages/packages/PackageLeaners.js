@@ -107,7 +107,6 @@ function PackageLeaners(props) {
         set_total_pages(API_CALL?.data?.total_pages);
         set_total_learners(API_CALL?.data?.total_learners);
       } else {
-        console.log("error");
       }
       setLoader(false);
     };
@@ -303,9 +302,10 @@ function PackageLeaners(props) {
       if (response?.data?.status) {
         notification.success({
           message: "Successful",
-          description: response?.data?.message,
+          description:response?.data?.message ,
         });
         set_is_model_open(false);
+        set_file([])
         setLoader(false)
       } else {
         set_errors(response?.data?.errors);
