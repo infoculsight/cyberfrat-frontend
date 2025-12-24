@@ -130,10 +130,10 @@ const LiveTestQuestionView = (props) => {
 
                           <LiveTestQuestionOptionsRview
                             live_test_id={live_test_id_new}
-                            question_id={question_id}
+                            question_id={item.id}
                             options={JSON.parse(item.option_details)}
                             setOptions={set_option_details}
-                            optionChoice={item.question_type}
+                            optionChoice={item.type}
                             submit_question={submit_question}
                           />
                         </div>

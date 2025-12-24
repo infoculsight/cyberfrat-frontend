@@ -5,6 +5,7 @@ import { formatToIST } from "../../../helper/CommonHelper";
 import { LIST_LIVE_TESTS, VIEW_LIVE_TEST_DETAILS } from "../../apis/apis";
 import { useCallback, useEffect, useState } from "react";
 import debounce from "lodash.debounce";
+import CulsightPageLoader from "../../components/CulsightPageLoader";
 
 function ListLiveTest() {
   const navigate = useNavigate();
@@ -236,9 +237,7 @@ function ListLiveTest() {
         {/* Render Table for Desktop, Tiles for Mobile */}
         {!isMobile ? (
           loader ? (
-            <div style={{ textAlign: "center", padding: "50px 0" }}>
-              <Spin size="large" />
-            </div>
+             <CulsightPageLoader />
           ) : (
             <Table
               columns={columns}
