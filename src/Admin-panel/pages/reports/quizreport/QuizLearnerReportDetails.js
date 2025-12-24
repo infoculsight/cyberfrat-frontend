@@ -33,6 +33,19 @@ function QuizLearnerReportDetails() {
     LIST_API();
   }, [chapter_id,learner_id]);
 
+      const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60); // round down
+
+    const h = hrs > 0 ? `${String(hrs).padStart(2, "0")}h ` : "";
+    const m = mins > 0 ? `${String(mins).padStart(2, "0")}m ` : "";
+    const s = `${String(secs).padStart(2, "0")}s`;
+
+    return h + m + s;
+  };
+
+
   return (
     <>
       {loader ? (
@@ -103,7 +116,7 @@ function QuizLearnerReportDetails() {
                       <b>Right Answer:</b> {item.correct_answer}
                     </div>
                     <div style={{ marginTop: 8, fontSize: "12px", color: "#888" }}>
-                      ⏱ Time Spent: {item.time_spend}s
+                      ⏱ Time Spent: {formatTime(item.time_spend)}
                     </div>
                   </List.Item>
                 )}

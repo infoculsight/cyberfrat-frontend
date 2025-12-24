@@ -93,6 +93,7 @@ export default function Chapters() {
   );
 
  const change_status = async (id) => {
+  setLoading(true)
     const FORM_DATA = new FormData();
     FORM_DATA.append("id", id);
     try {
@@ -102,10 +103,10 @@ export default function Chapters() {
           message: "Successful",
           description: response?.data?.message,
         });
-
+       setLoading(false);
+       fetchChapterList();
       } else {
-        // setLoader(false);
-
+        //  setLoading(false);
       }
     } catch (error) {
         console.log(error)

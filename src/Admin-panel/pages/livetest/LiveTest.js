@@ -16,12 +16,16 @@ function LiveTest() {
   const [total_live_test, set_total_live_test] = useState(0);
   const [pagination_loader, set_pagination_loader] = useState(false);
   const [search_query_value, set_search_query_value] = useState("");
+  const [page_size, set_page_size] = useState(10); // default 10 rows per page
+
 
   // Fetch List API
   const LIST_API = async () => {
     setLoader(true);
     try {
       const FORM_DATA = new FormData();
+      FORM_DATA.append("per_page", page_size);
+
       const API_CALL = await LIST_LIVE_TESTS(FORM_DATA);
       if (API_CALL?.data?.status) {
         set_table_data(API_CALL.data.data);
@@ -47,6 +51,7 @@ function LiveTest() {
       try {
         set_pagination_loader(true);
         const FORM_DATA = new FormData();
+        FORM_DATA.append("per_page", page_size);
         FORM_DATA.append("title", search_value);
         const API_CALL = await LIST_LIVE_TESTS(FORM_DATA);
         if (API_CALL?.data?.status) {
@@ -65,15 +70,16 @@ function LiveTest() {
   const handleInput = (e) => {
     const value = e.target.value;
     set_search_query_value(value);
-    debouncedSearch(value);
+    debouncedSearch(value);  
   };
 
 
-  const pagination_on_change = async (page) => {
+  const pagination_on_change = async (page, size = page_size) => {
     set_pagination_loader(true);
     try {
       const FORM_DATA = new FormData();
       FORM_DATA.append("page", page);
+      FORM_DATA.append("per_page", size);
       FORM_DATA.append("title", search_query_value || "");
       const API_CALL = await LIST_LIVE_TESTS(FORM_DATA);
       if (API_CALL?.data?.status) {
@@ -120,11 +126,14 @@ function LiveTest() {
           <Button
             color="red"
             variant="solid"
-            onClick={() =>
+            onClick={() => {
+
+              localStorage.setItem("live_test_title", record.title);
+
               navigate("/assign-learner-live-test/" + btoa(record.id), {
                 state: { title: record.title },
-              })
-            }
+              });
+            }}
           >
             learners
           </Button>
@@ -176,10 +185,25 @@ function LiveTest() {
           <div style={{ float: "right", marginTop: "20px" }}>
             <Pagination
               current={current_page}
-              total={total_pages}
-              pageSize={10}
+              total={total_pages * 10}
+              pageSize={page_size}
+              showSizeChanger
+              pageSizeOptions={["10", "20", "50", "100"]}
               onChange={pagination_on_change}
+              onShowSizeChange={(current, size) => {
+                set_page_size(size);
+                pagination_on_change(1, size); // FIXED
+              }}
+              style={{ display: "inline-block" }}
+              className="no-search-pagination"
             />
+            <style>
+              {`
+                             .no-search-pagination .ant-select-selection-search-input {
+                               display: none !important;
+                             }
+                           `}
+            </style>
           </div>
         </>}
 

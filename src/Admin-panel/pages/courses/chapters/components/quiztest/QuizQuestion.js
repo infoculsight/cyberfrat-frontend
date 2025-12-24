@@ -39,7 +39,7 @@ const QuizQuestion = (props) => {
   const [addQuestionView, setAddQuestionView] = useState(false);
   const [current_page, set_current_page] = useState("");
   const [total_pages, set_total_pages] = useState("");
-  const [total_questions,set_total_questions] = useState("")
+  const [total_questions, set_total_questions] = useState("")
   const [errors, set_errors] = useState("");
   const [file, set_file] = useState([]);
   const [is_model_open, set_is_model_open] = useState(false);
@@ -93,8 +93,8 @@ const QuizQuestion = (props) => {
       if (LIST_API_RESPONSE?.data?.status) {
         const response_data = LIST_API_RESPONSE?.data?.data;
         set_current_page(LIST_API_RESPONSE?.data?.current_page || 1);
-          set_total_pages(LIST_API_RESPONSE.data.total_pages || 0);
-          set_total_questions(LIST_API_RESPONSE.data.total_questions || 0);
+        set_total_pages(LIST_API_RESPONSE.data.total_pages || 0);
+        set_total_questions(LIST_API_RESPONSE.data.total_questions || 0);
         setItems(response_data);
         // if (response_data.length > 0) {
         //   setActivePanelKey(response_data[response_data.length - 1]?.id);
@@ -165,9 +165,9 @@ const QuizQuestion = (props) => {
   //   }
   // };
   const handleQuestionAdded = async () => {
-  setAddQuestionView(false);
-  await refetchData(true); // Refresh list and pagination data
-};
+    setAddQuestionView(false);
+    await refetchData(true); // Refresh list and pagination data
+  };
 
 
   const fetchResults = useCallback(
@@ -207,61 +207,61 @@ const QuizQuestion = (props) => {
     </Select>
   );
 
-    const handleBulkUpload = async () => {
-      set_page_loader(true)
-   const formData = new FormData();
-  formData.append("chapter_id", atob(props.chapter_id));
-  formData.append("file", file[0]);
-      try {
-        const response = await BULK_QUIZ_QUESTION(formData);
-        if (response?.data?.status) {
-            notification.success({
-                          message: "Successful",
-                          description: response?.data?.message,
-                        });
-          set_is_model_open(false);
-          set_page_loader(false)
-  
-        } else {
-          set_errors(response?.data?.errors);
-        }
-      } catch (error) {
-        message.error(
-          "Server Error: " + (error?.response?.data?.message || "Unknown error")
-        );
-      }
-    };
-
-
-    
- const DOWNLOAD_TEMPLATE = async () => {
-      try {
-        const response = await BULK_IMPORT_QUIZ_QUESITON_TEMPLATE();
-   
-        const blob = new Blob([response.data], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-   
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-   
-        link.href = url;
-        link.download = "bulk_import_quiz_questions_template.csv"; 
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-   
+  const handleBulkUpload = async () => {
+    set_page_loader(true)
+    const formData = new FormData();
+    formData.append("chapter_id", atob(props.chapter_id));
+    formData.append("file", file[0]);
+    try {
+      const response = await BULK_QUIZ_QUESTION(formData);
+      if (response?.data?.status) {
         notification.success({
-          message: "Template Downloaded",
-          description: "Excel template downloaded successfully",
+          message: "Successful",
+          description: response?.data?.message,
         });
-      } catch (error) {
-        notification.error({
-          message: "Download Failed",
-          description: "Something went wrong",
-        });
+        set_is_model_open(false);
+        set_page_loader(false)
+        set_file([])
+      } else {
+        set_errors(response?.data?.errors);
       }
-    };
+    } catch (error) {
+      message.error(
+        "Server Error: " + (error?.response?.data?.message || "Unknown error")
+      );
+    }
+  };
+
+
+
+  const DOWNLOAD_TEMPLATE = async () => {
+    try {
+      const response = await BULK_IMPORT_QUIZ_QUESITON_TEMPLATE();
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "bulk_import_quiz_questions_template.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      notification.success({
+        message: "Template Downloaded",
+        description: "Excel template downloaded successfully",
+      });
+    } catch (error) {
+      notification.error({
+        message: "Download Failed",
+        description: "Something went wrong",
+      });
+    }
+  };
   return (
     <div>
       {page_loader ? (
@@ -279,7 +279,7 @@ const QuizQuestion = (props) => {
               {addQuestionView ? "Add Question" : "Question List"}
             </Divider>
             <div style={{ position: "absolute", right: "0px", top: "0px" }}>
-                <Button
+              <Button
                 variant="solid"
                 color="green"
                 size="small"
@@ -290,7 +290,7 @@ const QuizQuestion = (props) => {
                 }}
                 onClick={DOWNLOAD_TEMPLATE}
               >
-               Download Template
+                Download Template
               </Button>
               <Button
                 type="primary"
@@ -390,47 +390,47 @@ const QuizQuestion = (props) => {
         </>
       )}
 
-      
-        <Modal
-          title={<span>Add Questions</span>}
-          open={is_model_open}
-          onCancel={handleCancel}
-          footer={[
-            <Button color="green" variant="solid" onClick={handleBulkUpload} style={{ width: "100%" }}>
-              Add
-            </Button>,
-          ]}
-          width={400}
-        >
-          <div style={{ width: "100%" }}>
-            <Upload
-              beforeUpload={beforeUpload}
-              fileList={file}
-              onRemove={() => set_file([])}
-              accept=".csv"
-              maxCount={1}
-              multiple={false}
-              style={{ width: "100%" }} // optional
-            >
-              <div style={{ width: "100%" }}>
-                <Button type="primary" icon={<UploadOutlined />} block>
-                  Upload File
-                </Button>
-              </div>
-            </Upload>
-            {errors?.file ? (
-              <>
-                <span style={{ color: "red" }}>
-                  {errors?.file}
-                </span>
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
-        </Modal>
 
-        
+      <Modal
+        title={<span>Add Questions</span>}
+        open={is_model_open}
+        onCancel={handleCancel}
+        footer={[
+          <Button color="green" variant="solid" onClick={handleBulkUpload} style={{ width: "100%" }}>
+            Add
+          </Button>,
+        ]}
+        width={400}
+      >
+        <div style={{ width: "100%" }}>
+          <Upload
+            beforeUpload={beforeUpload}
+            fileList={file}
+            onRemove={() => set_file([])}
+            accept=".csv"
+            maxCount={1}
+            multiple={false}
+            style={{ width: "100%" }} // optional
+          >
+            <div style={{ width: "100%" }}>
+              <Button type="primary" icon={<UploadOutlined />} block>
+                Upload File
+              </Button>
+            </div>
+          </Upload>
+          {errors?.file ? (
+            <>
+              <span style={{ color: "red" }}>
+                {errors?.file}
+              </span>
+            </>
+          ) : (
+            <></>
+          )}
+        </div>
+      </Modal>
+
+
     </div>
   );
 };

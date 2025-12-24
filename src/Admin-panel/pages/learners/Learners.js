@@ -375,7 +375,7 @@ const handlePasswordSubmit = async () => {
         });
         set_is_model_open(false);
         setLoader(false)
-
+        set_file([])
       } else {
         set_errors(response?.data?.errors);
       }

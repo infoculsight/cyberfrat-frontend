@@ -12,12 +12,13 @@ import {
   Modal,
   message,
   App,
+  Upload,
 } from "antd";
 import { Option } from "antd/es/mentions";
-import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
+import { LeftOutlined, LoadingOutlined, UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { LIST_LIVE_TEST_LEARNERS, LIST_LIVE_TEST_LEARNERS_STATUS } from "../../apis/apis";
+import { BULK_ASSIGN_LIVE_TEST, LIST_LIVE_TEST_LEARNERS, LIST_LIVE_TEST_LEARNERS_STATUS } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import BulkInrollLearnersToLiveTest from "./BulkInrollLearnersToLiveTest";
@@ -27,8 +28,9 @@ function LiveTestLearners(props) {
   const { notification } = App.useApp();
   const Navigate = useNavigate();
   const location = useLocation();
-  const { live_test_id } = useParams(); // Encoded ID from URL
-  const { title } = location.state || {};
+  const { live_test_id } = useParams();
+  const title =
+    location.state?.title || localStorage.getItem("live_test_title");
 
 
   const [loader, setLoader] = useState(true);
@@ -38,7 +40,6 @@ function LiveTestLearners(props) {
   const [total_pages, set_total_pages] = useState("");
   const [total_learners, set_total_learners] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isModalOpen, setisModalOpen] = useState(false);
   const [search_paceholder, set_search_paceholder] = useState("Search by name");
   const [search_query_name, set_search_query_name] = useState("");
   const [search_query_email, set_search_query_email] = useState("");
@@ -47,6 +48,32 @@ function LiveTestLearners(props) {
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
   const [page_size, set_page_size] = useState(10);
+  const [file, set_file] = useState([]);
+  const [is_model_open, set_is_model_open] = useState(false);
+  const [errors, set_errors] = useState("");
+
+  const showbulkModal = () => {
+    set_is_model_open(true);
+  };
+
+  const handleCancel = () => {
+    set_is_model_open(false);
+    set_file([])
+  };
+
+  const beforeUpload = (file) => {
+    const isCSV = file.type === 'text/csv';
+    if (!isCSV) {
+      set_errors({ file: "Only CSV files are allowed!" });
+      message.error("Please upload a valid CSV file.");
+      return Upload.LIST_IGNORE;
+    }
+
+    set_file([file]);
+    set_errors("");
+    message.success(` ${file.name}`);
+    return false;
+  };
 
 
   const handleBack = () => {
@@ -65,7 +92,7 @@ function LiveTestLearners(props) {
   };
 
 
-  const CancelEnrollModal = () => setisModalOpen(false);
+  // const CancelEnrollModal = () => setisModalOpen(false);
 
 
   const handleModalCancel = async () => {
@@ -73,7 +100,7 @@ function LiveTestLearners(props) {
     setLoader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("live_test_id", atob(live_test_id));
-     FORM_DATA.append("page_size", page_size);
+    FORM_DATA.append("page_size", page_size);
     const API_CALL = await LIST_LIVE_TEST_LEARNERS(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.data);
@@ -86,6 +113,7 @@ function LiveTestLearners(props) {
 
 
   useEffect(() => {
+
     const LIST_API = async () => {
       const FORM_DATA = new FormData();
       FORM_DATA.append("live_test_id", atob(live_test_id));
@@ -100,7 +128,7 @@ function LiveTestLearners(props) {
       setLoader(false);
     };
     LIST_API();
-  }, [live_test_id,page_size]);
+  }, [live_test_id, page_size]);
 
 
   const selectBefore = (
@@ -149,7 +177,7 @@ function LiveTestLearners(props) {
       dataIndex: "email",
       render: (text, record) => <span>{record.email}</span>,
     },
-  
+
     // {
     //   title: "Course Status",
     //   key: "status",
@@ -173,16 +201,16 @@ function LiveTestLearners(props) {
               setStatusModalVisible(true);
             }}
           >
-           Unassign
+            Unassign
           </Button>
         </Space>
       ),
     },
- 
+
   ];
 
 
-  const pagination_on_change = async (page,size = page_size) => {
+  const pagination_on_change = async (page, size = page_size) => {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", page);
@@ -257,22 +285,51 @@ function LiveTestLearners(props) {
     }
   };
 
+  const handleBulkUpload = async () => {
+    setLoader(true)
+    const formData = new FormData();
+    formData.append("live_test_id", atob(live_test_id));
+    formData.append("file", file[0]);
+
+    try {
+      const response = await BULK_ASSIGN_LIVE_TEST(formData);
+      if (response?.data?.status) {
+        notification.success({
+          message: "Successful",
+          description: response?.data?.message,
+        });
+        set_is_model_open(false);
+        setLoader(false)
+        set_file([])
+      } else {
+        notification.error({
+          message: "Error",
+          description: response?.data?.message,
+        });
+      }
+    } catch (error) {
+      message.error(
+        "Server Error: " + (error?.response?.data?.message || "Unknown error")
+      );
+    }
+  };
+
   return (
     <div className="lms-body">
       <Card>
-          <Row>
-            <Col span={12}>
-              <h2><span  style={{ cursor: "pointer" }}
+        <Row>
+          <Col span={12}>
+            <h2><span style={{ cursor: "pointer" }}
               onClick={handleBack}><LeftOutlined /></span> {title} - Learners</h2>
-            </Col>
-           
-          </Row>
+          </Col>
+
+        </Row>
 
 
 
         <Row gutter={[16, 16]}>
           {/* Search Input */}
-          <Col span={12}>
+          <Col span={16}>
             <Input
               addonBefore={selectBefore}
               placeholder={search_paceholder}
@@ -281,25 +338,22 @@ function LiveTestLearners(props) {
             />
           </Col>
 
-          {/* Bulk Enroll Button */}
-          {/* <Col xs={24} sm={12} md={4} lg={4}>
+          <Col xs={24} sm={24} md={4} lg={4} xl={4}>
             <Button
               type="primary"
+              className="responsive-btn"
               size="large"
-              icon={<ArrowUpOutlined />}
-              style={{ width: "100%" }}
-              onClick={showEnrollModal}
+              onClick={showbulkModal} onCancel={handleCancel}
             >
-              Bulk Enroll
-            </Button>
-          </Col> */}
+              Bulk Assign Learners
+            </Button></Col>
 
           {/* Assign Learners Button */}
-          <Col span={12}>
+          <Col xs={24} sm={24} md={4} lg={4} xl={4}>
             <Button
               type="primary"
               size="large"
-              style={{float:"right" }}
+
               onClick={showModal}
             >
               Assign Learners
@@ -326,28 +380,28 @@ function LiveTestLearners(props) {
 
             {total_pages > 0 ? <>
               <div style={{ float: "right", marginTop: "20px" }}>
-                         <Pagination
-                           current={current_page}
-                           total={total_learners}
-                           pageSize={page_size}
-                           showSizeChanger
-                           pageSizeOptions={["10", "20", "50", "100"]}
-                           onChange={pagination_on_change}
-                           onShowSizeChange={(current, size) => {
-                             set_page_size(size);
-                             pagination_on_change(1, size); // FIXED
-                           }}
-                           style={{ display: "inline-block" }}
-                           className="no-search-pagination"
-                         />
-                         <style>
-                           {`
+                <Pagination
+                  current={current_page}
+                  total={total_learners}
+                  pageSize={page_size}
+                  showSizeChanger
+                  pageSizeOptions={["10", "20", "50", "100"]}
+                  onChange={pagination_on_change}
+                  onShowSizeChange={(current, size) => {
+                    set_page_size(size);
+                    pagination_on_change(1, size); // FIXED
+                  }}
+                  style={{ display: "inline-block" }}
+                  className="no-search-pagination"
+                />
+                <style>
+                  {`
                              .no-search-pagination .ant-select-selection-search-input {
                                display: none !important;
                              }
                            `}
-                         </style>
-                       </div>
+                </style>
+              </div>
             </> : <>
               <div style={{ textAlign: "center", color: "red" }}>
                 <h2>No Learners Found</h2>
@@ -417,7 +471,7 @@ function LiveTestLearners(props) {
         </p>
       </Modal>
 
-      <Modal
+      {/* <Modal
         title="Bulk Enroll Learners"
         open={isModalOpen}
         onCancel={CancelEnrollModal}
@@ -425,6 +479,45 @@ function LiveTestLearners(props) {
         width={800}
       >
         <BulkInrollLearnersToLiveTest live_test_id={live_test_id}/>
+      </Modal> */}
+
+
+      <Modal
+        title={<span>Bulk Assign Learners</span>}
+        open={is_model_open}
+        onCancel={handleCancel}
+        footer={[
+          <Button color="green" variant="solid" onClick={handleBulkUpload} style={{ width: "100%" }}>
+            Add
+          </Button>,
+        ]}
+        width={400}
+        destroyOnClose
+      >
+        <div style={{ width: "100%" }}>
+          <Upload
+            beforeUpload={beforeUpload}
+            fileList={file}
+            onRemove={() => set_file([])}
+            accept=".csv"
+            multiple={false}
+            maxCount={1}
+            style={{ width: "100%" }}
+          >
+            <Button type="primary" icon={<UploadOutlined />} block>
+              Upload File
+            </Button>
+          </Upload>
+          {errors?.file ? (
+            <>
+              <span style={{ color: "red" }}>
+                {errors?.file}
+              </span>
+            </>
+          ) : (
+            <></>
+          )}
+        </div>
       </Modal>
 
     </div>
