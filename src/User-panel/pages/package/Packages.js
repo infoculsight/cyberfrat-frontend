@@ -120,6 +120,8 @@ function Packages() {
                             package_image={items?.thumbnail}
                             package_tag_line={items?.tag_line}
                             assign={true}
+                            expired = {items?.expired}
+                            validity={items?.valid_till}
                           />
                         </Col>
                       ))

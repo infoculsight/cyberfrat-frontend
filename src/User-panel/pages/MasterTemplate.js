@@ -163,7 +163,10 @@ const MasterTemplate = () => {
               }}
             >
               <div className="menu-logo" style={{ margin: "20px 0", textAlign: "center" }}>
-                <img alt="logo" src={Logo} style={{ width: "120px" }} />
+                <img alt="logo" src={Logo} style={{ width: "120px", cursor: "pointer" }} onClick={() =>
+                  window.open("https://cyberfrat.com/", "_blank")
+                }
+                />
               </div>
               <Menu
                 className="gold-menu"
@@ -185,8 +188,10 @@ const MasterTemplate = () => {
               collapsedWidth={isMobile ? 0 : 80}
               style={balck_theme ? { background: "#141414" } : { background: "#fff" }}
             >
-              <div className="menu-logo" style={{ marginTop: "20px" }}>
-                <img alt="logo" src={Logo} />
+              <div className="menu-logo" style={{ marginTop: "20px",cursor:"pointer" }}>
+                <img alt="logo" src={Logo} onClick={() =>
+                  window.open("https://cyberfrat.com/", "_blank")
+                } />
               </div>
 
               <Menu
