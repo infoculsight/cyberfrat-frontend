@@ -212,7 +212,7 @@ function QuizSetting({ course_id, chapter_id }) {
               <Form.Item label="Time Limit (in Minutes)">
                 <TimePicker
                   style={{ width: "100%" }}
-                  format="HH:mm:ss"
+                  format="HH:mm"
                   value={time_limit ? dayjs().startOf("day").add(time_limit, "minute") : null}
                   onChange={(time) => {
                     if (time) {
@@ -234,7 +234,7 @@ function QuizSetting({ course_id, chapter_id }) {
                       >
                         <span>HH</span>
                         <span>MM</span>
-                        <span>SS</span>
+                      
                       </div>
                       {panel}
                     </div>
@@ -297,21 +297,45 @@ function QuizSetting({ course_id, chapter_id }) {
                   </span>
                 )}
               </Form.Item>
-
               <Form.Item label="Minimum Time Before Submit">
                 <TimePicker
                   style={{ width: "100%" }}
                   format="HH:mm"
-                  value={min_time_before_submit ? dayjs().startOf("day").add(time_limit, "minute") : null}
+                  value={
+                    min_time_before_submit
+                      ? dayjs().startOf("day").add(min_time_before_submit, "minute")
+                      : null
+                  }
                   onChange={(time) => {
                     if (time) {
-                      set_min_time_before_submit(time.diff(dayjs().startOf("day"), "minute"));
+                      set_min_time_before_submit(
+                        time.diff(dayjs().startOf("day"), "minute")
+                      );
                     } else {
                       set_min_time_before_submit("");
                     }
                   }}
+                  panelRender={(panel) => (
+                    <div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-around",
+                          fontWeight: 600,
+                          padding: "8px 0",
+                          borderBottom: "1px solid #f0f0f0",
+                        }}
+                      >
+                        <span>HH</span>
+                        <span>MM</span>
+                        <span>SS</span>
+                      </div>
+                      {panel}
+                    </div>
+                  )}
                 />
               </Form.Item>
+
 
               {/* Advanced Setting Toggle */}
               <h3

@@ -189,7 +189,7 @@ function AddLiveTest() {
                                     <Form.Item label="Time Limit">
                                        <TimePicker
                                                         style={{ width: "100%" }}
-                                                        format="HH:mm:ss"
+                                                        format="HH:mm"
                                                         value={time_limit ? dayjs().startOf("day").add(time_limit, "minute") : null}
                                                         onChange={(time) => {
                                                           if (time) {
@@ -211,7 +211,7 @@ function AddLiveTest() {
                                                             >
                                                               <span>HH</span>
                                                               <span>MM</span>
-                                                              <span>SS</span>
+                                                          
                                                             </div>
                                                             {panel}
                                                           </div>
