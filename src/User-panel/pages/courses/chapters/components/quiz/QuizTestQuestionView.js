@@ -41,6 +41,8 @@ const QuizTestQuestionView = (props) => {
         set_total_questions(response_data?.total_questions);
         set_question_type(response_data?.data[0]?.type);
         set_review_questions(response_data?.review_questions);
+
+        
         const options = response_data?.data[0]?.option_details
           ? JSON.parse(response_data?.data[0]?.option_details).map((opt) => ({
             ...opt,
@@ -75,6 +77,7 @@ const QuizTestQuestionView = (props) => {
     return <CulsightPageLoader />;
   }
 
+  
 
   const minSubmitSeconds = min_time_before_submit
     ? parseInt(min_time_before_submit) * 60
@@ -139,10 +142,10 @@ const QuizTestQuestionView = (props) => {
                       <h3>{`Ques ${index + 1}. ${item?.question_text}`}</h3>
                       <QuizTestQuestionOptionsRview
                         chapter_id={chapter_id_new}
-                        question_id={question_id}
+                        question_id={item.id}
                         options={JSON.parse(item.option_details)}
                         setOptions={set_option_details}
-                        optionChoice={question_type}
+                        optionChoice={item.type}
                       />
                     </div>
                   ))}

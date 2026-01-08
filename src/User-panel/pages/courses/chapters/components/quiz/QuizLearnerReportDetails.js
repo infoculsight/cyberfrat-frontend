@@ -33,10 +33,25 @@ function QuizLearnerReportDetails(props) {
   }, [props.chapter_id]);
 
 
-  const right_label = (option_details) => {
-    const correctOption = option_details.find(opt => opt.value === true);
-    return correctOption?.label
-  }
+const right_label = (option_details = []) => {
+  return option_details
+    .filter(opt => opt.value === true)
+    .map(opt => opt.label)
+    .join(", ");
+};
+
+
+    const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60); // round down
+
+    const h = hrs > 0 ? `${String(hrs).padStart(2, "0")}h ` : "";
+    const m = mins > 0 ? `${String(mins).padStart(2, "0")}m ` : "";
+    const s = `${String(secs).padStart(2, "0")}s`;
+
+    return h + m + s;
+  };
   return (
     <>
       {loader ? (
@@ -113,9 +128,9 @@ function QuizLearnerReportDetails(props) {
                               color: "#888",
                             }}
                           >
-                            ⏱ Time Spent: {item.time_spend}s
+                            ⏱ Time Spent: {formatTime(item.time_spend)}
                           </div>
-                        {!item?.is_correct &&   <span style={{color:"green"}}><b>Right Answer:</b> {right_label(item.right_option_details)}</span>}
+                        {<span style={{color:"green"}}><b>Right Answer:</b> {right_label(item.right_option_details)}</span>}
                         </List.Item>
                       )}
                     />
