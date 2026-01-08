@@ -119,7 +119,8 @@ function AddNotification() {
                   { value: 'course_expire', label: 'Course Expire' },
                   {value:'certificate_issued', label:"Certificate Issued"},
                   {value:'quiz_uploaded',label:"Quiz Uploaded"} ,
-                  {value:'livetest_assign',label:"Live Test Assign"}
+                  {value:'livetest_assign',label:"Live Test Assign"},
+                  {value:'profile_update',label:"Profile Update"},
                 ].filter(opt => available_dropdown.includes(opt.value))}
               />
               {errors?.notification_type && (
