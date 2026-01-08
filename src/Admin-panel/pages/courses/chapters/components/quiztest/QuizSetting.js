@@ -328,7 +328,7 @@ function QuizSetting({ course_id, chapter_id }) {
                       >
                         <span>HH</span>
                         <span>MM</span>
-                        <span>SS</span>
+                        
                       </div>
                       {panel}
                     </div>
