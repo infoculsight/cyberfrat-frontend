@@ -240,7 +240,7 @@ try {
 
   return (
     <div className="lms-body" style={{ padding: "10px" }}>
-      <Card>
+      {/* <Card> */}
         <Row gutter={[16, 16]}>
           <Col span={24}>
             <Card>
@@ -409,7 +409,7 @@ try {
             </Form.Item>
           </Form>
         </Modal>
-      </Card>
+      {/* </Card> */}
     </div>
   );
 }

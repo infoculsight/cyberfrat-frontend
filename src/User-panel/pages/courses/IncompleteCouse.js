@@ -130,6 +130,9 @@ function IncompleteCourse() {
                       course_image={items?.thumbnail}
                       progress={items.progress}
                       course_ribbon={items.ribbon}
+                      expired={items?.expired}
+                      validity={items?.valid_till}
+                      show_validity={items?.show_validity_to_learner}
                     />
                   </Col>
                 ))

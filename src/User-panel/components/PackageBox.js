@@ -2,7 +2,6 @@ import { Card, Spin, Tag, Typography, Modal } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoadingOutlined } from "@ant-design/icons";
-import { formatToIST } from "../../helper/CommonHelper";
 
 const { Text } = Typography;
 
@@ -22,6 +21,22 @@ export default function PackageBox(props) {
         : Navigate("/unassign-courses/" + props.id);
     }
   };
+
+function formatDateTime(isoDate) {
+  const date = new Date(isoDate);
+
+  return date.toLocaleString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+  });
+}
+
+
 
   return (
     <div>
@@ -136,7 +151,7 @@ export default function PackageBox(props) {
             <Text
               ellipsis={{ tooltip: props.package_tag_line }}
               style={{
-                fontSize: 12,
+                fontSize: 14,
                 display: "block",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
@@ -146,19 +161,16 @@ export default function PackageBox(props) {
               {props.package_tag_line}
             </Text>
 
-              {/* {props.validity && ( */}
-                <Text
+                <span
                   style={{
                     fontSize: 14,
                     fontWeight: "500",
                     color:"Gold",
-                    display: "block",
                     marginTop: 2,
                   }}
                 >
-                 validity Till = {formatToIST(props.validity)}
-                </Text>
-              {/* )} */}
+                 Valid Till = 
+                </span>{" "}{formatDateTime(props.validity)}
               </div>
           }
         />

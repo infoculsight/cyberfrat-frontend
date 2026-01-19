@@ -41,16 +41,18 @@ function Packages() {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", data);
-    FORM_DATA.append("token", localStorage.getItem("token"));
     FORM_DATA.append("name", search_query_name);
     const API_CALL = await LIST_PACKAGE(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_packages(API_CALL.data?.data);
       set_current_page(API_CALL?.data?.current_page);
       set_total_pages(API_CALL?.data?.total_pages);
-      set_total_packages(API_CALL?.data?.total_courses);
+      set_total_packages(API_CALL?.data?.total_packages);
+      set_pagination_loader(false);
+    }else {
+       set_pagination_loader(false);
     }
-    set_pagination_loader(false);
+  
   };
 
   const fetchResultsname = useCallback((value) => {

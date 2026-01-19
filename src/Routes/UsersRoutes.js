@@ -19,6 +19,8 @@ import LiveTest from "../User-panel/pages/courses/chapters/components/livetest/L
 import LiveTestResult from "../User-panel/pages/livetest/LiveTestResult";
 import UnAssignCourses from "../User-panel/pages/all-packages/UnAssignCourses";
 import UnAssignCourseDetails from "../User-panel/pages/all-packages/UnAssignCourseDetails";
+import Announcements from "../User-panel/pages/annoucements/Announcements";
+import ViewAnnouncement from "../User-panel/pages/annoucements/ViewAnnouncement";
 
 function UsersRoutes() {
   return (
@@ -42,6 +44,8 @@ function UsersRoutes() {
         <Route path="list-live-test" element ={<ListLiveTest />} />
         <Route path="live-test-result/:live_test_id" element ={<LiveTestResult />} />
         <Route path="/quiz-result/:chapter_id" element={<QuizResult />} />
+        <Route path="announcements" element={<Announcements />} />
+        <Route path="view-announcements/:id" element={<ViewAnnouncement />} />
         
         <Route path="*" element={<NotFound />} />
       </Route>

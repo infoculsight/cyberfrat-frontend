@@ -5,6 +5,7 @@ import {
   HomeOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  NotificationFilled,
   SettingFilled,
   SnippetsOutlined,
   UploadOutlined
@@ -59,6 +60,8 @@ const MasterTemplate = () => {
       "/all-packages": { selected: "4", open: "4" },
       "/account": { selected: "7", open: "7" },
       "/list-live-test": { selected: "8", open: "8" },
+      "/announcements": { selected: "9", open: "9" },
+      "/view-announcements": { selected: "9", open: "9" },
     };
 
     const path = location.pathname;
@@ -83,7 +86,8 @@ const MasterTemplate = () => {
       3: "packages",
       4: "all-packages",
       7: "/account",
-      8: "/list-live-test"
+      8: "/list-live-test",
+      9: "/announcements",
     };
 
     const route = keyToPath[key];
@@ -137,6 +141,11 @@ const MasterTemplate = () => {
       key: "7",
       icon: <SettingFilled />,
       label: "Account",
+    },
+      {
+      key: "9",
+      icon: <NotificationFilled />,
+      label: "Announcements",
     },
     {
       key: "50",
