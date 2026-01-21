@@ -17,6 +17,8 @@ import { ADD_LEARNER } from "../../apis/apis";
 import { useNavigate } from "react-router-dom";
 import LmsCountryDropdown from "../../components/LmsCountryDropdown";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
+import { getWordCount, MAX_ADDRESS_WORDS, PINCODE_LENGTH, PINCODE_REGEX } from "../../../helper/CommonHelper";
+import { MAX_NAME_LENGTH, nameRegex } from "../../../helper/CommonHelper";
 
 export default function AddLearners() {
   const { notification } = App.useApp();
@@ -40,6 +42,9 @@ export default function AddLearners() {
   const [pin_code, set_pin_code] = useState("");
   const [errors, set_errors] = useState("");
   const [imageError, setimageError] = useState("");
+
+
+
 
   const getBase64 = (img, callback) => {
     const reader = new FileReader();
@@ -89,7 +94,7 @@ export default function AddLearners() {
     FORM_DATA.append("email", email);
     FORM_DATA.append("country_code", country_code);
     FORM_DATA.append("contact_no", contact_no);
-    FORM_DATA.append("organization", organization); 
+    FORM_DATA.append("organization", organization);
     FORM_DATA.append("designation", designation);
     // FORM_DATA.append("password", password);
     // FORM_DATA.append("confirm_password", confirm_password);
@@ -231,29 +236,70 @@ export default function AddLearners() {
 
                 <Row gutter={16}>
                   <Col span={12}>
-                    <Form.Item label="First Name">
+                    <Form.Item
+                      label="First Name"
+                      validateStatus={
+                        errors?.first_name
+                          ? "error"
+                          : first_name &&
+                            (!nameRegex.test(first_name) || first_name.length > MAX_NAME_LENGTH)
+                            ? "error"
+                            : ""
+                      }
+                      help={
+                        errors?.first_name
+                          ? errors.first_name
+                          : first_name &&
+                            !nameRegex.test(first_name)
+                            ? "Special characters and numbers are not allowed"
+                            : first_name &&
+                              first_name.length > MAX_NAME_LENGTH
+                              ? "First name cannot exceed 50 characters"
+                              : ""
+                      }
+                    >
                       <Input
                         value={first_name}
                         placeholder="Enter your First Name"
-                        onChange={(e) => set_first_name(e.target.value)}
+                        maxLength={MAX_NAME_LENGTH}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          set_first_name(value);
+                        }}
                       />
-                      {errors?.first_name ? (
-                        <>
-                          <span style={{ color: "red" }}>
-                            {errors?.first_name}
-                          </span>
-                        </>
-                      ) : (
-                        <></>
-                      )}
                     </Form.Item>
+
                   </Col>
+
                   <Col span={12}>
-                    <Form.Item label="Last Name">
+                    <Form.Item label="Last Name"
+                      validateStatus={
+                        errors?.last_name
+                          ? "error"
+                          : last_name &&
+                            (!nameRegex.test(last_name) || last_name.length > MAX_NAME_LENGTH)
+                            ? "error"
+                            : ""
+                      }
+                      help={
+                        errors?.last_name
+                          ? errors.last_name
+                          : last_name &&
+                            !nameRegex.test(last_name)
+                            ? "Special characters and numbers are not allowed"
+                            : last_name &&
+                              last_name.length > MAX_NAME_LENGTH
+                              ? "First name cannot exceed 50 characters"
+                              : ""
+                      }>
                       <Input
                         value={last_name}
                         placeholder="Enter your Last Name"
-                        onChange={(e) => set_last_name(e.target.value)}
+                        maxLength={MAX_NAME_LENGTH}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          set_last_name(value);
+                        }}
                       />
                       {errors?.last_name ? (
                         <>
@@ -338,49 +384,129 @@ export default function AddLearners() {
                   )}
                 </Form.Item>
 
+
                 <Row gutter={16}>
                   <Col span={12}>
-                    <Form.Item label="Address 1">
+                    <Form.Item
+                      label="Address 1"
+                      validateStatus={
+                        errors?.address_line_1
+                          ? "error"
+                          : address_line_1 &&
+                            getWordCount(address_line_1) > MAX_ADDRESS_WORDS
+                            ? "error"
+                            : ""
+                      }
+                      help={
+                        <>
+                          {errors?.address_line_1
+                            ? errors.address_line_1
+                            : address_line_1 &&
+                              getWordCount(address_line_1) > MAX_ADDRESS_WORDS
+                              ? `Address cannot exceed ${MAX_ADDRESS_WORDS} words`
+                              : ""
+                          }
+
+                          <span style={{ float: "right" }}>
+                            {address_line_1 ? getWordCount(address_line_1) : 0} / {MAX_ADDRESS_WORDS} words
+                          </span>
+                        </>
+                      }
+
+                    >
                       <Input
                         value={address_line_1}
-                        placeholder="Enter your 1st address"
+                        placeholder="Enter your address (max 120 words)"
+                        rows={3}
                         onChange={(e) => set_address_line1(e.target.value)}
                       />
+
+
+
                     </Form.Item>
+
+
                   </Col>
+
                   <Col span={12}>
-                    <Form.Item label="Address 2">
+                    <Form.Item
+                      label="Address 2"
+                      validateStatus={
+                        errors?.address_line_2
+                          ? "error"
+                          : address_line_2 &&
+                            getWordCount(address_line_2) > MAX_ADDRESS_WORDS
+                            ? "error"
+                            : ""
+                      }
+                      help={
+                         <>
+                          {errors?.address_line_2
+                            ? errors.address_line_2
+                            : address_line_2 &&
+                              getWordCount(address_line_2) > MAX_ADDRESS_WORDS
+                              ? `Address cannot exceed ${MAX_ADDRESS_WORDS} words`
+                              : ""
+                          }
+
+                          <span style={{ float: "right" }}>
+                            {address_line_2 ? getWordCount(address_line_2) : 0} / {MAX_ADDRESS_WORDS} words
+                          </span>
+                        </>
+                      }
+                    >
                       <Input
                         value={address_line_2}
-                        placeholder="Enter your 2nd address"
+                        placeholder="Enter additional address details (max 120 words)"
+                        rows={3}
                         onChange={(e) => set_address_line2(e.target.value)}
                       />
+
                     </Form.Item>
+
                   </Col>
+
                 </Row>
 
-                <Form.Item label="Pin Code">
+                <Form.Item
+                  label="Pin Code"
+                  validateStatus={
+                    errors?.pin_code
+                      ? "error"
+                      : pin_code &&
+                        (!PINCODE_REGEX.test(pin_code) ||
+                          pin_code.length !== PINCODE_LENGTH)
+                        ? "error"
+                        : ""
+                  }
+                  help={
+                    errors?.pin_code
+                      ? errors.pin_code
+                      : pin_code &&
+                        !PINCODE_REGEX.test(pin_code)
+                        ? "Only numbers are allowed"
+                        : pin_code &&
+                          pin_code.length !== PINCODE_LENGTH
+                          ? "Pin Code must be exactly 6 digits"
+                          : ""
+                  }
+                >
                   <Input
                     value={pin_code}
                     placeholder="Enter your pin code"
+                    maxLength={PINCODE_LENGTH}
+                    inputMode="numeric"
                     onChange={(e) => {
-                      const value = e.target.value;
-                      if (value.length <= 6) {
-                        set_pin_code(value);
-                      }
+                      // 🔒 Allow only numbers
+                      const value = e.target.value.replace(/\D/g, "");
+                      set_pin_code(value);
                     }}
                   />
-                  {errors?.pin_code ? (
-                    <>
-                      <span style={{ color: "red" }}>{errors?.pin_code}</span>
-                    </>
-                  ) : (
-                    <></>
-                  )}
                 </Form.Item>
 
+
                 <h3>Security Information</h3>
-{/* 
+                {/* 
                 <Form.Item label="Password">
                   <Input.Password
                     value={password}

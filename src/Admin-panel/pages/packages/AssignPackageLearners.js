@@ -120,7 +120,7 @@ function AssignPackageLearners(props) {
     }
   };
 
-  // ✅ UPDATED pagination with page_size
+  //  UPDATED pagination with page_size
   const pagination_on_change = async (page, size = page_size) => {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
@@ -259,8 +259,6 @@ function AssignPackageLearners(props) {
             </div>
           </>
         )}
-
-        const [confirmLoading, setConfirmLoading] = useState(false);
 
         <Modal
           title="Confirm Assignment"

@@ -75,6 +75,7 @@ const MasterTemplate = () => {
       '/add-smtp':{selected:'16',open:'16'},
       '/edit-smtp':{selected:'16',open:'16'}
     };
+      
     const path = location.pathname;
     const match = pathToKey[path];
     if (match) {

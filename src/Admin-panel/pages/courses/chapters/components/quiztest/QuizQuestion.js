@@ -43,7 +43,7 @@ const QuizQuestion = (props) => {
   const [errors, set_errors] = useState("");
   const [file, set_file] = useState([]);
   const [is_model_open, set_is_model_open] = useState(false);
-
+  const [page_size, set_page_size] = useState(5)
 
   const showModal = () => {
     set_is_model_open(true);
@@ -70,6 +70,7 @@ const QuizQuestion = (props) => {
 
   const refetchData = async (expandLatest = false) => {
     const FORM_DATA = new FormData();
+    FORM_DATA.append("per_page", page_size);
     FORM_DATA.append("chapter_id", atob(props.chapter_id));
     const LIST_API_RESPONSE = await List_QUIZ_QUESTION(FORM_DATA);
     if (LIST_API_RESPONSE?.data?.status) {
@@ -88,6 +89,7 @@ const QuizQuestion = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       const FORM_DATA = new FormData();
+      FORM_DATA.append("per_page", page_size);
       FORM_DATA.append("chapter_id", atob(props.chapter_id));
       const LIST_API_RESPONSE = await List_QUIZ_QUESTION(FORM_DATA);
       if (LIST_API_RESPONSE?.data?.status) {
@@ -104,12 +106,13 @@ const QuizQuestion = (props) => {
     };
 
     fetchData();
-  }, [props.chapter_id]);
+  }, [props.chapter_id, page_size]);
 
-  const pagination_on_change = async (data) => {
+  const pagination_on_change = async (data, size) => {
     set_page_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", data);
+    FORM_DATA.append("per_page", size);
     FORM_DATA.append("chapter_id", atob(props.chapter_id));
     const LIST_API_RESPONSE = await List_QUIZ_QUESTION(FORM_DATA);
     if (LIST_API_RESPONSE?.data?.status) {
@@ -175,6 +178,7 @@ const QuizQuestion = (props) => {
       debounce(async () => {
         try {
           const FORM_DATA = new FormData();
+          FORM_DATA.append("per_page", page_size);
           FORM_DATA.append("chapter_id", atob(props.chapter_id));
           FORM_DATA.append(search_key, search_value);
           const LIST_API_RESPONSE = await List_QUIZ_QUESTION(FORM_DATA);
@@ -193,7 +197,7 @@ const QuizQuestion = (props) => {
         }
       }, 500)(); // Call debounce immediately
     },
-    [props.chapter_id]
+    [props.chapter_id, page_size]
   );
   const handleInput = (e) => {
     fetchResults("topic", e.target.value);
@@ -378,13 +382,31 @@ const QuizQuestion = (props) => {
                 ))}
               </Collapse>
 
-              <Pagination
-                style={{ marginTop: "15px", float: "right" }}
-                onChange={pagination_on_change}
-                current={current_page}
-                total={total_questions}
-                pageSize={5}
-              />
+              <div style={{ float: "right", marginTop: "20px" }}>
+                {" "}
+
+                <Pagination
+                  current={current_page}
+                  total={total_questions}
+                  pageSize={page_size}
+                  showSizeChanger
+                  pageSizeOptions={['5','10', '20', '50', '100']}
+                  onChange={pagination_on_change}
+                  onShowSizeChange={(current, size) => {
+                    set_page_size(size);
+                    pagination_on_change(1, size);
+                  }}
+                  style={{ display: 'inline-block' }}
+                  className="no-search-pagination"
+                />
+                <style>
+                  {`
+                    .no-search-pagination .ant-select-selection-search-input {
+                      display: none !important;
+                    }
+                  `}
+                </style>
+              </div>
             </>
           )}
         </>

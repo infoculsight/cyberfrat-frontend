@@ -20,7 +20,23 @@ export const formatToIST = (utcDateString) => {
     <>
       {datePart}
       <br />
-      <span style={{color:"orange"}}>At</span> {timePart}
+      <span style={{ color: "orange" }}>At</span> {timePart}
     </>
   );
 };
+
+
+
+export const nameRegex = /^[A-Za-z\s]+$/;
+export const MAX_NAME_LENGTH = 50;
+
+export const PINCODE_REGEX = /^[0-9]+$/;
+export const PINCODE_LENGTH = 6;
+
+
+export const MAX_ADDRESS_WORDS = 300;
+
+export const getWordCount = (text = "") =>
+  text ? text.length : 0;
+;
+

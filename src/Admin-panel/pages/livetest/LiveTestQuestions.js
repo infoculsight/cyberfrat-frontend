@@ -25,14 +25,17 @@ const LiveTestQuestion = (props) => {
   const [questionToDelete, setQuestionToDelete] = useState(null);
   const [current_page, set_current_page] = useState("");
   const [total_pages, set_total_pages] = useState("");
-  const [total_questions,set_total_questions] = useState("")
+  const [total_questions, set_total_questions] = useState("")
   const showModal = () => setAddQuestionModal(true);
   const handleCancel = () => setAddQuestionModal(false);
+  const [page_size, set_page_size] = useState(5)
+
 
 
 
   const refetchData = async (expandLatest = false) => {
     const FORM_DATA = new FormData();
+    FORM_DATA.append("per_page", page_size);
     FORM_DATA.append("live_test_id", atob(live_test_id));
     const LIST_API_RESPONSE = await LIST_LIVE_TEST_QUESTION(FORM_DATA);
     if (LIST_API_RESPONSE?.data?.status) {
@@ -51,6 +54,7 @@ const LiveTestQuestion = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       const FORM_DATA = new FormData();
+      FORM_DATA.append("per_page", page_size);
       FORM_DATA.append("live_test_id", atob(live_test_id));
       const LIST_API_RESPONSE = await LIST_LIVE_TEST_QUESTION(FORM_DATA);
       if (LIST_API_RESPONSE?.data?.status) {
@@ -68,7 +72,7 @@ const LiveTestQuestion = (props) => {
     };
 
     fetchData();
-  }, [live_test_id]);
+  }, [live_test_id, page_size]);
 
   const confirmDelete = (id) => {
     setQuestionToDelete(id);
@@ -112,17 +116,19 @@ const LiveTestQuestion = (props) => {
   };
 
 
-  const pagination_on_change = async (data) => {
+  const pagination_on_change = async (data, size) => {
     set_page_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", data);
+    FORM_DATA.append("per_page", size);
+
     FORM_DATA.append("live_test_id", atob(live_test_id));
     const LIST_API_RESPONSE = await LIST_LIVE_TEST_QUESTION(FORM_DATA);
     if (LIST_API_RESPONSE?.data?.status) {
       const response_data = LIST_API_RESPONSE?.data?.data;
-        set_current_page(LIST_API_RESPONSE?.data?.current_page || 1);
-        set_total_pages(LIST_API_RESPONSE?.data?.total_pages || 0);
-        set_total_questions(LIST_API_RESPONSE?.data?.total_questions || 0)
+      set_current_page(LIST_API_RESPONSE?.data?.current_page || 1);
+      set_total_pages(LIST_API_RESPONSE?.data?.total_pages || 0);
+      set_total_questions(LIST_API_RESPONSE?.data?.total_questions || 0)
       setItems(response_data);
       // if (response_data.length > 0) {
       //   setActivePanelKey(response_data[response_data.length - 1]?.id);
@@ -136,14 +142,15 @@ const LiveTestQuestion = (props) => {
       debounce(async () => {
         try {
           const FORM_DATA = new FormData();
+          FORM_DATA.append("per_page", page_size);
           FORM_DATA.append("live_test_id", atob(live_test_id));
           FORM_DATA.append(search_key, search_value);
           const LIST_API_RESPONSE = await LIST_LIVE_TEST_QUESTION(FORM_DATA);
           if (LIST_API_RESPONSE?.data?.status) {
             const response_data = LIST_API_RESPONSE?.data?.data;
-           set_current_page(LIST_API_RESPONSE?.data?.current_page || 1);
-           set_total_pages(LIST_API_RESPONSE?.data?.total_pages || 0);
-           set_total_questions(LIST_API_RESPONSE?.data?.total_questions || 0)
+            set_current_page(LIST_API_RESPONSE?.data?.current_page || 1);
+            set_total_pages(LIST_API_RESPONSE?.data?.total_pages || 0);
+            set_total_questions(LIST_API_RESPONSE?.data?.total_questions || 0)
             setItems(response_data);
             // if (response_data.length > 0) {
             //   setActivePanelKey(response_data[response_data.length - 1]?.id);
@@ -154,7 +161,7 @@ const LiveTestQuestion = (props) => {
         }
       }, 500)(); // Call debounce immediately
     },
-    [live_test_id]
+    [live_test_id, page_size]
   );
 
   const handleInput = (e) => {
@@ -249,14 +256,32 @@ const LiveTestQuestion = (props) => {
                 ))}
               </Collapse>
 
-              {total_pages > 0 ?<> <Pagination
-                style={{ marginTop: "15px", float: "right" }}
-                onChange={pagination_on_change}
-                current={current_page}
-                total={total_questions}
-                pageSize={5}
-              /></>:<></>}
-             
+              {total_pages > 0 ? <> <div style={{ float: "right", marginTop: "20px" }}>
+                {" "}
+
+                <Pagination
+                  current={current_page}
+                  total={total_questions}
+                  pageSize={page_size}
+                  showSizeChanger
+                  pageSizeOptions={['5', '10', '20', '50', '100']}
+                  onChange={pagination_on_change}
+                  onShowSizeChange={(current, size) => {
+                    set_page_size(size);
+                    pagination_on_change(1, size);
+                  }}
+                  style={{ display: 'inline-block' }}
+                  className="no-search-pagination"
+                />
+                <style>
+                  {`
+                                  .no-search-pagination .ant-select-selection-search-input {
+                                    display: none !important;
+                                  }
+                                `}
+                </style>
+              </div></> : <></>}
+
             </>}
 
 

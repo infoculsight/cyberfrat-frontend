@@ -17,6 +17,8 @@ import { EDIT_LEARNER, VIEW_LEARNER } from "../../apis/apis";
 import { useNavigate, useParams } from "react-router-dom";
 import LmsCountryDropdown from "../../components/LmsCountryDropdown";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
+import { getWordCount, MAX_ADDRESS_WORDS, PINCODE_LENGTH, PINCODE_REGEX } from "../../../helper/CommonHelper";
+import { MAX_NAME_LENGTH, nameRegex } from "../../../helper/CommonHelper";
 
 export default function EditLearner() {
   const { id } = useParams();
@@ -50,8 +52,8 @@ export default function EditLearner() {
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
       {loading ? <Loading3QuartersOutlined /> : <PlusOutlined style={{ color: "#fff" }} />}
-      <div style={{ marginTop: 8,color:"#fff" }}>Upload</div>
-    </button> 
+      <div style={{ marginTop: 8, color: "#fff" }}>Upload</div>
+    </button>
   );
 
   useEffect(() => {
@@ -61,7 +63,7 @@ export default function EditLearner() {
       const EDIT_API_RESPONSE = await VIEW_LEARNER(FORM_DATA);
       if (EDIT_API_RESPONSE?.data?.status) {
         const response_data = EDIT_API_RESPONSE?.data?.data;
-        
+
         set_first_name(response_data?.first_name);
         if (response_data?.image) {
           set_image(response_data.image);
@@ -83,7 +85,7 @@ export default function EditLearner() {
     };
 
     VIEW_API();
-  }, [id]); 
+  }, [id]);
 
   const onFinish = async () => {
     setLoading(true);
@@ -124,14 +126,14 @@ export default function EditLearner() {
     <div className="lms-body">
       <Card>
         <div className="lms-form">
-        
+
           <Row>
             <Col span={12}>
-              <h2><span       style={{ cursor: "pointer" }}
-              onClick={() => navigate("/learners")} ><LeftOutlined /></span> Edit Learner</h2>
+              <h2><span style={{ cursor: "pointer" }}
+                onClick={() => navigate("/learners")} ><LeftOutlined /></span> Edit Learner</h2>
             </Col>
           </Row>
-          
+
           {page_loader ? (
             <CulsightPageLoader />
           ) : (
@@ -151,7 +153,7 @@ export default function EditLearner() {
                   listType="picture-card"
                   className="avatar-uploader"
                   showUploadList={false}
-                   beforeUpload={(file) => {
+                  beforeUpload={(file) => {
                     console.log(file)
                     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
                     const isLt2MB = file.size <= 2 * 1024 * 1024;
@@ -171,21 +173,21 @@ export default function EditLearner() {
                       const { width, height } = img;
                       // Example: Minimum 600X400 pixels
                       if (width === 490 && height === 320) {
-                            setimageError(""); // Clear errors if valid
+                        setimageError(""); // Clear errors if valid
 
-                            // Set preview and file for API
-                            getBase64(file, (url) => set_image(url));
-                            set_image_api(file);
-                           
+                        // Set preview and file for API
+                        getBase64(file, (url) => set_image(url));
+                        set_image_api(file);
+
                       } else {
-                            setimageError("Image must be at least 600x400 pixels.");
+                        setimageError("Image must be at least 600x400 pixels.");
                       }
-                    
+
                     };
-                      return false;
-                  
+                    return false;
+
                   }}
-                 
+
                 >
                   {image ? (
                     <img
@@ -219,31 +221,84 @@ export default function EditLearner() {
                   </span>
                 )}
 
-                 <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 2MB and must be at least 600x400 pixels.</p>
+                <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 2MB and must be at least 600x400 pixels.</p>
               </Form.Item>
 
               <Row gutter={16}>
                 <Col span={12}>
-                  <Form.Item label="First Name">
+                  <Form.Item
+                    label="First Name"
+                    validateStatus={
+                      errors?.first_name
+                        ? "error"
+                        : first_name &&
+                          (!nameRegex.test(first_name) || first_name.length > MAX_NAME_LENGTH)
+                          ? "error"
+                          : ""
+                    }
+                    help={
+                      errors?.first_name
+                        ? errors.first_name
+                        : first_name &&
+                          !nameRegex.test(first_name)
+                          ? "Special characters and numbers are not allowed"
+                          : first_name &&
+                            first_name.length > MAX_NAME_LENGTH
+                            ? "First name cannot exceed 50 characters"
+                            : ""
+                    }
+                  >
                     <Input
-                      placeholder="Enter your First Name"
                       value={first_name}
-                      onChange={(e) => set_first_name(e.target.value)}
+                      placeholder="Enter your First Name"
+                      maxLength={MAX_NAME_LENGTH}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        set_first_name(value);
+                      }}
                     />
-                    {errors?.first_name && (
-                      <span style={{ color: "red" }}>{errors?.first_name}</span>
-                    )}
                   </Form.Item>
+
                 </Col>
+
                 <Col span={12}>
-                  <Form.Item label="Last Name">
+                  <Form.Item label="Last Name"
+                    validateStatus={
+                      errors?.last_name
+                        ? "error"
+                        : last_name &&
+                          (!nameRegex.test(last_name) || last_name.length > MAX_NAME_LENGTH)
+                          ? "error"
+                          : ""
+                    }
+                    help={
+                      errors?.last_name
+                        ? errors.last_name
+                        : last_name &&
+                          !nameRegex.test(last_name)
+                          ? "Special characters and numbers are not allowed"
+                          : last_name &&
+                            last_name.length > MAX_NAME_LENGTH
+                            ? "First name cannot exceed 50 characters"
+                            : ""
+                    }>
                     <Input
                       value={last_name}
                       placeholder="Enter your Last Name"
-                      onChange={(e) => set_last_name(e.target.value)}
+                      maxLength={MAX_NAME_LENGTH}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        set_last_name(value);
+                      }}
                     />
-                    {errors?.last_name && (
-                      <span style={{ color: "red" }}>{errors?.last_name}</span>
+                    {errors?.last_name ? (
+                      <>
+                        <span style={{ color: "red" }}>
+                          {errors?.last_name}
+                        </span>
+                      </>
+                    ) : (
+                      <></>
                     )}
                   </Form.Item>
                 </Col>
@@ -314,49 +369,129 @@ export default function EditLearner() {
 
               <Row gutter={16}>
                 <Col span={12}>
-                  <Form.Item label="Address 1">
+                  <Form.Item
+                    label="Address 1"
+                    validateStatus={
+                      errors?.address_line_1
+                        ? "error"
+                        : address_line_1 &&
+                          getWordCount(address_line_1) > MAX_ADDRESS_WORDS
+                          ? "error"
+                          : ""
+                    }
+                    help={
+                      <>
+                        {errors?.address_line_1
+                          ? errors.address_line_1
+                          : address_line_1 &&
+                            getWordCount(address_line_1) > MAX_ADDRESS_WORDS
+                            ? `Address cannot exceed ${MAX_ADDRESS_WORDS} words`
+                            : ""
+                        }
+
+                        <span style={{ float: "right" }}>
+                          {address_line_1 ? getWordCount(address_line_1) : 0} / {MAX_ADDRESS_WORDS} words
+                        </span>
+                      </>
+                    }
+                  >
                     <Input
-                      placeholder="Enter your 1st address"
                       value={address_line_1}
+                      placeholder="Enter your address (max 120 words)"
+                      rows={3}
                       onChange={(e) => set_address_line1(e.target.value)}
                     />
+
+
                   </Form.Item>
+
                 </Col>
+
                 <Col span={12}>
-                  <Form.Item label="Address 2">
+                  <Form.Item
+                    label="Address 2"
+                    validateStatus={
+                      errors?.address_line_2
+                        ? "error"
+                        : address_line_2 &&
+                          getWordCount(address_line_2) > MAX_ADDRESS_WORDS
+                          ? "error"
+                          : ""
+                    }
+                    help={
+                      <>
+                        {errors?.address_line_2
+                          ? errors.address_line_2
+                          : address_line_2 &&
+                            getWordCount(address_line_2) > MAX_ADDRESS_WORDS
+                            ? `Address cannot exceed ${MAX_ADDRESS_WORDS} words`
+                            : ""
+                        }
+
+                        <span style={{ float: "right" }}>
+                          {address_line_2 ? getWordCount(address_line_2) : 0} / {MAX_ADDRESS_WORDS} words
+                        </span>
+                      </>
+                    }
+                  >
                     <Input
                       value={address_line_2}
-                      placeholder="Enter your 2nd address"
+                      placeholder="Enter additional address details (max 120 words)"
+                      rows={3}
                       onChange={(e) => set_address_line2(e.target.value)}
                     />
+
                   </Form.Item>
+
                 </Col>
+
               </Row>
 
-              <Form.Item label="Pin Code">
+
+              <Form.Item
+                label="Pin Code"
+                validateStatus={
+                  errors?.pin_code
+                    ? "error"
+                    : pin_code &&
+                      (!PINCODE_REGEX.test(pin_code) ||
+                        pin_code.length !== PINCODE_LENGTH)
+                      ? "error"
+                      : ""
+                }
+                help={
+                  errors?.pin_code
+                    ? errors.pin_code
+                    : pin_code &&
+                      !PINCODE_REGEX.test(pin_code)
+                      ? "Only numbers are allowed"
+                      : pin_code &&
+                        pin_code.length !== PINCODE_LENGTH
+                        ? "Pin Code must be exactly 6 digits"
+                        : ""
+                }
+              >
                 <Input
                   value={pin_code}
                   placeholder="Enter your pin code"
+                  maxLength={PINCODE_LENGTH}
+                  inputMode="numeric"
                   onChange={(e) => {
-                      const value = e.target.value;
-                      if (value.length <= 6) {
-                        set_pin_code(value);
-                      }
-                    }}
+                    // 🔒 Allow only numbers
+                    const value = e.target.value.replace(/\D/g, "");
+                    set_pin_code(value);
+                  }}
                 />
-                {errors?.pin_code && (
-                  <span style={{ color: "red" }}>{errors?.pin_code}</span>
-                )}
               </Form.Item>
 
-                 <Form.Item>
-                  <Checkbox
-                    checked={email_send}
-                    onChange={(e) => set_email_send(e.target.checked)}
-                  >
-                    Send email to user (notify user about creation as learner)
-                  </Checkbox>
-                </Form.Item>
+              <Form.Item>
+                <Checkbox
+                  checked={email_send}
+                  onChange={(e) => set_email_send(e.target.checked)}
+                >
+                  Send email to user (notify user about creation as learner)
+                </Checkbox>
+              </Form.Item>
 
               <Form.Item>
                 {loading ? (
@@ -376,7 +511,7 @@ export default function EditLearner() {
               </Form.Item>
 
             </Form>
-            
+
           )}
         </div>
       </Card>
