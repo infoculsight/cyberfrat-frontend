@@ -87,9 +87,16 @@ export default function CourseBox(props) {
                     fontWeight: "bold",
                     zIndex: 10,
                     fontSize: 12,
+                    height: "20px",
+                    alignItems: "center",
+                    display: "flex",
+                    justifyContent: "center",
                   }}
                 >
-                  Expired
+                  <span>
+                    Expired
+                  </span>
+
                 </div>
               )}
               <img

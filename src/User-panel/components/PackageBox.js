@@ -86,6 +86,10 @@ function formatDateTime(isoDate) {
                     fontWeight: "bold",
                     zIndex: 10,
                     fontSize: 12,
+                    height: "20px",
+                    alignItems: "center",
+                    display: "flex",
+                    justifyContent: "center",
                   }}
                 >
                   Expired

@@ -29,15 +29,13 @@ export default function Chapters() {
   const [single_progress, set_single_progress] = useState(0);
   const [course_watch_percent, set_course_watch_percent] = useState(0);
   const [course_status, set_course_status] = useState("");
-
-
   const [showChapterList, setShowChapterList] = useState(false);
 
   function hasQuiz(title) {
     return /\bquiz\b/i.test(title);
   }
 
-
+  
   const handleBack = () => {
     if (location.state?.from) Navigate(location.state.from);
     else Navigate(-1);
@@ -130,7 +128,7 @@ export default function Chapters() {
 
 
   const check_quiz_status = async (chapter_id) => {
-    const FORM_DATA = new FormData();
+    const FORM_DATA = new FormData(); 
     FORM_DATA.append("chapter_id", chapter_id);
     try {
       const API_CALL = await START_QUIZ_QUESTION(FORM_DATA);
@@ -145,8 +143,6 @@ export default function Chapters() {
       console.log(error);
     }
   };
-
-
 
 
   return (
