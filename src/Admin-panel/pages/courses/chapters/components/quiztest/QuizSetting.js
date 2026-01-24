@@ -11,7 +11,7 @@ import {
   Space,
   Spin,
   Switch,
-  TimePicker,
+  TimePicker
 } from "antd";
 import { LoadingOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
@@ -23,8 +23,7 @@ import {
 import CustomRichTextEditor from "../../../../../components/CustomTextEditor";
 import CulsightPageLoader from "../../../../../components/CulsightPageLoader";
 import dayjs from "dayjs";
-
-
+ 
 function QuizSetting({ course_id, chapter_id }) {
   const { notification } = App.useApp();
   const [show_edit_button, set_edit_button] = useState(false);
@@ -54,9 +53,9 @@ function QuizSetting({ course_id, chapter_id }) {
   const [arrange_questions_by_topic, set_arrange_questions_by_topic] =
     useState(0);
   const [enable_section_grouping, set_enable_section_grouping] = useState(0);
-  const [errors, set_errors] = useState("");
+  const [errors, set_errors] = useState({});
   const [showAdvanced, setShowAdvanced] = useState(false);
-
+ 
   useEffect(() => {
     const VIEW_API = async () => {
       const FORM_DATA = new FormData();
@@ -67,7 +66,7 @@ function QuizSetting({ course_id, chapter_id }) {
         set_quiz_setting_id(data?.id);
         set_title(data?.title);
         set_tag(
-          Array.isArray(data?.tags) ? data.tags : data?.tags?.split(',') || []
+          Array.isArray(data?.tags) ? data.tags : data?.tags?.split(",") || []
         );
         set_time_limit(data?.time_limit);
         set_no_of_retake(data?.no_of_retake);
@@ -94,15 +93,16 @@ function QuizSetting({ course_id, chapter_id }) {
       }
       setLoading(false);
     };
-
+ 
     if (chapter_id) {
       VIEW_API();
     }
   }, [edit_loading, chapter_id]);
-
+ 
   const handleSubmit = async (isEdit) => {
+    set_errors({});
     setLoading(true);
-
+ 
     const FORM_DATA = new FormData();
     FORM_DATA.append("title", title);
     FORM_DATA.append("tags", tag);
@@ -110,7 +110,7 @@ function QuizSetting({ course_id, chapter_id }) {
     FORM_DATA.append("course_id", course_id)
     FORM_DATA.append("time_limit", time_limit);
     FORM_DATA.append("no_of_retake", no_of_retake);
-
+ 
     FORM_DATA.append("show_instructions", show_instructions);
     FORM_DATA.append("show_calculator", show_calculator);
     FORM_DATA.append("post_submit_message", post_submit_message);
@@ -143,37 +143,36 @@ function QuizSetting({ course_id, chapter_id }) {
       enable_section_grouping.toString()
     );
     FORM_DATA.append("chapter_id", atob(chapter_id));
-
+ 
     if (quiz_setting_id) {
       FORM_DATA.append("id", quiz_setting_id);
     }
-
+ 
     try {
       const response = isEdit
         ? await EDIT_QUIZ_SETTIING(FORM_DATA)
         : await ADD_QUIZ_SETTIING(FORM_DATA);
-
+ 
       if (response?.data?.status) {
         notification.success({
           message: "Successful",
           description: response.data.message,
         });
-        set_edit_loading(true);
+        set_edit_loading(prev => !prev);
+ 
         setLoading(false);
-        set_errors([])
       } else {
         setLoading(false);
         set_errors(response.data.errors);
       }
     } catch (error) {
       message.error(
-
         "Server Error: " + (error?.response?.data?.message || "Unknown error")
       );
       setLoading(false);
     }
   };
-
+ 
   return (
     <div style={{ marginTop: "15px" }}>
       {loading ? (
@@ -191,7 +190,11 @@ function QuizSetting({ course_id, chapter_id }) {
                 <Input
                   placeholder="Enter Quiz Title"
                   value={title}
-                  onChange={(e) => set_title(e.target.value)}
+                  onChange={(e) => {
+                    set_title(e.target.value);
+                    set_errors(prev => ({ ...prev, title: null }));
+                  }}
+ 
                 />
                 {errors?.title && (
                   <span style={{ color: "red" }}>{errors.title}</span>
@@ -201,7 +204,10 @@ function QuizSetting({ course_id, chapter_id }) {
                 <Select
                   mode="tags"
                   value={tag}
-                  onChange={set_tag}
+                  onChange={(value) => {
+                    set_tag(value);
+                    set_errors(prev => ({ ...prev, tag: null }));
+                  }}
                   placeholder="Select Tag"
                   style={{ width: "100%" }}
                 />
@@ -209,44 +215,64 @@ function QuizSetting({ course_id, chapter_id }) {
                   <span style={{ color: "red" }}>{errors.tag}</span>
                 )}
               </Form.Item>
+             
               <Form.Item label="Time Limit (in Minutes)">
                 <TimePicker
                   style={{ width: "100%" }}
                   format="HH:mm"
-                  value={time_limit ? dayjs().startOf("day").add(time_limit, "minute") : null}
-                  onChange={(time) => {
-                    if (time) {
-                      set_time_limit(time.diff(dayjs().startOf("day"), "minute"));
-                    } else {
-                      set_time_limit("");
-                    }
-                  }}
+                  value={
+                    time_limit
+                      ? dayjs().startOf("day").add(time_limit, "minute")
+                      : null
+                  }
                   panelRender={(panel) => (
                     <div>
+                      {/* TIME HEADER */}
                       <div
                         style={{
                           display: "flex",
                           justifyContent: "space-around",
+                          padding: "6px 12px",
+                          fontSize: "12px",
                           fontWeight: 600,
-                          padding: "8px 0",
-                          borderBottom: "1px solid #f0f0f0",
+                          borderBottom: "1px solid #474646",
+                          background: "#272525",
                         }}
                       >
                         <span>HH</span>
                         <span>MM</span>
-                      
                       </div>
+ 
+                      {/* ORIGINAL PANEL */}
                       {panel}
                     </div>
                   )}
+                  onChange={(time) => {
+                    if (time) {
+                      set_time_limit(
+                        time.diff(dayjs().startOf("day"), "minute")
+                      );
+                    } else {
+                      set_time_limit("");
+                    }
+                    set_errors((prev) => ({ ...prev, time_limit: null }));
+                  }}
                 />
-
+ 
+                {errors?.time_limit && (
+                  <span style={{ color: "red" }}>{errors.time_limit}</span>
+                )}
               </Form.Item>
+ 
+ 
               <Form.Item label="Number Of Retake">
                 <Input
                   placeholder="Enter Number Of Retake"
                   value={no_of_retake}
-                  onChange={(e) => set_no_of_retake(e.target.value)}
+                  onChange={(e) => {
+                    set_no_of_retake(e.target.value);
+                    set_errors(prev => ({ ...prev, no_of_retake: null }));
+                  }}
                 />
                 {errors?.no_of_retake && (
                   <span style={{ color: "red" }}>{errors.no_of_retake}</span>
@@ -256,7 +282,10 @@ function QuizSetting({ course_id, chapter_id }) {
                 <Input
                   placeholder="Display Question"
                   value={display_question}
-                  onChange={(e) => set_display_question(e.target.value)}
+                  onChange={(e) => {
+                    set_display_question(e.target.value);
+                    set_errors(prev => ({ ...prev, display_question: null }));
+                  }}
                 />
                 {errors?.display_question && (
                   <span style={{ color: "red" }}>
@@ -283,13 +312,14 @@ function QuizSetting({ course_id, chapter_id }) {
                   </span>
                 )}
               </Form.Item>
-
-
               <Form.Item label="Passing Percentage">
                 <Input
                   placeholder="Enter Percentage"
                   value={passing_percentage}
-                  onChange={(e) => set_passing_percentage(e.target.value)}
+                  onChange={(e) => {
+                    set_passing_percentage(e.target.value);
+                    set_errors(prev => ({ ...prev, passing_percentage: null }));
+                  }}
                 />
                 {errors?.passing_percentage && (
                   <span style={{ color: "red" }}>
@@ -297,46 +327,63 @@ function QuizSetting({ course_id, chapter_id }) {
                   </span>
                 )}
               </Form.Item>
-              <Form.Item label="Minimum Time Before Submit">
-                <TimePicker
-                  style={{ width: "100%" }}
-                  format="HH:mm"
-                  value={
-                    min_time_before_submit
-                      ? dayjs().startOf("day").add(min_time_before_submit, "minute")
-                      : null
-                  }
-                  onChange={(time) => {
-                    if (time) {
-                      set_min_time_before_submit(
-                        time.diff(dayjs().startOf("day"), "minute")
-                      );
-                    } else {
-                      set_min_time_before_submit("");
-                    }
-                  }}
-                  panelRender={(panel) => (
-                    <div>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-around",
-                          fontWeight: 600,
-                          padding: "8px 0",
-                          borderBottom: "1px solid #f0f0f0",
-                        }}
-                      >
-                        <span>HH</span>
-                        <span>MM</span>
-                        
-                      </div>
-                      {panel}
-                    </div>
-                  )}
-                />
-              </Form.Item>
-
-
+ 
+            <Form.Item label="Minimum Time Before Submit">
+  <TimePicker
+    style={{ width: "100%" }}
+    format="HH:mm"
+    value={
+      min_time_before_submit
+        ? dayjs().startOf("day").add(min_time_before_submit, "minute")
+        : null
+    }
+    panelRender={(panel) => (
+      <div>
+        {/* TIME HEADER */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            padding: "6px 12px",
+            fontSize: "12px",
+            fontWeight: 600,
+            borderBottom: "1px solid #474646",
+            background: "#272525",
+          }}
+        >
+          <span>HH</span>
+          <span>MM</span>
+        </div>
+ 
+        {/* ORIGINAL PANEL */}
+        {panel}
+      </div>
+    )}
+    onChange={(time) => {
+      if (time) {
+        set_min_time_before_submit(
+          time.diff(dayjs().startOf("day"), "minute")
+        );
+      } else {
+        set_min_time_before_submit("");
+      }
+      set_errors((prev) => ({
+        ...prev,
+        min_time_before_submit: null,
+      }));
+    }}
+  />
+ 
+  {errors?.min_time_before_submit && (
+    <span style={{ color: "red" }}>
+      {errors.min_time_before_submit}
+    </span>
+  )}
+</Form.Item>
+ 
+ 
+ 
+ 
               {/* Advanced Setting Toggle */}
               <h3
                 style={{
@@ -352,8 +399,7 @@ function QuizSetting({ course_id, chapter_id }) {
                 Advanced Setting
                 {showAdvanced ? <UpOutlined /> : <DownOutlined />}
               </h3>
-
-
+ 
               {showAdvanced && (
                 <>
                   <Form.Item label="Show Calculator" style={{ marginTop: "15px" }}>
@@ -373,7 +419,7 @@ function QuizSetting({ course_id, chapter_id }) {
                       <span style={{ color: "red" }}>{errors.show_calculator}</span>
                     )}
                   </Form.Item>
-
+ 
                   <Form.Item>
                     <CustomRichTextEditor
                       value={post_submit_message}
@@ -387,7 +433,9 @@ function QuizSetting({ course_id, chapter_id }) {
                       </span>
                     )}
                   </Form.Item>
-
+ 
+ 
+ 
                   <Form.Item
                     label="Force Learn Attempt in one go"
                     style={{ marginTop: "15px" }}
@@ -407,7 +455,7 @@ function QuizSetting({ course_id, chapter_id }) {
                       </span>
                     )}
                   </Form.Item>
-
+ 
                   <Form.Item
                     label="Show Rank Along with Result"
                     style={{ marginTop: "15px" }}
@@ -427,9 +475,8 @@ function QuizSetting({ course_id, chapter_id }) {
                       </span>
                     )}
                   </Form.Item>
-
-
-
+ 
+ 
                   <Form.Item
                     label="Show Solutions to learner"
                     style={{ marginTop: "15px" }}
@@ -453,7 +500,7 @@ function QuizSetting({ course_id, chapter_id }) {
                       <span style={{ color: "red" }}>{errors.show_solution}</span>
                     )}
                   </Form.Item>
-
+ 
                   <Form.Item>
                     <Space>
                       <Switch
@@ -470,7 +517,7 @@ function QuizSetting({ course_id, chapter_id }) {
                       </span>
                     )}
                   </Form.Item>
-
+ 
                   <Form.Item>
                     <Space>
                       <Switch
@@ -487,7 +534,7 @@ function QuizSetting({ course_id, chapter_id }) {
                       </span>
                     )}
                   </Form.Item>
-
+ 
                   <Form.Item>
                     <Space>
                       <Switch
@@ -504,7 +551,7 @@ function QuizSetting({ course_id, chapter_id }) {
                       </span>
                     )}
                   </Form.Item>
-
+ 
                   <Form.Item>
                     <Space>
                       <Switch
@@ -523,7 +570,7 @@ function QuizSetting({ course_id, chapter_id }) {
                   </Form.Item>
                 </>
               )}
-
+ 
               <Form.Item>
                 <Button
                   type="primary"
@@ -550,5 +597,7 @@ function QuizSetting({ course_id, chapter_id }) {
     </div>
   );
 }
-
+ 
 export default QuizSetting;
+ 
+ 

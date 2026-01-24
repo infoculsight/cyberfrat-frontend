@@ -247,6 +247,7 @@ export default function AddCourses() {
                   <span style={{ color: "red" }}>{errors.title}</span>
                 )}
               </Form.Item>
+              
               <Form.Item label="Tag">
                 <Select
                   mode="tags"

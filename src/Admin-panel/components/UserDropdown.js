@@ -27,7 +27,7 @@ const UserDropdown = ({ user }) => {
       key: 'username',
       label: (
         <span style={{ textTransform: "capitalize" }}>
-          {user?.profile?.name || 'User'}
+          {user?.user_info?.name || 'User'}
         </span>
       ),
       icon: <UserOutlined />,
@@ -50,7 +50,7 @@ const UserDropdown = ({ user }) => {
   return (
     <div style={{float:"right"}}>
         <div style={{ marginRight: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <span style={{ color: "#fff" }}>Welcome, <b>{user?.profile?.name}</b></span>
+      <span style={{ color: "#fff" }}>Welcome, <b>{user?.user_info?.name}</b></span>
       <Dropdown menu={{ items: menuItems }} trigger={['click']}>
         <Avatar style={{ backgroundColor: '#096e72',color:"black", cursor: 'pointer' }} icon={<UserOutlined />} />
       </Dropdown>

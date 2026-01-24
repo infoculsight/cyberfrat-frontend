@@ -99,8 +99,6 @@ const handlePasswordSubmit = async () => {
 };
 
 
-
-
   const showModal = () => {
     set_is_model_open(true);
   };

@@ -73,7 +73,9 @@ const MasterTemplate = () => {
       '/edit-announcment':{selected:'15', open:'15'},
       '/smtp':{selected:'16', open:'16'},
       '/add-smtp':{selected:'16',open:'16'},
-      '/edit-smtp':{selected:'16',open:'16'}
+      '/edit-smtp':{selected:'16',open:'16'},
+      '/upcoming-trainings':{selected:'17',open:'5'},
+      '/add-trainings':{selected:'17',open:'5'},
     };
       
     const path = location.pathname;
@@ -104,6 +106,7 @@ const MasterTemplate = () => {
       '14': '/deleted-courses',
       '15': '/announcment',
       '16': '/smtp',
+      '17':'/upcoming-trainings',
 
     };
 
@@ -166,7 +169,8 @@ const MasterTemplate = () => {
                     { key: '6', label: "Courses" },
                     { key: '14', label: "Deleted Courses" },
                     { key: '7', label: "Packages" },
-                    {key: '11',label:"Live Test"}
+                    {key: '11',label:"Live Test"},
+                    {key: '17',label:'Upcoming Trainings'},
                   ]
                 },
                 { key: '8', icon: <ProfileFilled />, label: 'Media' },

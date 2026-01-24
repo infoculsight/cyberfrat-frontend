@@ -53,7 +53,9 @@ import CourseDownload from "../Admin-panel/pages/downloads/CourseDownload";
 import PackageDownload from "../Admin-panel/pages/downloads/PackageDownload";
 import QuizDownload from "../Admin-panel/pages/downloads/QuizDownload";
 import LiveTestDownload from "../Admin-panel/pages/downloads/LiveTestDownload";
-
+import UpcommingTrainings from "../Admin-panel/pages/upcomingtrainings/UpcommingTrainings";
+import AddUpcommingTrainings from "../Admin-panel/pages/upcomingtrainings/AddUpcommingTrainings";
+import EditUpcomingTrainings from "../Admin-panel/pages/upcomingtrainings/EditUpcommingTraings";
 
 
 function AdminRoutes() {
@@ -91,6 +93,9 @@ function AdminRoutes() {
         <Route path="edit-live-test/:id" element={<EditLiveTest />} />
         <Route path="live-test-questions/:live_test_id" element={<LiveTestQuestion />} />
         <Route path="/assign-learner-live-test/:live_test_id" element={<LiveTestLearners />} />
+        <Route path="upcoming-trainings" element={<UpcommingTrainings />} />
+        <Route path="add-trainings" element={<AddUpcommingTrainings />} />
+        <Route path="edit-trainings/:id" element={<EditUpcomingTrainings />} />
 
         <Route path="report" element={<Reports />}>
           <Route path="course-report" element={<CourseReport />} />

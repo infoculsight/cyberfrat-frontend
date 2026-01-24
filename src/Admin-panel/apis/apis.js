@@ -1274,3 +1274,49 @@ export const LIST_DOWNLOAD_LIVE_TEST_REPORT = async (body) => {
         console.error(error);
     }
 };
+
+
+export const LIST_TRAININGS = async (body) => {
+    try {
+        const response = await Axios.post('list-trainings/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const ADD_TRAININGS = async (body) => {
+    try {
+        const response = await Axios.post('add-trainings/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const EDIT_TRAININGS = async (body) => {
+    try {
+        const response = await Axios.post('edit-trainings/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const VIEW_TRAININGS = async (body) => {
+    try {
+        const response = await Axios.post('view-trainings/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const TRAININGS_STATUS = async (body) => {
+    try {
+        const response = await Axios.post('trainings-status/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
