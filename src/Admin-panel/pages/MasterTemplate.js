@@ -5,6 +5,8 @@ import {
   DownloadOutlined,
   FileSearchOutlined,
   FileTextOutlined,
+  FolderOpenFilled,
+  FormOutlined,
   MailFilled,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -60,24 +62,27 @@ const MasterTemplate = () => {
       '/media': { selected: '8' },
       '/report': { selected: '9' },
       '/download': { selected: '10' },
-      '/live-test':{selected:'11',open:'5'},
-      '/add-live-test': {selected:'11',open:'5'},
-      '/edit-live-test':{selected:'11',open:'5'},
-      '/live-test-questions':{selected:'11',open:'5'},
+      '/live-test': { selected: '11', open: '5' },
+      '/add-live-test': { selected: '11', open: '5' },
+      '/edit-live-test': { selected: '11', open: '5' },
+      '/live-test-questions': { selected: '11', open: '5' },
       '/notification': { selected: '13' },
       '/add-notification': { selected: '13', open: '13' },
       '/edit-notification': { selected: '13', open: '13' },
       '/deleted-courses': { selected: '14', open: '5' },
-      '/announcment': {selected: '15', open: '15'},
-      '/add-announcment':{selected:'15', open:'15'},
-      '/edit-announcment':{selected:'15', open:'15'},
-      '/smtp':{selected:'16', open:'16'},
-      '/add-smtp':{selected:'16',open:'16'},
-      '/edit-smtp':{selected:'16',open:'16'},
-      '/upcoming-trainings':{selected:'17',open:'5'},
-      '/add-trainings':{selected:'17',open:'5'},
+      '/announcment': { selected: '15', open: '15' },
+      '/add-announcment': { selected: '15', open: '15' },
+      '/edit-announcment': { selected: '15', open: '15' },
+      '/smtp': { selected: '16', open: '16' },
+      '/add-smtp': { selected: '16', open: '16' },
+      '/edit-smtp': { selected: '16', open: '16' },
+      '/upcoming-trainings': { selected: '17', open: '17' },
+      '/add-trainings': { selected: '17', open: '17' },
+      '/edit-trainings': { selected: '17', open: '17' },
+      '/discussion': { selected: '18' },
+
     };
-      
+
     const path = location.pathname;
     const match = pathToKey[path];
     if (match) {
@@ -100,13 +105,14 @@ const MasterTemplate = () => {
       '8': '/media',
       '9': '/report',
       '10': '/download',
-      '11':'/live-test',
+      '11': '/live-test',
       '12': '/learners-group',
       '13': '/notification',
       '14': '/deleted-courses',
       '15': '/announcment',
       '16': '/smtp',
-      '17':'/upcoming-trainings',
+      '17': '/upcoming-trainings',
+      '18': '/discussion',
 
     };
 
@@ -139,7 +145,7 @@ const MasterTemplate = () => {
         <>Loading...........</>
       ) : (
         <Layout style={{ minHeight: '100vh' }}>
-          <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: "#141414",}}>
+          <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: "#141414", }}>
             <div className='menu-logo'>
               <img alt="logo" src={Logo} />
             </div>
@@ -169,23 +175,25 @@ const MasterTemplate = () => {
                     { key: '6', label: "Courses" },
                     { key: '14', label: "Deleted Courses" },
                     { key: '7', label: "Packages" },
-                    {key: '11',label:"Live Test"},
-                    {key: '17',label:'Upcoming Trainings'},
+                    { key: '11', label: "Live Test" },
+
                   ]
                 },
                 { key: '8', icon: <ProfileFilled />, label: 'Media' },
+                { key: '17',icon: <FolderOpenFilled />, label: 'Upcoming Trainings' },
                 { key: '9', icon: <FileSearchOutlined />, label: 'Report' },
                 { key: '10', icon: <DownloadOutlined />, label: 'Download' },
                 { key: '13', icon: <BellFilled />, label: 'Notification' },
-                { key: '15', icon: <NotificationOutlined />, label: 'Announcement' },
+                { key: '15', icon: <NotificationOutlined />, label: 'News' },
                 { key: '16', icon: <MailFilled />, label: 'SMTP' },
+                { key: '18', icon: <FormOutlined />, label: 'Discussion Form' },
                 { key: '50', icon: <UploadOutlined />, label: 'Logout' },
               ]}
             />
           </Sider>
           <Layout>
             <Header
-              style={{    
+              style={{
                 padding: '0',
                 backgroundColor: '#141414',
               }}
@@ -198,10 +206,10 @@ const MasterTemplate = () => {
                   fontSize: '16px',
                   width: 64,
                   height: 64,
-                  color:'#fff',
+                  color: '#fff',
                 }}
               />
-              <span style={{ fontWeight: "bold", fontSize: "20px"}}>
+              <span style={{ fontWeight: "bold", fontSize: "20px" }}>
                 Admin Panel
               </span>
               <UserDropdown user={user} />
@@ -212,7 +220,7 @@ const MasterTemplate = () => {
           </Layout>
         </Layout>
       )}
-  </>
+    </>
   );
 };
 

@@ -201,7 +201,10 @@ const onFinish = async () => {
           <Form.Item label="Start Date">
             <DatePicker
               style={{ width: '100%' }}
-              onChange={set_start_date}
+              onChange={(date) => {
+                set_start_date(date);
+                set_end_date(null); // reset end date
+              }}
               value={start_date}
             /> {errors?.start_date && (
               <span style={{ color: "red" }}>{errors.start_date}</span>
@@ -213,6 +216,9 @@ const onFinish = async () => {
               style={{ width: '100%' }}
               onChange={set_end_date}
               value={end_date}
+              disabledDate={(current) =>
+                start_date && current.isBefore(start_date.startOf('day'))
+              }
             /> {errors?.end_date && (
               <span style={{ color: "red" }}>{errors.end_date}</span>
             )}
@@ -221,7 +227,10 @@ const onFinish = async () => {
           <Form.Item label="Enrollment Start">
             <DatePicker
               style={{ width: '100%' }}
-              onChange={set_enrollment_start}
+              onChange={(date) => {
+                set_enrollment_start(date);
+                set_enrollment_end(null); // reset enrollment end
+              }}
               value={enrollment_start}
             /> {errors?.enrollment_start && (
               <span style={{ color: "red" }}>{errors.enrollment_start}</span>
@@ -233,6 +242,9 @@ const onFinish = async () => {
               style={{ width: '100%' }}
               onChange={set_enrollment_end}
               value={enrollment_end}
+               disabledDate={(current) =>
+               enrollment_start && current.isBefore(enrollment_start.startOf('day'))
+              }
             /> {errors?.enrollment_end && (
               <span style={{ color: "red" }}>{errors.enrollment_end}</span>
             )}
