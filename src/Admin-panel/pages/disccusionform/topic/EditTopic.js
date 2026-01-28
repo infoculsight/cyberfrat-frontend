@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, Form, Input, Button, App, message, Checkbox } from 'antd';
 import CustomRichTextEditor from '../../../components/CustomTextEditor';
 import { EDIT_TOPIC, LIST_CITY, VIEW_TOPIC } from '../../../apis/apis';
+import CulsightPageLoader from "../../../components/CulsightPageLoader"
 
 function EditTopic(props) {
     const [form] = Form.useForm();
@@ -79,6 +80,7 @@ function EditTopic(props) {
                 // Close edit view
                 props.set_edit_topic(null);
             } else {
+                set_errors(response?.data?.errors)
                 message.error(response?.data?.message || 'Update failed');
             }
         } catch (err) {
@@ -92,7 +94,12 @@ function EditTopic(props) {
 
     return (
         <>
-            <Form
+
+        {loading ? <>
+<CulsightPageLoader />
+        </>
+        :<>
+  <Form
                 form={form}
                 layout="vertical"
                 onFinish={onFinish}
@@ -140,6 +147,8 @@ function EditTopic(props) {
                     </Button>
                 </Form.Item>
             </Form>
+        </>}
+          
         </>
     );
 }
