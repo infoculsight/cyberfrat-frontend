@@ -82,8 +82,8 @@ const EditCity = (props) => {
         }))}
       />
 
-      {errors?.city && (
-        <span style={{ color: "red" }}>{errors.city}</span>
+      {errors?.title && (
+        <span style={{ color: "red" }}>{errors.title}</span>
       )}
 
       <br />

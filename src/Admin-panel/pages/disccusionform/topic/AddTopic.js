@@ -54,7 +54,7 @@ function AddTopic(props) {
                 // Close edit view
                 props.set_add_city(null);
             } else {
-                set_errors(response?.data?.error)
+                set_errors(response?.data?.errors)
                 message.error(response?.data?.message || 'Update failed');
             }
         } catch (err) {
