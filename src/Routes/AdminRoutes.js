@@ -56,7 +56,10 @@ import LiveTestDownload from "../Admin-panel/pages/downloads/LiveTestDownload";
 import UpcommingTrainings from "../Admin-panel/pages/upcomingtrainings/UpcommingTrainings";
 import AddUpcommingTrainings from "../Admin-panel/pages/upcomingtrainings/AddUpcommingTrainings";
 import EditUpcomingTrainings from "../Admin-panel/pages/upcomingtrainings/EditUpcommingTraings";
-
+import ListDiscussion from "../Admin-panel/pages/disccusionform/ListDiscussion";
+import AddCity from "../Admin-panel/pages/disccusionform/city/AddCity";
+import ListCity from "../Admin-panel/pages/disccusionform/city/ListCity";
+import ListTopic from "../Admin-panel/pages/disccusionform/topic/ListTopic";
 
 function AdminRoutes() {
   return (
@@ -110,9 +113,9 @@ function AdminRoutes() {
           <Route path="course-download" element={<CourseDownload />} />
           <Route path="package-download" element={<PackageDownload />} />
           <Route path="livetest-download" element={<LiveTestDownload />} />
-          <Route path="quiz-download" element={<QuizDownload/>} />
+          <Route path="quiz-download" element={<QuizDownload />} />
         </Route>
-        
+
         <Route path="announcment/:page?" element={<Announcment />} />
         <Route path="add-announcment/" element={<AddAnnouncment />} />
         <Route path="edit-announcment/:id" element={<EditAnnouncment />} />
@@ -124,6 +127,11 @@ function AdminRoutes() {
         <Route path="notification" element={<AdminNotification />} />
         <Route path="add-notification" element={<AddNotification />} />
         <Route path="edit-notification/:id" element={<EditNotification />} />
+        <Route path="discussion" element={<ListDiscussion />}>
+          <Route index element={<ListCity />} />
+          <Route path="city" element={<ListCity />} />
+          <Route path="topic" element={<ListTopic />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

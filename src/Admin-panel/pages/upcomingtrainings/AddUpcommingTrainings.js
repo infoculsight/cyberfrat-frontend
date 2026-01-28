@@ -15,6 +15,7 @@ import { LeftOutlined, UploadOutlined } from '@ant-design/icons';
 import CustomRichTextEditor from '../../components/CustomTextEditor';
 import { ADD_TRAININGS } from '../../apis/apis';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 function AddUpcomingTrainings() {
   const navigate = useNavigate();
@@ -22,7 +23,6 @@ function AddUpcomingTrainings() {
 
   const [loading, setLoading] = useState(false);
 
-  // Form fields state
   const [title, set_title] = useState('');
   const [short_description, set_short_description] = useState('');
   const [description, set_description] = useState('');
@@ -39,7 +39,6 @@ function AddUpcomingTrainings() {
   const [banner, set_Banner] = useState(null);
   const [errors, set_errors] = useState("");
 
-
   const onFinish = async () => {
     setLoading(true);
     const FORM_DATA = new FormData();
@@ -53,17 +52,14 @@ function AddUpcomingTrainings() {
       'start_date',
       start_date ? start_date.format('YYYY-MM-DD HH:mm:ss') : ''
     );
-
     FORM_DATA.append(
       'end_date',
       end_date ? end_date.format('YYYY-MM-DD HH:mm:ss') : ''
     );
-
     FORM_DATA.append(
       'enrollment_start',
       enrollment_start ? enrollment_start.format('YYYY-MM-DD HH:mm:ss') : ''
     );
-
     FORM_DATA.append(
       'enrollment_end',
       enrollment_end ? enrollment_end.format('YYYY-MM-DD HH:mm:ss') : ''
@@ -101,14 +97,18 @@ function AddUpcomingTrainings() {
   return (
     <div className="lms-body">
       <Card>
-        <h2> <span style={{ cursor: "pointer" }}
-          onClick={() => navigate("/upcoming-trainings")}><LeftOutlined /></span>Add Upcomming training details</h2>
+        <h2>
+          <span style={{ cursor: "pointer" }} onClick={() => navigate("/upcoming-trainings")}>
+            <LeftOutlined />
+          </span>
+          Add Upcomming training details
+        </h2>
+
         <Form layout="vertical" onFinish={onFinish}>
+
           <Form.Item label="Title">
             <Input value={title} onChange={(e) => set_title(e.target.value)} />
-            {errors?.title && (
-              <span style={{ color: "red" }}>{errors.title}</span>
-            )}
+            {errors?.title && <span style={{ color: "red" }}>{errors.title}</span>}
           </Form.Item>
 
           <Form.Item label="Short Description">
@@ -126,10 +126,8 @@ function AddUpcomingTrainings() {
             editorLabel="Description"
             onChange={set_description}
             placeholder="Write something..."
-          /> {errors?.description && (
-            <span style={{ color: "red" }}>{errors.description}</span>
-          )}
-
+          />
+          {errors?.description && <span style={{ color: "red" }}>{errors.description}</span>}
 
           <Form.Item label="Category" style={{ marginTop: '15px' }}>
             <Select onChange={set_category} value={category}>
@@ -138,11 +136,8 @@ function AddUpcomingTrainings() {
               <Select.Option value="course">Course</Select.Option>
               <Select.Option value="package">Package</Select.Option>
             </Select>
-            {errors?.category && (
-              <span style={{ color: "red" }}>{errors.category}</span>
-            )}
+            {errors?.category && <span style={{ color: "red" }}>{errors.category}</span>}
           </Form.Item>
-
 
           <Form.Item label="Training Type">
             <Select onChange={set_training_type} value={training_type}>
@@ -154,43 +149,56 @@ function AddUpcomingTrainings() {
             )}
           </Form.Item>
 
+          {/* START DATE */}
           <Form.Item label="Start Date">
             <DatePicker
               style={{ width: '100%' }}
-              onChange={set_start_date}
+              onChange={(date) => {
+                set_start_date(date);
+                set_end_date(null); // reset end date
+              }}
               value={start_date}
             />
-            {errors?.start_date && (
-              <span style={{ color: "red" }}>{errors.start_date}</span>
-            )}
+            {errors?.start_date && <span style={{ color: "red" }}>{errors.start_date}</span>}
           </Form.Item>
 
+          {/* END DATE */}
           <Form.Item label="End Date">
             <DatePicker
               style={{ width: '100%' }}
               onChange={set_end_date}
               value={end_date}
+              disabledDate={(current) =>
+                start_date && current.isBefore(start_date.startOf('day'))
+              }
             />
-            {errors?.end_date && (
-              <span style={{ color: "red" }}>{errors.end_date}</span>
-            )}
+            {errors?.end_date && <span style={{ color: "red" }}>{errors.end_date}</span>}
           </Form.Item>
 
+          {/* ENROLLMENT START */}
           <Form.Item label="Enrollment Start">
             <DatePicker
               style={{ width: '100%' }}
-              onChange={set_enrollment_start}
+              onChange={(date) => {
+                set_enrollment_start(date);
+                set_enrollment_end(null); // reset enrollment end
+              }}
               value={enrollment_start}
-            /> {errors?.enrollment_start && (
+            />
+            {errors?.enrollment_start && (
               <span style={{ color: "red" }}>{errors.enrollment_start}</span>
             )}
           </Form.Item>
 
+          {/* ENROLLMENT END */}
           <Form.Item label="Enrollment End">
             <DatePicker
               style={{ width: '100%' }}
               onChange={set_enrollment_end}
               value={enrollment_end}
+              disabledDate={(current) =>
+                enrollment_start && current.isBefore(enrollment_start.startOf('day'))
+              }
             />
             {errors?.enrollment_end && (
               <span style={{ color: "red" }}>{errors.enrollment_end}</span>
@@ -210,23 +218,15 @@ function AddUpcomingTrainings() {
 
           <Form.Item label="Trainer">
             <Input value={trainer} onChange={(e) => set_trainer(e.target.value)} />
-            {errors?.trainer && (
-              <span style={{ color: "red" }}>{errors.trainer}</span>
-            )}
+            {errors?.trainer && <span style={{ color: "red" }}>{errors.trainer}</span>}
           </Form.Item>
 
           <Form.Item label="Mandatory">
             <Switch checked={is_mandatory} onChange={set_is_mandatory} />
-            {errors?.is_mandatory && (
-              <span style={{ color: "red" }}>{errors.is_mandatory}</span>
-            )}
           </Form.Item>
 
           <Form.Item label="Active">
             <Switch checked={is_active} onChange={set_is_active} />
-            {errors?.is_active && (
-              <span style={{ color: "red" }}>{errors.is_active}</span>
-            )}
           </Form.Item>
 
           <Form.Item label="Banner">
@@ -239,9 +239,7 @@ function AddUpcomingTrainings() {
             >
               <Button icon={<UploadOutlined />}>Upload Banner</Button>
             </Upload>
-            {errors?.banner && (
-              <span style={{ color: "red" }}>{errors.banner}</span>
-            )}
+            {errors?.banner && <span style={{ color: "red" }}>{errors.banner}</span>}
           </Form.Item>
 
           <Form.Item>
@@ -249,6 +247,7 @@ function AddUpcomingTrainings() {
               Save Training
             </Button>
           </Form.Item>
+
         </Form>
       </Card>
     </div>

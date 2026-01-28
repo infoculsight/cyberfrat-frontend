@@ -9,6 +9,8 @@ function Dashboard() {
   const [loader, setLoader] = useState(false);
   const [user_info, set_user_info] = useState({});
   const [learner_watch, set_learner_watch] = useState([]);
+
+
   useEffect(() => {
     const LIST_API = async () => {
       setLoader(true);
@@ -25,6 +27,7 @@ function Dashboard() {
       } finally {
       }
     };
+    
     const LEANER_WATCHTIME_API = async () => {
       const FORM_DATA = new FormData();
       try {

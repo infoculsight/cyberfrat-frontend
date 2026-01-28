@@ -95,10 +95,18 @@ export default function TrainingCards() {
                 </span>
             ),
         },
-         {
+        {
             title: "Category",
             dataIndex: "category",
-            render: (text, record) => <span>{record.category}</span>,
+            render: (text, record) => {
+                const labels = {
+                    course: "Course",
+                    package: "Package",
+                    tech: "Tech",
+                    hr: "HR",
+                };
+                return <span>{labels[record.category] || record.category}</span>;
+            }
         },
         {
             title: "Start Date",
@@ -113,10 +121,14 @@ export default function TrainingCards() {
         {
             title: "Training Type",
             dataIndex: "training_type",
-            render: (text, record) => <span>{record.training_type}</span>,
-
+            render: (text, record) => {
+                const labels = {
+                    online: "Online",
+                    offline: "Offline",
+                }
+                return <span>{labels[record.training_type] || record.training_type}</span>;
+            }
         },
-
         {
             title: "Status",
             key: "status",
@@ -285,16 +297,16 @@ export default function TrainingCards() {
                                     />
                                     <style>
                                         {`
-                      .no-search-pagination .ant-select-selection-search-input {
-                        display: none !important;
-                      }
-                    `}
+                                        .no-search-pagination .ant-select-selection-search-input {
+                                            display: none !important;
+                                        }
+                                        `}
                                     </style>
                                 </div>
                             </>
                         ) : (
                             <>
-                               
+
                             </>
                         )}
                     </>

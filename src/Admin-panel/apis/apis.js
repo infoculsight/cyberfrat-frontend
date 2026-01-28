@@ -1320,3 +1320,95 @@ export const TRAININGS_STATUS = async (body) => {
         console.error(error);
     }  
 };
+
+
+export const ADD_CITY = async (body) => {
+    try {
+        const response = await Axios.post('add-city-forum/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const LIST_CITY = async (body) => {
+    try {
+        const response = await Axios.post('city-list/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const EDIT_CITY = async (body) => {
+    try {
+        const response = await Axios.post('edit-city-forum/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const VIEW_CITY = async (body) => {
+    try {
+        const response = await Axios.post('view-city-forum/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const STATUS_CITY = async (body) => {
+    try {
+        const response = await Axios.post('city-forum-status/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const ADD_TOPIC = async (body) => { 
+    try {
+        const response = await Axios.post('add-topic-forum/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const LIST_TOPIC = async (body) => { 
+    try {
+        const response = await Axios.post('topic-list/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const EDIT_TOPIC = async (body) => { 
+    try {
+        const response = await Axios.post('edit-topic-forum/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const VIEW_TOPIC = async (body) => { 
+    try {
+        const response = await Axios.post('view-topic-forum/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+
+export const STATUS_TOPIC = async (body) => { 
+    try {
+        const response = await Axios.post('topic-forum-status/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
