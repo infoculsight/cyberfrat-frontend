@@ -13,6 +13,16 @@ function EditTopic(props) {
     const [title, set_title] = useState('');
     const [cities, set_cities] = useState([]); // List of cities from API
     const [selectedCities, set_selectedCities] = useState([]); // Selected city IDs
+    const [checkAll, setCheckAll] = useState(false);
+    const allCityIds = cities.map(city => city.id);
+
+    const onCheckAllChange = (e) => {
+        const checked = e.target.checked;
+        setCheckAll(checked);
+        set_selectedCities(checked ? allCityIds : []);
+    };
+
+
 
     // Fetch cities from API
     useEffect(() => {
@@ -58,6 +68,7 @@ function EditTopic(props) {
     // Handle checkbox change
     const onCityChange = (checkedValues) => {
         set_selectedCities(checkedValues);
+        setCheckAll(checkedValues.length === allCityIds.length);
     };
 
     const onFinish = async () => {
@@ -95,60 +106,75 @@ function EditTopic(props) {
     return (
         <>
 
-        {loading ? <>
-<CulsightPageLoader />
-        </>
-        :<>
-  <Form
-                form={form}
-                layout="vertical"
-                onFinish={onFinish}
-            >
-                <Form.Item
-                    label="Title"
-                >
-                    <Input
-                        placeholder="Enter topic title"
-                        value={title}
-                        onChange={(e) => set_title(e.target.value)}
-                    />
-                    {errors?.title && (
-                        <span style={{ color: "red" }}>{errors.title}</span>
-                    )}
-                </Form.Item>
-
-                <CustomRichTextEditor
-                    editorLabel={"Description"}
-                    value={description}
-                    onChange={(value) => set_description(value)}
-                />
-                {errors?.description && (
-                    <span style={{ color: "red" }}>{errors.description}</span>
-                )}
-
-                {/* City Checkboxes */}
-                <Form.Item label="Select Cities" style={{ marginTop: "15px" }}>
-                    <Checkbox.Group
-                        options={cities.map(city => ({ label: city.title, value: city.id }))}
-                        value={selectedCities}
-                        onChange={onCityChange}
-                    />
-
-                </Form.Item>
-
-                <Form.Item>
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        style={{ float: 'right', marginTop: '20px' }}
-                        loading={loading}
+            {loading ? <>
+                <CulsightPageLoader />
+            </>
+                : <>
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        onFinish={onFinish}
                     >
-                        Update
-                    </Button>
-                </Form.Item>
-            </Form>
-        </>}
-          
+                        <Form.Item
+                            label="Title"
+                        >
+                            <Input
+                                placeholder="Enter topic title"
+                                value={title}
+                                onChange={(e) => set_title(e.target.value)}
+                            />
+                            {errors?.title && (
+                                <span style={{ color: "red" }}>{errors.title}</span>
+                            )}
+                        </Form.Item>
+
+                        <CustomRichTextEditor
+                            editorLabel={"Description"}
+                            value={description}
+                            onChange={(value) => set_description(value)}
+                        />
+                        {errors?.description && (
+                            <span style={{ color: "red" }}>{errors.description}</span>
+                        )}
+
+                        {/* City Checkboxes */}
+                        <Form.Item label="Select Cities" style={{ marginTop: "15px" }}>
+                            <Checkbox
+                                indeterminate={
+                                    selectedCities.length > 0 &&
+                                    selectedCities.length < allCityIds.length
+                                }
+                                onChange={onCheckAllChange}
+                                checked={checkAll}
+                            >
+                                Select All
+                            </Checkbox>
+                            
+                            <Checkbox.Group
+                                style={{ display: "block", marginTop: "10px" }}
+                                options={cities.map(city => ({
+                                    label: city.title,
+                                    value: city.id
+                                }))}
+                                value={selectedCities}
+                                onChange={onCityChange}
+                            />
+                        </Form.Item>
+
+
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                style={{ float: 'right', marginTop: '20px' }}
+                                loading={loading}
+                            >
+                                Update
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </>}
+
         </>
     );
 }

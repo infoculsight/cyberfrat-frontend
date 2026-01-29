@@ -172,7 +172,7 @@ export default function EditLearner() {
                     img.onload = () => {
                       const { width, height } = img;
                       // Example: Minimum 600X400 pixels
-                      if (width === 490 && height === 320) {
+                      if (width === 600 && height === 400) {
                         setimageError(""); // Clear errors if valid
 
                         // Set preview and file for API
@@ -213,11 +213,11 @@ export default function EditLearner() {
                   </span>
                 )}
                 {/* Server-side validation error */}
-                {errors?.thumbnail && (
+                {errors?.image && (
                   <span
                     style={{ color: "red", display: "block", marginTop: 8 }}
                   >
-                    {errors?.thumbnail}
+                    {errors?.image}
                   </span>
                 )}
 

@@ -180,7 +180,7 @@ export default function AddLearners() {
                       img.onload = () => {
                         const { width, height } = img;
                         // Example: Minimum 300x300 pixels
-                        if (width === 490 && height === 320) {
+                        if (width === 600 && height === 400) {
                           setimageError(""); // Clear errors if valid
 
                           // Set preview and file for API

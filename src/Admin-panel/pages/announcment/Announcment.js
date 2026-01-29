@@ -38,6 +38,7 @@ function Announcment() {
   };
   useEffect(() => {
     LIST_API();
+
   }, []);
 
 

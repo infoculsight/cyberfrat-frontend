@@ -11,11 +11,10 @@ import {
   message,
   App
 } from 'antd';
-import { LeftOutlined, UploadOutlined } from '@ant-design/icons';
+import { LeftOutlined, Loading3QuartersOutlined, PlusOutlined } from '@ant-design/icons';
 import CustomRichTextEditor from '../../components/CustomTextEditor';
 import { ADD_TRAININGS } from '../../apis/apis';
 import { useNavigate } from 'react-router-dom';
-import dayjs from 'dayjs';
 
 function AddUpcomingTrainings() {
   const navigate = useNavigate();
@@ -36,8 +35,47 @@ function AddUpcomingTrainings() {
   const [trainer, set_trainer] = useState('');
   const [is_mandatory, set_is_mandatory] = useState(false);
   const [is_active, set_is_active] = useState(true);
-  const [banner, set_Banner] = useState(null);
   const [errors, set_errors] = useState("");
+  const [imageError, setimageError] = useState("");
+  const [image, set_image] = useState("");
+  const [image_api, set_image_api] = useState("");
+
+
+
+  const getBase64 = (img, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+  const handleChange = async (info) => {
+    if (info.file.status === "uploading") {
+      setLoading(true);
+      return;
+    }
+    set_image_api(info.file);
+    if (info.file.status === "done") {
+      console.log(info.file.originFileObj);
+      getBase64(info.file.originFileObj, (url) => {
+        setLoading(false);
+        set_image(url);
+      });
+    } else if (info.file.status === "error") {
+      setLoading(false);
+      message.error("Upload failed. Please try again.");
+    }
+  };
+
+  const uploadButton = (
+    <button style={{ border: 0, background: "none" }} type="button">
+      {loading ? (
+        <Loading3QuartersOutlined />
+      ) : (
+        <PlusOutlined style={{ color: "#fff" }} />
+      )}
+      <div style={{ marginTop: 8, color: "#fff" }}>Upload</div>
+    </button>
+  );
 
   const onFinish = async () => {
     setLoading(true);
@@ -70,7 +108,7 @@ function AddUpcomingTrainings() {
     FORM_DATA.append('is_mandatory', is_mandatory ? 1 : 0);
     FORM_DATA.append('is_active', is_active ? 1 : 0);
 
-    if (banner) FORM_DATA.append('banner', banner);
+   FORM_DATA.append('banner', image_api);
 
     try {
       const response = await ADD_TRAININGS(FORM_DATA);
@@ -231,15 +269,85 @@ function AddUpcomingTrainings() {
 
           <Form.Item label="Banner">
             <Upload
+              name="avatar"
+              listType="picture-card"
+              className="avatar-uploader"
+              showUploadList={false}
               beforeUpload={(file) => {
-                set_Banner(file);
+                console.log(file)
+                const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
+                const isLt2MB = file.size <= 2 * 1024 * 1024;
+                if (!isJpgOrPng) {
+                  set_image_api('');
+                  set_image('')
+                  setimageError("Only JPG/PNG files are allowed.");
+                  return false;
+                }
+
+                if (!isLt2MB) {
+                  set_image_api('');
+                  set_image('')
+                  setimageError("Banner must be smaller than or equal to 2MB.");
+                  return false;
+                }
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+
+                img.onload = () => {
+                  const { width, height } = img;
+                  // Example: Minimum 300x300 pixels
+                  if (width === 600 && height === 400) {
+                    setimageError(""); // Clear errors if valid
+
+                    // Set preview and file for API
+                    getBase64(file, (url) => set_image(url));
+                    set_image_api(file);
+
+                  } else {
+                    set_image_api('');
+                    set_image('')
+                    setimageError("Image must be at least 600x400 pixels.");
+                  }
+
+                };
                 return false;
+
               }}
-              fileList={banner ? [banner] : []}
+              onChange={handleChange}
             >
-              <Button icon={<UploadOutlined />}>Upload Banner</Button>
+              {image ? (
+                <img
+                  src={image}
+                  alt="avatar"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                uploadButton
+              )}
             </Upload>
-            {errors?.banner && <span style={{ color: "red" }}>{errors.banner}</span>}
+
+            {/* Error message under the uploader */}
+            {imageError && (
+              <span
+                style={{ color: "red", display: "block", marginTop: 8 }}
+              >
+                {imageError}
+              </span>
+            )}
+            {/* Server-side validation error */}
+            {errors?.banner && (
+              <span
+                style={{ color: "red", display: "block", marginTop: 8 }}
+              >
+                {errors?.banner}
+              </span>
+            )}
+
+            <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 2MB and must be at least 600x400 pixels.</p>
           </Form.Item>
 
           <Form.Item>

@@ -11,7 +11,7 @@ import {
   message,
   App
 } from 'antd';
-import { LeftOutlined, UploadOutlined } from '@ant-design/icons';
+import { LeftOutlined, Loading3QuartersOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import CustomRichTextEditor from '../../components/CustomTextEditor';
 import { EDIT_TRAININGS, VIEW_TRAININGS } from '../../apis/apis';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -38,9 +38,25 @@ function EditUpcomingTrainings() {
   const [trainer, set_trainer] = useState('');
   const [is_mandatory, set_is_mandatory] = useState(false);
   const [is_active, set_is_active] = useState(true);
-  const [banner, set_Banner] = useState(null);
   const [errors, set_errors] = useState("");
+  const [image, set_image] = useState("");
+  const [image_api, set_image_api] = useState("");
+  const [imageError, setimageError] = useState("");
   
+
+    const getBase64 = (img, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+  const uploadButton = (
+    <button style={{ border: 0, background: "none" }} type="button">
+      {loading ? <Loading3QuartersOutlined /> : <PlusOutlined style={{ color: "#fff" }} />}
+      <div style={{ marginTop: 8, color: "#fff" }}>Upload</div>
+    </button>
+  );
+
 
 useEffect(() => {
   setLoading(true);
@@ -68,6 +84,11 @@ useEffect(() => {
         set_trainer(data.trainer || '');
         set_is_mandatory(data.is_mandatory || false);
         set_is_active(data.is_active || true);
+          if (data?.banner) {
+          set_image(data.banner);
+        } else {
+          set_image("");
+        }
         // If the API returns a banner URL, you can set it as a dummy file
        setLoading(false);
       } else {
@@ -117,7 +138,7 @@ const onFinish = async () => {
     FORM_DATA.append('is_mandatory', is_mandatory ? 1 : 0);
     FORM_DATA.append('is_active', is_active ? 1 : 0);
 
-    if (banner) FORM_DATA.append('banner', banner);
+    FORM_DATA.append('banner', image_api);
 
     try {
       const response = await EDIT_TRAININGS(FORM_DATA);
@@ -279,18 +300,81 @@ const onFinish = async () => {
           </Form.Item>
 
           <Form.Item label="Banner">
-            <Upload
-              beforeUpload={(file) => {
-                set_Banner(file);
-                return false;
-              }}
-              fileList={banner ? [banner] : []}
-            >
-              <Button icon={<UploadOutlined />}>Upload Banner</Button>
-            </Upload>  {errors?.banner && (
-              <span style={{ color: "red" }}>{errors.banner}</span>
-            )}
-          </Form.Item>
+                     <Upload
+                       name="avatar"
+                       listType="picture-card"
+                       className="avatar-uploader"
+                       showUploadList={false}
+                       beforeUpload={(file) => {
+                         console.log(file)
+                         const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
+                         const isLt2MB = file.size <= 2 * 1024 * 1024;
+                         if (!isJpgOrPng) {
+                           setimageError("Only JPG/PNG files are allowed.");
+                           return false;
+                         }
+     
+                         if (!isLt2MB) {
+                           setimageError("Thumbnail must be smaller than or equal to 2MB.");
+                           return false;
+                         }
+                         const img = new Image();
+                         img.src = URL.createObjectURL(file);
+     
+                         img.onload = () => {
+                           const { width, height } = img;
+                           // Example: Minimum 600X400 pixels
+                           if (width === 490 && height === 320) {
+                             setimageError(""); // Clear errors if valid
+     
+                             // Set preview and file for API
+                             getBase64(file, (url) => set_image(url));
+                             set_image_api(file);
+     
+                           } else {
+                             setimageError("Image must be at least 600x400 pixels.");
+                           }
+     
+                         };
+                         return false;
+     
+                       }}
+     
+                     >
+                       {image ? (
+                         <img
+                           src={image}
+                           alt="avatar"
+                           style={{
+                             width: "100%",
+                             height: "100%",
+                             objectFit: "cover",
+                           }}
+                         />
+                       ) : (
+                         uploadButton
+                       )}
+                     </Upload>
+     
+                     {/* Error message under the uploader */}
+                     {imageError && (
+                       <span
+                         style={{ color: "red", display: "block", marginTop: 8 }}
+                       >
+                         {imageError}
+                       </span>
+                     )}
+                     {/* Server-side validation error */}
+                     {errors?.banner && (
+                       <span
+                         style={{ color: "red", display: "block", marginTop: 8 }}
+                       >
+                         {errors?.banner}
+                       </span>
+                     )}
+     
+                     <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - Thumbnail must be smaller than or equal to 2MB and must be at least 600x400 pixels.</p>
+                   </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading}>

@@ -38,7 +38,7 @@ function ListCity() {
     const [total_count, set_total_count] = useState(0);
     const [onchange_call, set_onchange_call] = useState(true);
     const [pagination_loader, set_pagination_loader] = useState(false)
-    const [search_query_value, set_search_query_value] = useState('name');
+    const [search_query_value, set_search_query_value] = useState('');
 
 
 
@@ -112,7 +112,7 @@ function ListCity() {
                         okText="Yes"
                         cancelText="No"
                     >
-                        <Button danger size="small">
+                        <Button color="red" variant="solid" size="small">
                             Change Status
                         </Button>
                     </Popconfirm>
@@ -148,7 +148,6 @@ function ListCity() {
 
 
     const pagination_on_change = async (data, size) => {
-        navigate(`/learners/${data}`);
         set_pagination_loader(true);
         const FORM_DATA = new FormData();
         FORM_DATA.append("page", data);

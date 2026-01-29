@@ -12,6 +12,17 @@ function AddTopic(props) {
     const [title, set_title] = useState('');
     const [cities, set_cities] = useState([]); // List of cities from API
     const [selectedCities, set_selectedCities] = useState([]); // Selected city IDs
+    const [checkAll, setCheckAll] = useState(false);
+
+
+    const allCityIds = cities.map(city => city.id);
+
+    const onCheckAllChange = (e) => {
+        const checked = e.target.checked;
+        setCheckAll(checked);
+        set_selectedCities(checked ? allCityIds : []);
+    };
+
 
     // Fetch cities from API
     useEffect(() => {
@@ -33,6 +44,7 @@ function AddTopic(props) {
     // Handle checkbox change
     const onCityChange = (checkedValues) => {
         set_selectedCities(checkedValues);
+        setCheckAll(checkedValues.length === allCityIds.length);
     };
 
     const onFinish = async () => {
@@ -52,7 +64,7 @@ function AddTopic(props) {
                 props.set_list_refresh(prev => prev + 1);
 
                 // Close edit view
-                props.set_add_city(null);
+                props.set_add_topic(null);
             } else {
                 set_errors(response?.data?.errors)
                 message.error(response?.data?.message || 'Update failed');
@@ -97,12 +109,28 @@ function AddTopic(props) {
 
                 {/* City Checkboxes */}
                 <Form.Item label="Select Cities" style={{ marginTop: "15px" }}>
+                    <Checkbox
+                        indeterminate={
+                            selectedCities.length > 0 &&
+                            selectedCities.length < allCityIds.length
+                        }
+                        onChange={onCheckAllChange}
+                        checked={checkAll}
+                    >
+                        Select All
+                    </Checkbox>
+
                     <Checkbox.Group
-                        options={cities.map(city => ({ label: city.title, value: city.id }))}
+                        style={{ display: "block", marginTop: "10px" }}
+                        options={cities.map(city => ({
+                            label: city.title,
+                            value: city.id
+                        }))}
                         value={selectedCities}
                         onChange={onCityChange}
                     />
                 </Form.Item>
+
 
                 <Form.Item>
                     <Button

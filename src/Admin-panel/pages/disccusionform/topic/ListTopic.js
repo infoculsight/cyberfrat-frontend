@@ -39,7 +39,7 @@ function ListTopic() {
 
     const [onchange_call, set_onchange_call] = useState(true);
     const [pagination_loader, set_pagination_loader] = useState(false)
-    const [search_query_value, set_search_query_value] = useState('name');
+    const [search_query_value, set_search_query_value] = useState('');
 
     const selectBefore = (
         <Select defaultValue="title">
@@ -109,11 +109,10 @@ function ListTopic() {
                     <Popconfirm
                         title="Do you really want to change the status?"
                         onConfirm={() => change_status(record?.id)}
-
                         okText="Yes"
                         cancelText="No"
                     >
-                        <Button danger size="small">
+                        <Button color="red" variant="solid" size="small">
                             Change Status
                         </Button>
                     </Popconfirm>
@@ -137,7 +136,6 @@ function ListTopic() {
                 setLoader(false)
 
             } else {
-                setLoader(false);
             }
         } catch (error) {
             message.error(
@@ -193,6 +191,8 @@ function ListTopic() {
     const fetchResults = (search_value) => {
         debouncedFetch(search_value);
     };
+
+    
     return (
         <div>
             {/* Top Right Button */}
