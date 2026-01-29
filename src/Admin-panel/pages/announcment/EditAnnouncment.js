@@ -81,15 +81,15 @@ function EditAnnouncment() {
                 if (response_data?.image) {
                     set_image(response_data.image);
                 } else {
-                    set_image("");
+                    set_image("");   
                 }
                 set_description(response_data?.description || "");
                 set_short_description(response_data?.short_description || "");
-                set_tags(response_data?.tags || []);
+                set_tags(Array.isArray(response_data?.tags) ? response_data.tags : response_data?.tags?.split(',') || []);
                 set_slug(response_data?.slug);
                 set_seo_title(response_data?.seo_title);
                 set_seo_description(response_data?.seo_description || "");
-                set_seo_keywords(response_data?.seo_keywords || []);
+                set_seo_keywords(Array.isArray(response_data?.seo_keywords) ? response_data.seo_keywords : response_data?.seo_keywords?.split(',') || []);
                 set_location(response_data?.location || "");
                 set_video_url(response_data?.video_url || "");
                 set_source(response_data?.source || "");

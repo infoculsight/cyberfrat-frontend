@@ -324,7 +324,7 @@ const onFinish = async () => {
                          img.onload = () => {
                            const { width, height } = img;
                            // Example: Minimum 600X400 pixels
-                           if (width === 490 && height === 320) {
+                           if (width === 600 && height === 400) {
                              setimageError(""); // Clear errors if valid
      
                              // Set preview and file for API
