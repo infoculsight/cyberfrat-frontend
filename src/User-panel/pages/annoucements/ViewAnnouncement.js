@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { VIEW_NEWS } from "../../apis/apis";
 import { useNavigate, useParams } from "react-router-dom";
 import { LeftOutlined } from "@ant-design/icons";
+import CulsightPageLoader from "../../components/CulsightPageLoader"
 
 function ViewAnnouncement() {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ function ViewAnnouncement() {
   if (loader) {
     return (
       <div className="lms-body" style={{ textAlign: "center", marginTop: 50 }}>
-        <Spin size="large" />
+       <CulsightPageLoader />
       </div>
     );
   }
