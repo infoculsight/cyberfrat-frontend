@@ -1,6 +1,5 @@
 
 import axios from 'axios';
-import { logout } from '../../authService';
 export const AxiosFirst = axios.create({
   baseURL: 'https://development.cfgold.in/api/organization/',
   withCredentials: true,

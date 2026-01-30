@@ -1,14 +1,14 @@
 import { Row, Col, Card, Tag, Button, Input, Space, Popconfirm, message, App, Table, Pagination, Spin, Select } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { LIST_TRAININGS, TRAININGS_STATUS } from '../../apis/apis';
+import { DELETE_TRAININGS, LIST_TRAININGS, TRAININGS_STATUS } from '../../apis/apis';
 import { useCallback, useEffect, useState } from 'react';
-import { EyeFilled, LoadingOutlined } from '@ant-design/icons';
+import { DeleteFilled, EyeFilled, LoadingOutlined } from '@ant-design/icons';
 import CulsightPageLoader from '../../components/CulsightPageLoader';
 import debounce from 'lodash.debounce';
 import { formatToIST } from '../../../helper/CommonHelper';
 
 
-export default function TrainingCards() {
+export default function TrainingCards() {    
     const Navigate = useNavigate();
     const { notification } = App.useApp();
     const [loader, setLoader] = useState(false);
@@ -41,23 +41,24 @@ export default function TrainingCards() {
         }
     };
 
-    useEffect(() => {
+       
+    const LIST_API = async () => {
         setLoader(true)
-        const LIST_API = async () => {
-            const FORM_DATA = new FormData();
-            FORM_DATA.append("per_page", page_size);
-            const API_CALL = await LIST_TRAININGS(FORM_DATA);
-            if (API_CALL?.data?.status) {
-                set_table_data(API_CALL?.data?.data);
-                set_current_page(API_CALL?.data?.current_page);
-                set_total_pages(API_CALL?.data?.total_pages);
-                set_total_rows(API_CALL?.data?.total_rows);
-                setLoader(false);
-            } else {
-                console.log("error");
-                setLoader(false);
-            }
-        };
+        const FORM_DATA = new FormData();
+        FORM_DATA.append("per_page", page_size);
+        const API_CALL = await LIST_TRAININGS(FORM_DATA);
+        if (API_CALL?.data?.status) {
+            set_table_data(API_CALL?.data?.data);
+            set_current_page(API_CALL?.data?.current_page);
+            set_total_pages(API_CALL?.data?.total_pages);
+            set_total_rows(API_CALL?.data?.total_rows);
+            setLoader(false);
+        } else {
+            console.log("error");
+            setLoader(false);
+        }
+    };
+    useEffect(() => {
         LIST_API();
     }, [page_size, onchange_call]);
 
@@ -82,6 +83,32 @@ export default function TrainingCards() {
             message.error(
                 "Server Error: " + (error?.response?.data?.message || "Unknown error")
             );
+        }
+    };
+
+
+    const delete_news = async (id) => {
+        set_pagination_loader(true);          
+        const FORM_DATA = new FormData();  
+        FORM_DATA.append("id", id);
+        try {
+            const response = await DELETE_TRAININGS(FORM_DATA);
+            if (response?.data?.status) {
+                notification.success({
+                    message: "Deleted Successfully",
+                    description: response?.data?.message,
+                });
+                // Refresh the table after deletion
+                LIST_API();
+            } else {
+                message.error(response?.data?.message || "Failed to delete");
+            }
+        } catch (error) {
+            message.error(
+                "Server Error: " + (error?.response?.data?.message || "Unknown error")
+            );
+        } finally {
+            set_pagination_loader(false);
         }
     };
 
@@ -153,7 +180,14 @@ export default function TrainingCards() {
             render: (_, record) => (
                 <Space size="middle">
                     <Button type="primary" size="small" onClick={() => Navigate("/edit-trainings/" + btoa(record.id))}><EyeFilled /></Button>
-
+                    <Popconfirm
+                        title="Do you really want to delete this Training?"
+                        onConfirm={() => delete_news(record?.id)}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Button size='small' variant='solid' color='red' style={{ marginLeft: "10px" }}><DeleteFilled /></Button>
+                    </Popconfirm>
                     <Popconfirm
                         title="Do you really want to change the status ?"
                         onConfirm={() => change_status(record?.id)}
@@ -162,7 +196,6 @@ export default function TrainingCards() {
                     >
                         <Button variant="solid" color="danger" size="small"> Change Status</Button>
                     </Popconfirm>
-
 
                 </Space>
             ),

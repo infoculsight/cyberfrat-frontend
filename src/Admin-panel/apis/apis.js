@@ -1321,6 +1321,15 @@ export const TRAININGS_STATUS = async (body) => {
     }  
 };
 
+export const DELETE_TRAININGS = async (body) => {
+    try {
+        const response = await Axios.post('delete-trainings/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
 
 export const ADD_CITY = async (body) => {
     try {
