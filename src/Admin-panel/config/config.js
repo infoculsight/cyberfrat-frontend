@@ -1,11 +1,11 @@
 
 import axios from 'axios';
 export const AxiosFirst = axios.create({
-  baseURL: 'https://development.cfgold.in/api/organization/',
+  baseURL: 'https://api.cfgold.in/api/organization/',
   withCredentials: true,
 });
 const Axios = axios.create({
-  baseURL: 'https://development.cfgold.in/api/organization/',
+  baseURL: 'https://api.cfgold.in/api/organization/',
   withCredentials: true,
 });
 

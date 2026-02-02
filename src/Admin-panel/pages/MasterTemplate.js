@@ -189,7 +189,7 @@ const MasterTemplate = () => {
                 { key: '15', icon: <NotificationOutlined />, label: 'News' },
                 { key: '16', icon: <MailFilled />, label: 'SMTP' },
                 { key: '18', icon: <FormOutlined />, label: 'Discussion Form' },
-                { key: '19', icon: <SettingFilled />, label: 'App Setting' },
+                // { key: '19', icon: <SettingFilled />, label: 'App Setting' },
                 { key: '50', icon: <UploadOutlined />, label: 'Logout' },
               ]}
             />
