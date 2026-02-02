@@ -1,234 +1,201 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { Table, Checkbox, Input, Row, Col, Spin, Pagination, Button, Upload, message, App } from "antd";
-import { BULK_ASSIGN_MULTI_PACKAGE, LIST_PACKAGE } from "../../apis/apis";
-import debounce from "lodash.debounce";
+import React, { useState, useEffect } from 'react';
+import { Card, Upload, Button, message, Select, Input, DatePicker, Typography, App, InputNumber } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
 
-function AssignPackagePage({ selectedPackages, handleSelect, onCancel, resetTrigger }) {
-  const { notification } = App.useApp();
-  const [packages, setPackages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [paginationLoading, setPaginationLoading] = useState(false);
-  const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPackages, setTotalPackages] = useState(0);
-  const [errors, set_errors] = useState("");
-  const [file, set_file] = useState([]);
+import { BULK_ASSIGN_PACKAGE } from '../../apis/apis';
+const { Text } = Typography;
 
+function BulkAssignPackage({ package_id, isModalOpen, onSuccess }) {
 
-  const beforeUpload = (file) => {
-    const isCSV = file.type === 'text/csv';
-    if (!isCSV) {
-      set_errors({ file: "Only CSV files are allowed!" });
-      message.error("Please upload a valid CSV file.");
-      return Upload.LIST_IGNORE;
-    }
-
-    set_file([file]);
-    set_errors("");
-    message.success(` ${file.name}`);
-    return false;
-  };
-
-  const fetchPackages = async (page = 1, searchText = "") => {
-    setPaginationLoading(true);
-
-    const form = new FormData();
-    form.append("page", page);
-    form.append("name", searchText);
-    const res = await LIST_PACKAGE(form);
-    if (res?.data?.status) {
-      setPackages(res.data.data);
-      setTotalPackages(res.data.total_packages);
-      setCurrentPage(res.data.current_page);
-    }
-
-    setLoading(false);
-    setPaginationLoading(false);
-  };
+    const { notification } = App.useApp();
+    const [access_type, set_access_type] = useState('LifeTime');
+    const [access_value, set_access_value] = useState('');
+    const [file, setFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [fileError, setFileError] = useState('');
 
 
-  useEffect(() => {
-    fetchPackages(1, "");
-  }, []);
-
-  useEffect(() => {
-    set_file([]);
-    set_errors("");
-  }, [resetTrigger]);
+    useEffect(() => {
+        if (isModalOpen) {
+            setFile(null);
+            set_access_value('');
+            set_access_type('LifeTime');
+            setFileError('');
+        }
+    }, [isModalOpen]);
 
 
 
-  const handleSearch = useCallback(
-    debounce((value) => {
-      setSearch(value);
-      fetchPackages(1, value);
-    }, 500),
-    []
-  );
+    useEffect(() => {
+        if (isModalOpen) {
+            setFile(null);
+            set_access_value('');
+            set_access_type('LifeTime');
+            setFileError('');
+        }
+    }, [isModalOpen]);
 
-  const onSearchInput = (e) => {
-    handleSearch(e.target.value);
-  };
 
-  // Pagination
-  const changePage = (page) => {
-    fetchPackages(page, search);
-  };
+    const handleFileChange = (file) => {
+        const isCSV = file.type === 'text/csv';
+        if (!isCSV) {
 
-  // Table Columns
-  const columns = [
-    {
-      title: (
-        <Checkbox
-          checked={packages.length > 0 && selectedPackages.length === packages.length}
-          indeterminate={
-            selectedPackages.length > 0 &&
-            selectedPackages.length < packages.length
-          }
-          onChange={(e) => {
-            if (e.target.checked) {
-              // Select All IDs
-              const allIds = packages.map((p) => p.id);
-              handleSelect(allIds, true);
-            } else {
-              // Unselect All
-              handleSelect([], true);
+            return Upload.LIST_IGNORE;
+        }
+
+        setFile([file]);
+        setFileError('');
+        message.success(` ${file.name}`);
+        return false;
+    };
+
+
+    const handleSubmit = async () => {
+
+        if (!file) {
+            setFileError('Please select a CSV file before submitting.');
+            message.error('Please select an Excel file first.');
+            return;
+        }
+
+        if ((access_type === 'FixedDate' || access_type === 'MaxViewingHours') && !access_value) {
+            message.error('Please enter access value.');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const formData = new FormData();
+            formData.append('file', file[0]);
+            formData.append('package_id', atob(package_id));
+            formData.append('access_type', access_type);
+
+            // Only append access_value if access_type is not LifeTime
+            if (access_type === 'FixedDate' || access_type === 'MaxViewingHours') {
+                formData.append('access_value', access_value);
             }
-          }}
-        />
-      ),
-      width: 60,
-      render: (_, record) => (
-        <Checkbox
-          checked={selectedPackages.includes(record.id)}
-          onChange={() => handleSelect(record.id)}
-        />
-      ),
-    },
 
-    {
-      title: "Package Name",
-      dataIndex: "name",
-    },
-    {
-      title: "Courses",
-      width: 120,
-      dataIndex: "course_count",
-      render: (val) => <b>{val ?? 0}</b>,
-    },
-  ];
+            const response = await BULK_ASSIGN_PACKAGE(formData);
+            if (response?.data?.status) {
+                notification.success({
+                    message: "Successful",
+                    description: response?.data?.message,
+                });
+                setFile([]);
+                set_access_value('');
+                if (onSuccess) onSuccess();
 
+            } else {
+                message.error(response?.data?.message || 'Enrollment failed!');
+            }
+        } catch (error) {
 
-  const handleSubmit = async () => {
-    if (!file?.length) {
-      message.error("Please upload a CSV file.");
-      return;
-    }
+            message.error('Server error: Could not enroll learners.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    if (!selectedPackages.length) {
-      message.error("Please select at least one package.");
-      return;
-    }
+    const renderAccessValueInput = () => {
+        if (access_type === 'FixedDate') {
+            return (
+                <>
+                    <label><b>Access Value (Select Date):</b></label>
+                    <DatePicker
+                        style={{ width: 300, marginBottom: '20px' }}
+                        onChange={(date) =>
+                            set_access_value(date ? dayjs(date).format('YYYY-MM-DD') : '')
+                        }
+                    />
+                </>
+            );
+        }
 
-    const form = new FormData();
-    form.append("package_id", selectedPackages.join(","));
-    form.append("file", file[0]);
+        if (access_type === 'MaxViewingHours') {
+            return (
+                <>
+                    <label><b>Access Value (Enter Hours):</b></label>
+                    <InputNumber
+                        min={1}
+                        max={24}
+                        style={{ width: 200 }}
+                        placeholder="Enter max hours"
+                        value={access_value}
+                        onChange={(value) => set_access_value(value)}
+                    />
+                </>
+            );
+        }
 
-    try {
-      const res = await BULK_ASSIGN_MULTI_PACKAGE(form);
+        return null;
+    };
 
-      if (res?.data?.status) {
-       notification.success({
-          message: "Successful",
-          description: res.data.message,
-        });
-        onCancel();
-        set_file([])
+    return (
+        <div className="lms-body">
+            <Card>
+                <h3>Bulk Enroll Learners to Live Test</h3>
+                <span>Upload Excel file and submit to enroll learners.</span>
 
-      } else {
-        message.error(res?.data?.message);
-      }
-    } catch (err) {
+                <div style={{ maxWidth: 600, margin: '15px auto' }}>
+                    <Card>
+                        <label><b>Access Type:</b></label>
+                        <Select
+                            style={{ width: 300, marginBottom: '20px' }}
+                            value={access_type}
+                            onChange={(value) => {
+                                set_access_type(value);
+                                set_access_value('');
+                            }}
+                            options={[
+                                { value: 'LifeTime', label: 'LifeTime' },
+                                { value: 'FixedDate', label: 'Fixed Date' },
+                                { value: 'MaxViewingHours', label: 'Max Viewing Hours' },
+                            ]}
+                        />
+                        <br />
+                        {/* Conditionally show access_value field */}
+                        {renderAccessValueInput()}
 
-      message.error("API request failed!");
-    }
-  };
+                        {/* <Row gutter={[16, 16]}>
+                            <Col span={12}>
+                                <Checkbox defaultChecked disabled>Email</Checkbox>
+                            </Col>
+                        </Row> */}
+                    </Card>
+                </div>
 
+                {/* Excel Upload */}
+                <Upload
+                    beforeUpload={handleFileChange}
+                    fileList={file}
+                    onRemove={() => setFile([])}
+                    accept=".csv"
+                    multiple={false}
+                    maxCount={1}
+                    style={{ width: "100%" }} // optional
+                >
+                    <Button icon={<UploadOutlined />}>Select Excel File</Button>
+                </Upload>
+                {fileError && (
+                    <Text type="danger" style={{ display: 'block', marginTop: 8 }}>
+                        {fileError}
+                    </Text>
+                )}
 
-
-  return (
-    <div>
-      {/* Search Box */}
-      <Row style={{ marginBottom: 20 }}>
-        <Col span={12}>
-          <Input
-            addonBefore={<>Name</>}
-            placeholder="Search package"
-            onChange={onSearchInput}
-            size="large"
-          />
-        </Col>
-        <Col span={12}>
-
-        </Col>
-      </Row>
-
-      {/* Loader */}
-      {loading ? (
-        <Spin size="large" />
-      ) : (
-        <>
-          <Table
-            columns={columns}
-            dataSource={packages}
-            rowKey="id"
-            pagination={false}
-            loading={paginationLoading}
-            bordered
-          />
-
-          {/* Pagination */}
-          <div style={{ textAlign: "right", marginTop: 20 }}>
-            <Pagination
-              current={currentPage}
-              total={totalPackages}
-              pageSize={9}
-              onChange={changePage}
-            />
-          </div>
-        </>
-
-      )}
-      <Row justify="end" gutter={10} style={{ marginTop: 25 }}>
-        <Col>
-          <Upload
-            beforeUpload={beforeUpload}
-            fileList={file}
-            onRemove={() => set_file([])}
-            accept=".csv"
-            maxCount={1}
-          >
-            <Button type="primary">Upload Learners</Button>
-          </Upload>    {errors?.file ? (
-            <>
-              <span style={{ color: "red" }}>
-                {errors?.file}
-              </span>
-            </>
-          ) : (
-            <></>
-          )}
-        </Col>
-
-        <Col>
-          <Button variant="solid" color="green" onClick={handleSubmit} disabled={file.length === 0}>  
-            Submit
-          </Button>
-        </Col>
-      </Row>
-
-    </div>
-  );
+                {/* Submit */}
+                <div style={{ marginTop: 20 }}>
+                    <Button
+                        type="primary"
+                        onClick={handleSubmit}
+                        loading={loading}
+                    >
+                        Submit
+                    </Button>
+                </div>
+            </Card>
+        </div>
+    );
 }
 
-export default AssignPackagePage;
+export default BulkAssignPackage;

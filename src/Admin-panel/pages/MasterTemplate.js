@@ -12,6 +12,7 @@ import {
   MenuUnfoldOutlined,
   NotificationOutlined,
   ProfileFilled,
+  SettingFilled,
   UploadOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -79,7 +80,8 @@ const MasterTemplate = () => {
       '/upcoming-trainings': { selected: '17', open: '17' },
       '/add-trainings': { selected: '17', open: '17' },
       '/edit-trainings': { selected: '17', open: '17' },
-      '/discussion': { selected: '18' },
+      '/discussion': { selected: '18',open:'18' },
+      '/app-setting':{selected:'19',open:'19'},
 
     };
 
@@ -113,7 +115,7 @@ const MasterTemplate = () => {
       '16': '/smtp',
       '17': '/upcoming-trainings',
       '18': '/discussion',
-
+      '19':'/app-setting'
     };
 
     const route = keyToPath[key];
@@ -187,6 +189,7 @@ const MasterTemplate = () => {
                 { key: '15', icon: <NotificationOutlined />, label: 'News' },
                 { key: '16', icon: <MailFilled />, label: 'SMTP' },
                 { key: '18', icon: <FormOutlined />, label: 'Discussion Form' },
+                { key: '19', icon: <SettingFilled />, label: 'App Setting' },
                 { key: '50', icon: <UploadOutlined />, label: 'Logout' },
               ]}
             />

@@ -1421,3 +1421,14 @@ export const STATUS_TOPIC = async (body) => {
         console.error(error);
     }  
 };
+
+export const APP_SETTING = async (body) => { 
+    try {
+        const response = await Axios.post('app-setting/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+

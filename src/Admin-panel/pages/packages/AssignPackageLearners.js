@@ -17,6 +17,7 @@ import React, { useEffect, useState } from "react";
 import { ASSIGN_PACKAGE } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
+import ConfirmPackageAssignLearner from "./ConfirmPackageAssignLearner";
 
 function AssignPackageLearners(props) {
   const { notification } = App.useApp();
@@ -28,6 +29,8 @@ function AssignPackageLearners(props) {
 
   const [page_size, set_page_size] = useState(10);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [accessDetails, setAccessDetails] = useState({});
+  
 
   const [search_paceholder, set_search_paceholder] = useState("Search by name");
   const [search_query_name, set_search_query_name] = useState("");
@@ -269,6 +272,21 @@ function AssignPackageLearners(props) {
             const FORM_DATA = new FormData();
             FORM_DATA.append("package_id", atob(props.package_id));
             FORM_DATA.append("learner_id", selectedLearner?.id);
+             FORM_DATA.append(
+              "access_type",
+              accessDetails?.access_type || "LifeTime"
+            );
+
+            if (accessDetails?.access_type === "FixedDate") {
+              FORM_DATA.append("access_value", accessDetails.expiry_date);
+            }
+
+            if (accessDetails?.access_type === "MaxViewingHours") {
+              FORM_DATA.append(
+                "access_value",
+                accessDetails.max_viewing_hours
+              );
+            }
 
             try {
               const API_CALL = await ASSIGN_PACKAGE(FORM_DATA);
@@ -295,6 +313,7 @@ function AssignPackageLearners(props) {
               setConfirmLoading(false);
               setIsModalVisible(false);
               setSelectedLearner(null);
+              setAccessDetails({});
             }
           }}
           onCancel={() => {
@@ -304,13 +323,11 @@ function AssignPackageLearners(props) {
           okText="Assign"
           cancelText="Cancel"
         >
-          <p>
-            Do you really want to assign{" "}
-            <strong>
-              {selectedLearner?.first_name} {selectedLearner?.last_name}
-            </strong>{" "}
-            to this package?
-          </p>
+        <ConfirmPackageAssignLearner 
+           first_name={selectedLearner?.first_name}
+            last_name={selectedLearner?.last_name}
+            onAccessDetailsChange={(data) => setAccessDetails(data)}
+        />
         </Modal>
 
 

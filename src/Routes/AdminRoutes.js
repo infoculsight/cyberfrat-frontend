@@ -57,9 +57,10 @@ import UpcommingTrainings from "../Admin-panel/pages/upcomingtrainings/Upcomming
 import AddUpcommingTrainings from "../Admin-panel/pages/upcomingtrainings/AddUpcommingTrainings";
 import EditUpcomingTrainings from "../Admin-panel/pages/upcomingtrainings/EditUpcommingTraings";
 import ListDiscussion from "../Admin-panel/pages/disccusionform/ListDiscussion";
-import AddCity from "../Admin-panel/pages/disccusionform/city/AddCity";
 import ListCity from "../Admin-panel/pages/disccusionform/city/ListCity";
 import ListTopic from "../Admin-panel/pages/disccusionform/topic/ListTopic";
+import AppSetting from "../Admin-panel/pages/appsetting/AppSetting";
+
 
 function AdminRoutes() {
   return (
@@ -132,6 +133,7 @@ function AdminRoutes() {
           <Route path="city" element={<ListCity />} />
           <Route path="topic" element={<ListTopic />} />
         </Route>
+        <Route path="app-setting" element={<AppSetting />}/>
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

@@ -11,21 +11,20 @@ import {
   Table,
   Tag,
   Modal,
-  Upload,
   message,
   App,
 } from "antd";
 import { Option } from "antd/es/mentions";
-import { LeftOutlined, LoadingOutlined, UploadOutlined } from "@ant-design/icons";
+import { LeftOutlined, LoadingOutlined,  } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LIST_PACKAGE_LEARNERS, LEARNER_PACKAGE_STATUS, BULK_ASSIGN_PACKAGE, BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE } from "../../apis/apis";
-import moment from "moment";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import AssignPackageLearners from "./AssignPackageLearners";
+import BulkAssignPackage from "./BulkAssignPackage";
 
-function PackageLeaners(props) {
+function PackageLeaners() {
 
   const { notification } = App.useApp();
   const { package_id } = useParams();
@@ -46,39 +45,27 @@ function PackageLeaners(props) {
   const [selectedLearner, setSelectedLearner] = useState(null);
   const [file, set_file] = useState([]);
   const [is_model_open, set_is_model_open] = useState(false);
-  const [errors, set_errors] = useState("");
   const [page_size, set_page_size] = useState(10);
+  const [bulkKey, setBulkKey] = useState(0);
+
 
   const showModal = () => {
-    setAssignKey((prev) => prev + 1);
+   
     setIsModalVisible(true);
   };
 
   const showbulkModal = () => {
+     setAssignKey((prev) => prev + 1);
     set_is_model_open(true);
   };
 
 
   const handleCancel = () => {
     set_is_model_open(false);
-    set_file([])
+     setBulkKey(prev => prev + 1);
   };
 
-  const beforeUpload = (file) => {
-    const isCSV = file.type === 'text/csv';
-    if (!isCSV) {
-      set_errors({ file: "Only CSV files are allowed!" });
-      message.error("Please upload a valid CSV file.");
-      return Upload.LIST_IGNORE;
-    }
-
-    set_file([file]);
-    set_errors("");
-    message.success(` ${file.name}`);
-    return false;
-  };
-
-
+ 
   const handleModalCancel = async () => {
     setIsModalVisible(false);
     setLoader(true);
@@ -291,31 +278,31 @@ function PackageLeaners(props) {
     }
   };
 
-  const handleBulkUpload = async () => {
-    setLoader(true)
-    const formData = new FormData();
-    formData.append("package_id", atob(package_id));
-    formData.append("file", file[0]);
+  // const handleBulkUpload = async () => {
+  //   setLoader(true)
+  //   const formData = new FormData();
+  //   formData.append("package_id", atob(package_id));
+  //   formData.append("file", file[0]);
 
-    try {
-      const response = await BULK_ASSIGN_PACKAGE(formData);
-      if (response?.data?.status) {
-        notification.success({
-          message: "Successful",
-          description:response?.data?.message ,
-        });
-        set_is_model_open(false);
-        set_file([])
-        setLoader(false)
-      } else {
-        set_errors(response?.data?.errors);
-      }
-    } catch (error) {
-      message.error(
-        "Server Error: " + (error?.response?.data?.message || "Unknown error")
-      );
-    }
-  };
+  //   try {
+  //     const response = await BULK_ASSIGN_PACKAGE(formData);
+  //     if (response?.data?.status) {
+  //       notification.success({
+  //         message: "Successful",
+  //         description:response?.data?.message ,
+  //       });
+  //       set_is_model_open(false);
+  //       set_file([])
+  //       setLoader(false)
+  //     } else {
+  //       set_errors(response?.data?.errors);
+  //     }
+  //   } catch (error) {
+  //     message.error(
+  //       "Server Error: " + (error?.response?.data?.message || "Unknown error")
+  //     );
+  //   }
+  // };
 
  const DOWNLOAD_TEMPLATE = async () => {
       try {
@@ -446,6 +433,8 @@ function PackageLeaners(props) {
           </>
         )}
       </Card>
+
+
       <Modal
         title="Assign Course to Learners"
         open={isModalVisible}
@@ -518,42 +507,16 @@ function PackageLeaners(props) {
       </Modal>
 
 
+     
       <Modal
-        title={<span>Bulk Assign Learners</span>}
+        title="Bulk Enroll Learners"
         open={is_model_open}
         onCancel={handleCancel}
-        footer={[
-          <Button color="green" variant="solid" onClick={handleBulkUpload} style={{ width: "100%" }}>
-            Add
-          </Button>,
-        ]}
-        width={400}
-        destroyOnClose
+        footer={null}
+        width={800}
       >
-        <div style={{ width: "100%" }}>
-          <Upload
-            beforeUpload={beforeUpload}
-            fileList={file}
-            onRemove={() => set_file([])}
-            accept=".csv"
-            multiple={false}
-            maxCount={1}
-            style={{ width: "100%" }}
-          >
-            <Button type="primary" icon={<UploadOutlined />} block>
-              Upload File
-            </Button>
-          </Upload>
-          {errors?.file ? (
-            <>
-              <span style={{ color: "red" }}>
-                {errors?.file}
-              </span>
-            </>
-          ) : (
-            <></>
-          )}
-        </div>
+        <BulkAssignPackage package_id={package_id}
+          onClose={handleCancel} key={bulkKey} />
       </Modal>
     </div>
   );
