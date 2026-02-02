@@ -21,6 +21,9 @@ export async function logout() {
     document.cookie = "cf_at=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure";
     document.cookie = "cf_rt=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure";
     localStorage.removeItem("token_expired");
+    localStorage.removeItem("user");        
+    localStorage.removeItem("user_info");   
+    localStorage.removeItem("token_expired");
     window.location.href = "/";
   }
 }

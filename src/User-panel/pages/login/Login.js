@@ -20,19 +20,17 @@ const Login = () => {
 
     const togglePasswordVisibility = () => {
         setShowPassword(prev => !prev);
-    };
+    }; 
+
     const LOGIN_ACCOUNT = async () => {
         setLoader(true);
         try {
             const formData = new FormData();
             formData.append("email", email);
             formData.append("password", password);
-
             const res = await AxiosFirst.post("login-view/", formData);
-
             if (res?.data?.status) {
-                //  console.log(res)
-                if (res?.data?.email_verified) {
+                  if (res?.data?.email_verified) {
                     set_verify_email(true)
                 }
                 else if (res?.data?.temporary_password) {

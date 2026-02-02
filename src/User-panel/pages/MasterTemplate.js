@@ -5,6 +5,7 @@ import {
   HomeOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  NotificationFilled,
   SettingFilled,
   SnippetsOutlined,
   UploadOutlined
@@ -59,6 +60,8 @@ const MasterTemplate = () => {
       "/all-packages": { selected: "4", open: "4" },
       "/account": { selected: "7", open: "7" },
       "/list-live-test": { selected: "8", open: "8" },
+      "/announcements": { selected: "9", open: "9" },
+      "/view-announcements": { selected: "9", open: "9" },
     };
 
     const path = location.pathname;
@@ -83,7 +86,8 @@ const MasterTemplate = () => {
       3: "packages",
       4: "all-packages",
       7: "/account",
-      8: "/list-live-test"
+      8: "/list-live-test",
+      9: "/announcements",
     };
 
     const route = keyToPath[key];
@@ -138,6 +142,11 @@ const MasterTemplate = () => {
       icon: <SettingFilled />,
       label: "Account",
     },
+      {
+      key: "9",
+      icon: <NotificationFilled />,
+      label: "Announcements",
+    },
     {
       key: "50",
       icon: <UploadOutlined />,
@@ -163,7 +172,10 @@ const MasterTemplate = () => {
               }}
             >
               <div className="menu-logo" style={{ margin: "20px 0", textAlign: "center" }}>
-                <img alt="logo" src={Logo} style={{ width: "120px" }} />
+                <img alt="logo" src={Logo} style={{ width: "120px", cursor: "pointer" }} onClick={() =>
+                  window.open("https://cyberfrat.com/", "_blank")
+                }
+                />
               </div>
               <Menu
                 className="gold-menu"
@@ -185,8 +197,10 @@ const MasterTemplate = () => {
               collapsedWidth={isMobile ? 0 : 80}
               style={balck_theme ? { background: "#141414" } : { background: "#fff" }}
             >
-              <div className="menu-logo" style={{ marginTop: "20px" }}>
-                <img alt="logo" src={Logo} />
+              <div className="menu-logo" style={{ marginTop: "20px",cursor:"pointer" }}>
+                <img alt="logo" src={Logo} onClick={() =>
+                  window.open("https://cyberfrat.com/", "_blank")
+                } />
               </div>
 
               <Menu

@@ -1,8 +1,7 @@
-import { Card, Col, Row, Button, List, Progress, App, Avatar, Popover } from "antd";
+import { Card, Col, Row, Button, List, Progress, App, Popover } from "antd";
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
-  ADD_COMMENT,
   LIST_COMMENT,
   LIST_ENABLED_CHAPTER,
   START_QUIZ_QUESTION,
@@ -11,16 +10,15 @@ import {
 import CulsightPageLoader from "../../../components/CulsightPageLoader";
 import { CheckCircleFilled, DownloadOutlined, LeftOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import SectionVideos from "./components/sectionmedia/sectionVideos";
-import CustomRichTextEditor from "../../../components/CustomTextEditor";
 import QuizLearnerReportDeatils from "../chapters/components/quiz/QuizLearnerReportDetails";
 import PdfIframeViewer from "../../../components/PdfIframeViewer";
+import ChapterComment from "./components/ChapterComment";
 
 export default function Chapters() {
   const { message } = App.useApp();
   const Navigate = useNavigate();
   const location = useLocation();
   const { course_id } = useParams();
-  const { notification } = App.useApp();
 
   const [enabledChapters, setEnabledChapters] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,104 +27,15 @@ export default function Chapters() {
   const [full_screen, set_full_screen] = useState(false);
   const [last_chapter, set_last_chapter] = useState(0);
   const [single_progress, set_single_progress] = useState(0);
-  const [description, set_description] = useState("");
-  const [comments, set_comments] = useState([]);
-  const [current_page, set_current_page] = useState(1);
-  const [total_comments, set_total_comments] = useState(0);
-  const [total_pages, set_total_pages] = useState(1);
-  const [card_loader, set_card_loader] = useState(true);
   const [course_watch_percent, set_course_watch_percent] = useState(0);
   const [course_status, set_course_status] = useState("");
-
   const [showChapterList, setShowChapterList] = useState(false);
 
   function hasQuiz(title) {
     return /\bquiz\b/i.test(title);
   }
 
-  const formatTime = (timestamp) => {
-    if (!timestamp) return "";
-    const createdTimeUTC = new Date(timestamp.replace(" ", "T") + "Z");
-    const nowUTC = new Date();
-    const diffMs = nowUTC - createdTimeUTC;
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMinutes / 60);
-    if (diffHours < 4) {
-      if (diffMinutes < 1) return "Just now";
-      if (diffMinutes < 60)
-        return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
-      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-    }
-    const istDate = new Date(createdTimeUTC.getTime() + 5.5 * 60 * 60 * 1000);
-    return istDate.toLocaleString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-      timeZone: "Asia/Kolkata",
-    });
-  };
-
-  const fetchCommentList = useCallback(async (page = 1, chapter_id) => {
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("view_id", chapter_id);
-    FORM_DATA.append("page", page);
-    FORM_DATA.append("comment_type", "chapter");
-    try {
-      const API_CALL = await LIST_COMMENT(FORM_DATA);
-      if (API_CALL?.data?.status) {
-        const data = API_CALL.data;
-        set_comments(data.comments || []);
-        set_current_page(data.page || 1);
-        set_total_comments(data.total_comments || 0);
-        set_total_pages(data.total_pages || 1);
-      } else {
-        set_comments([]);
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-    } finally {
-      set_card_loader(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (currentChapter?.id) {
-      fetchCommentList(1, currentChapter.id);
-    }
-  }, [currentChapter, fetchCommentList]);
-
-  const onFinish = async () => {
-    if (!description.trim()) {
-      message.warning("Please write a comment first.");
-      return;
-    }
-    set_card_loader(true);
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("view_id", currentChapter?.id);
-    FORM_DATA.append("description", description);
-    FORM_DATA.append("comment_type", "chapter");
-    try {
-      const response = await ADD_COMMENT(FORM_DATA);
-      if (response?.data?.status) {
-        notification.success({
-          message: "Success",
-          description: response?.data?.message,
-        });
-        set_description("");
-        fetchCommentList(1, currentChapter?.id);
-      } else {
-        message.error(response?.data?.message || "Failed to add comment");
-      }
-    } catch (error) {
-      message.error("Server Error: " + (error?.response?.data?.message || "Unknown error"));
-    } finally {
-      set_card_loader(false);
-    }
-  };
-
+  
   const handleBack = () => {
     if (location.state?.from) Navigate(location.state.from);
     else Navigate(-1);
@@ -219,7 +128,7 @@ export default function Chapters() {
 
 
   const check_quiz_status = async (chapter_id) => {
-    const FORM_DATA = new FormData();
+    const FORM_DATA = new FormData(); 
     FORM_DATA.append("chapter_id", chapter_id);
     try {
       const API_CALL = await START_QUIZ_QUESTION(FORM_DATA);
@@ -234,6 +143,7 @@ export default function Chapters() {
       console.log(error);
     }
   };
+
 
   return (
     <div
@@ -584,50 +494,8 @@ export default function Chapters() {
                           <PdfIframeViewer pdfUrl={currentChapter.scorm} />
                         </>
                       )}
+                      <ChapterComment chapter_id = {currentChapter.id} />
 
-                      <div style={{ marginTop: "30px" }}>
-                        <CustomRichTextEditor
-                          editorLabel="Chapter Discussions"
-                          value={description}
-                          onChange={(val) => set_description(val)}
-                          placeholder="Write something..."
-                        />
-                        <Button
-                          type="primary"
-                          style={{ marginTop: "-20px", marginBottom: "20px" }}
-                          onClick={onFinish}
-                        >
-                          Add Comment
-                        </Button>
-
-                        <List
-                          itemLayout="horizontal"
-                          dataSource={comments}
-                          style={{ marginTop: "20px" }}
-                          locale={{ emptyText: "No discussions yet." }}
-                          renderItem={(item) => (
-                            <List.Item>
-                              <List.Item.Meta
-                                avatar={<Avatar>{item.first_name?.[0]}</Avatar>}
-                                title={`${item.first_name} ${item.last_name}`}
-                                description={
-                                  <>
-                                    <span
-                                      dangerouslySetInnerHTML={{
-                                        __html: item.description,
-                                      }}
-                                    />
-                                    <br />
-                                    <span style={{ fontSize: "10px", color: "#999" }}>
-                                      {formatTime(item.created_at)}
-                                    </span>
-                                  </>
-                                }
-                              />
-                            </List.Item>
-                          )}
-                        />
-                      </div>
                     </>
                   )}
                 </Card>

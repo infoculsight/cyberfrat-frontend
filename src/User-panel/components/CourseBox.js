@@ -1,31 +1,58 @@
-import { Card, Progress, Tag, Button, Typography, Spin } from "antd";
+import { Card, Progress, Tag, Button, Typography, Spin, Modal } from "antd";
 import { DownloadOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const { Text } = Typography;
 
 export default function CourseBox(props) {
   const Navigate = useNavigate();
   const [image_loader, set_image_loader] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
-
-const handleDownload = () => {
-  const printWindow = window.open(props.certificate, "_blank");
-  printWindow.onload = () => {
-    printWindow.print();
+  const handleDownload = () => {
+    const printWindow = window.open(props.certificate, "_blank");
+    printWindow.onload = () => {
+      printWindow.print();
+    };
   };
-};
 
 
-   
+
+  function formatDateTime(isoDate) {
+    const date = new Date(isoDate);
+    return date.toLocaleString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true
+    });
+  }
+
+
+  function renderValidity(validity) {
+    if (!validity) return null;
+
+    if (typeof validity === "string" && validity.toLowerCase() === "lifetime") {
+      return "LifeTime";
+    }
+
+    return formatDateTime(props.validity);
+  }
+
+
+
   return (
     <div style={{ position: "relative" }}>
       <Card
         style={{ width: "100%", borderRadius: 8 }}
         cover={
           <div style={{ width: "100%", position: "relative" }}>
+
 
             {!image_loader && (
               <div
@@ -45,12 +72,45 @@ const handleDownload = () => {
               </div>
             )}
             <div style={{ position: "relative", overflow: "hidden", borderRadius: "8px 8px 0px 0px", minHeight: "26vh" }}>
+
+              {/* Ribbon */}
+              {props.expired && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 10,
+                    left: -30,
+                    transform: "rotate(-45deg)",
+                    backgroundColor: "red",
+                    color: "white",
+                    padding: "3px 40px",
+                    fontWeight: "bold",
+                    zIndex: 10,
+                    fontSize: 12,
+                    height: "20px",
+                    alignItems: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <span>
+                    Expired
+                  </span>
+
+                </div>
+              )}
               <img
                 alt="course"
                 src={props.course_image}
                 onLoad={() => set_image_loader(true)}
                 onError={() => set_image_loader(false)}
-                onClick={() => Navigate("/view-course/" + props.id)}
+                onClick={() => {
+                  if (props.expired) {
+                    setIsModalOpen(true);
+                  } else {
+                    Navigate("/view-course/" + props.id);
+                  }
+                }}
                 style={{
                   width: "100%",
                   objectFit: "cover",
@@ -118,7 +178,37 @@ const handleDownload = () => {
           status="active"
           style={{ marginTop: 10 }}
         />
+
+        <div
+          style={{
+            visibility: props.validity ? "visible" : "hidden",
+          }}
+        >
+          <span
+            style={{
+              fontSize: 14,
+              fontWeight: "500",
+              color: "gold",
+            }}
+          >
+            Valid Till =
+          </span>{" "}
+          {props.validity && renderValidity(props.validity)}
+        </div>
+
+
       </Card>
+
+      {/* Expired Modal */}
+      <Modal
+        title="Course Expired"
+        open={isModalOpen}
+        onOk={() => setIsModalOpen(false)}
+        onCancel={() => setIsModalOpen(false)}
+        okText="OK"
+      >
+        <p>This course has expired and cannot be accessed.</p>
+      </Modal>
     </div>
   );
 }

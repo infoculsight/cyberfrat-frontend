@@ -80,6 +80,15 @@ export const LIST_COMMENT = async (body) => {
   }
 };
 
+export const COMMENT_REPLY = async (body) => {
+  try {
+      const response = await Axios.post('comment-reply/', body);
+      return response;
+  } catch (error) {
+      console.error(error);
+  }
+};
+
 
 //CHAPTER API
 export const  ADD_CHAPTER = async (body) => {
@@ -758,6 +767,24 @@ export const LIST_LIVE_TESTS= async (body) => {
 export const RESET_PASSWORD= async (body) => {
     try {
         const response = await Axios.post('reset-password/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const NEWS_LIST = async (body) => {
+    try {
+        const response = await Axios.post('news-list/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const VIEW_NEWS = async (body) => {
+    try {
+        const response = await Axios.post('view-news/', body);
         return response;
     } catch (error) {
         console.error(error);
