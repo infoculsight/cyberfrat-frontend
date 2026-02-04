@@ -1,29 +1,23 @@
 import {
   Button,
   Card,
-  Checkbox,
   Form,
   Input,
   message,
   Radio,
-  Select,
   App,
   Spin,
   Upload,
-  Row,
-  Col,
   InputNumber,
 } from "antd";
 import { useEffect, useState } from "react";
-import {  APP_SETTING } from "../../apis/apis";
+import { APP_SETTING } from "../../apis/apis";
 import { useNavigate } from "react-router-dom";
 import {
-  LeftOutlined,
   Loading3QuartersOutlined,
   LoadingOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 
 
@@ -40,9 +34,6 @@ export default function AddAppSetting() {
   const [show_leaderboard_on_lms, set_show_leaderboard_on_lms] = useState(0);
   const [number_of_upcoming_event, set_number_of_upcoming_event] = useState("");
   const [number_of_news, set_number_of_news] = useState("");
-
-
-
   const [errors, set_errors] = useState("");
   const [bannerError, setbannerError] = useState("");
 
@@ -82,15 +73,15 @@ export default function AddAppSetting() {
   );
 
 
-//ADD API
+  //ADD API
   const onFinish = async () => {
     setLoading(true);
     const FORM_DATA = new FormData();
-     FORM_DATA.append("banner", banner_api);
+    FORM_DATA.append("banner", banner_api);
     FORM_DATA.append("banner_heading", banner_heading);
     FORM_DATA.append("button_text", button_text);
     FORM_DATA.append("web_link", web_link);
-    FORM_DATA.append("show_leaderboard_on_lms", show_leaderboard_on_lms);
+    FORM_DATA.append("number_of_upcoming_event", number_of_upcoming_event);
     FORM_DATA.append("number_of_news", number_of_news);
     FORM_DATA.append(
       "show_leaderboard_on_lms",
@@ -115,7 +106,7 @@ export default function AddAppSetting() {
       );
     }
   };
- 
+
   useEffect(() => {
     const view_api = async () => {
       setLoading(true);
@@ -149,15 +140,14 @@ export default function AddAppSetting() {
     };
     view_api()
   }, []);
- 
- 
+
+
 
   return (
     <div className="lms-body">
+
       <Card>
-             <h2> App Setting</h2>
-
-
+        <h2> App Setting</h2>
         {loading ? (
           <>
             <CulsightPageLoader />
@@ -285,14 +275,14 @@ export default function AddAppSetting() {
                   <span style={{ color: "red" }}>{errors.web_link}</span>
                 )}
               </Form.Item>
-              
-                  <Form.Item label="Number upcoming event">
+
+              <Form.Item label="Number upcoming event">
                 <InputNumber style={{ width: "100%" }} value={number_of_upcoming_event} onChange={(value) => set_number_of_upcoming_event(value)} placeholder="Enter here" />
                 {errors?.number_of_upcoming_event && (
                   <span style={{ color: "red" }}>{errors.number_of_upcoming_event}</span>
                 )}
               </Form.Item>
-                  <Form.Item label="Number of News">
+              <Form.Item label="Number of News">
                 <InputNumber style={{ width: "100%" }} value={number_of_news} onChange={(value) => set_number_of_news(value)} placeholder="Enter here" />
                 {errors?.validity && (
                   <span style={{ color: "red" }}>{errors.number_of_news}</span>
@@ -347,6 +337,7 @@ export default function AddAppSetting() {
           </>
         )}
       </Card>
+       
     </div>
   );
 }

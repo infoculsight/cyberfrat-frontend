@@ -1,4 +1,4 @@
-import { Button, Card, Col, Input, Modal, Pagination, Row, Spin, Table, Checkbox, App } from "antd";
+import { Button, Card, Col, Input, Modal, Pagination, Row, Spin, App } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import PackageBox from "../../components/PackageBox";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +6,7 @@ import { BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE, LIST_PACKAGE } from "../../apis/ap
 import debounce from "lodash.debounce";
 import { LoadingOutlined } from "@ant-design/icons";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
-import BulkAssignPackage from "./BulkAssignPackage";
+import BulkAssignMultiPackage from "./BulkAssignMultiPackage";
 
 function Packages() {
   const Navigate = useNavigate();
@@ -30,7 +30,7 @@ function Packages() {
 
     setSelectedPackages((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+    ); 
   };
 
   const showModal = () => {
@@ -66,7 +66,6 @@ function Packages() {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", data);
-    FORM_DATA.append("token", localStorage.getItem("token"));
     FORM_DATA.append("name", search_query_title);
     const API_CALL = await LIST_PACKAGE(FORM_DATA);
     if (API_CALL?.data?.status) {
@@ -84,7 +83,6 @@ function Packages() {
         set_search_query_title(value);
         set_pagination_loader(true);
         const FORM_DATA = new FormData();
-        FORM_DATA.append("token", localStorage.getItem("token"));
         FORM_DATA.append("name", value);
         const API_CALL = await LIST_PACKAGE(FORM_DATA);
         if (API_CALL?.data?.status) {
@@ -274,7 +272,7 @@ function Packages() {
         width={800}
 
       >
-        <BulkAssignPackage
+        <BulkAssignMultiPackage
           packages={packages}
           selectedPackages={selectedPackages}
           handleSelect={handleSelect}
