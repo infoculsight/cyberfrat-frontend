@@ -60,6 +60,14 @@ import ListDiscussion from "../Admin-panel/pages/disccusionform/ListDiscussion";
 import ListCity from "../Admin-panel/pages/disccusionform/city/ListCity";
 import ListTopic from "../Admin-panel/pages/disccusionform/topic/ListTopic";
 import AppSetting from "../Admin-panel/pages/appsetting/AppSetting";
+import LearnerPackages from "../Admin-panel/pages/learners/LearnerPackages";
+import AppUsers from "../Admin-panel/pages/AppUsers/AppUsers";
+import LearnerPackageReport from "../Admin-panel/pages/packages/LearnerPackageReport";
+import LearnerQuizTest from "../Admin-panel/pages/learners/LearnersQuizTest";
+import UserReport from "../Admin-panel/pages/reports/userreport/UserReport";
+import UserDownload from "../Admin-panel/pages/downloads/UserDownload";
+import LmsSetting from "../Admin-panel/pages/lmssetting/LmsSetting";
+import LogsView from "../Admin-panel/pages/logs/LogsView";
 
 
 function AdminRoutes() {
@@ -71,8 +79,11 @@ function AdminRoutes() {
         <Route path="add-learner" element={<AddLearners />} />
         <Route path="edit-learner/:id" element={<EditLearner />} />
         <Route path="learner-courses/:learner_id" element={<LearnerCourses />} />
+        <Route path="learner-packages/:learner_id" element={<LearnerPackages />} />
+        <Route path="learner-quiz-test/:learner_id" element={<LearnerQuizTest />} />
         <Route path="learners-group" element={<LmsLearnersGroup />} />
         <Route path="assign-learner/:id" element={<AssignLmsLearners />} />
+        <Route path="app-users/:page?" element={<AppUsers />} />
         <Route path="instructors" element={<Instructors />} />
         <Route path="add-instructor" element={<AddInstructor />} />
         <Route path="edit-instructor/:id" element={<EditInstructor />} />
@@ -92,6 +103,8 @@ function AdminRoutes() {
         <Route path="edit-package/:id" element={<EditPackages />} />
         <Route path="package-learners/:package_id" element={<PackageLeaners />} />
         <Route path="package-courses/:package_id" element={<PackageCourses />} />
+        <Route path="package-learner-report/:package_id/:learner_id" element={<LearnerPackageReport />} />
+
         <Route path="live-test" element={<LiveTest />} />
         <Route path="/add-live-test" element={<AddLiveTest />} />
         <Route path="edit-live-test/:id" element={<EditLiveTest />} />
@@ -108,6 +121,7 @@ function AdminRoutes() {
           <Route path="quiz-report" element={<QuizReport />} />
           <Route path="quiz-report/:learner_id" element={<QuizLearnerReport />} />
           <Route path="quiz-report-details/:learner_id/:chapter_id" element={<QuizLearnerReportDetails />} />
+          <Route path="user-report" element={<UserReport />} />
         </Route>
 
         <Route path="download" element={<Downloads />} >
@@ -115,8 +129,11 @@ function AdminRoutes() {
           <Route path="package-download" element={<PackageDownload />} />
           <Route path="livetest-download" element={<LiveTestDownload />} />
           <Route path="quiz-download" element={<QuizDownload />} />
-        </Route>
+          <Route path="user-download" element={<UserDownload />} />
+        </Route> 
 
+        <Route path="lms-setting" element={<LmsSetting />} />
+        <Route path="logs-view" element={<LogsView />} />
         <Route path="announcment/:page?" element={<Announcment />} />
         <Route path="add-announcment/" element={<AddAnnouncment />} />
         <Route path="edit-announcment/:id" element={<EditAnnouncment />} />

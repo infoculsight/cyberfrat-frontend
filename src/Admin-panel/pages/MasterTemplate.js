@@ -11,10 +11,10 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   NotificationOutlined,
+  PicRightOutlined,
   ProfileFilled,
   SettingFilled,
   UploadOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
 import { App, Button, Layout, Menu } from 'antd';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -49,6 +49,7 @@ const MasterTemplate = () => {
       '/edit-learner': { selected: '3', open: '2' },
       '/learners-group': { selected: '12', open: '2' },
       '/assign-learner': { selected: '12', open: '2' },
+      '/app-users': { selected: '4', open: '2' },
       '/instructors': { selected: '4', open: '2' },
       '/add-instructors': { selected: '4', open: '2' },
       '/import-instructors': { selected: '4', open: '2' },
@@ -80,8 +81,10 @@ const MasterTemplate = () => {
       '/upcoming-trainings': { selected: '17', open: '17' },
       '/add-trainings': { selected: '17', open: '17' },
       '/edit-trainings': { selected: '17', open: '17' },
-      '/discussion': { selected: '18',open:'18' },
-      '/app-setting':{selected:'19',open:'19'},
+      '/discussion': { selected: '18', open: '18' },
+      '/app-setting': { selected: '19', open: '19' },
+      '/lms-setting': { selected: '20', open: '20' },
+      '/logs-view': { selected: '21', open: '21' },
 
     };
 
@@ -101,7 +104,7 @@ const MasterTemplate = () => {
     const keyToPath = {
       '1': '/',
       '3': '/learners',
-      '4': '/instructors',
+      '4': '/app-users',
       '6': '/courses',
       '7': '/packages',
       '8': '/media',
@@ -115,7 +118,9 @@ const MasterTemplate = () => {
       '16': '/smtp',
       '17': '/upcoming-trainings',
       '18': '/discussion',
-      '19':'/app-setting'
+      '19': '/app-setting',
+      '20': '/lms-setting',
+      '21': '/logs-view',
     };
 
     const route = keyToPath[key];
@@ -161,12 +166,13 @@ const MasterTemplate = () => {
               items={[
                 { key: '1', icon: <DashboardOutlined />, label: 'Dashboard' },
                 {
-                  key: '2',
-                  icon: <UserOutlined />,
-                  label: 'Users',
+                  key: 'group',
+                  label: 'LMS Management',
+                  type: 'group',
                   children: [
                     { key: '3', label: "Learners" },
                     { key: '12', label: "Learners Group" },
+
                   ]
                 },
                 {
@@ -178,19 +184,29 @@ const MasterTemplate = () => {
                     { key: '14', label: "Deleted Courses" },
                     { key: '7', label: "Packages" },
                     { key: '11', label: "Live Test" },
-
                   ]
                 },
                 { key: '8', icon: <ProfileFilled />, label: 'Media' },
-                { key: '17',icon: <FolderOpenFilled />, label: 'Upcoming Trainings' },
+                { key: '16', icon: <MailFilled />, label: 'SMTP' },
+                { key: '13', icon: <BellFilled />, label: 'Notification' },
                 { key: '9', icon: <FileSearchOutlined />, label: 'Report' },
                 { key: '10', icon: <DownloadOutlined />, label: 'Download' },
-                { key: '13', icon: <BellFilled />, label: 'Notification' },
-                { key: '15', icon: <NotificationOutlined />, label: 'News' },
-                { key: '16', icon: <MailFilled />, label: 'SMTP' },
-                { key: '18', icon: <FormOutlined />, label: 'Discussion Form' },
-                // { key: '19', icon: <SettingFilled />, label: 'App Setting' },
+                { key: '20', icon: <SettingFilled />, label: 'LMS Setting' },
+                { key: '21', icon: <PicRightOutlined />, label: 'Logs Viewer' },
+                {
+                  key: 'group',
+                  label: 'App Management',
+                  type: 'group',
+                  children: [
+                    { key: '4', label: "App Users" },
+                    { key: '17', icon: <FolderOpenFilled />, label: 'Upcoming Trainings' },
+                    { key: '15', icon: <NotificationOutlined />, label: 'News' },
+                    { key: '18', icon: <FormOutlined />, label: 'Discussion Form' },
+                    { key: '19', icon: <SettingFilled />, label: 'App Setting' },
+                  ]
+                },
                 { key: '50', icon: <UploadOutlined />, label: 'Logout' },
+
               ]}
             />
           </Sider>

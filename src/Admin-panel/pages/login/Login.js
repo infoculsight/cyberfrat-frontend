@@ -12,17 +12,15 @@ const Login = () => {
     const [loader, setLoader] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
-    const [user_id, set_user_id] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [verify_email, set_verify_email] = useState(false);
-    const [temporary_password, set_temporary_password] = useState(false);
+
 
     const togglePasswordVisibility = () => {
-        setShowPassword(prev => !prev);
+        setShowPassword(prev => !prev);  
     }; 
 
-    const LOGIN_ACCOUNT = async () => {
+    const LOGIN_ACCOUNT = async () => {    
         setLoader(true);
         try {
             const formData = new FormData();

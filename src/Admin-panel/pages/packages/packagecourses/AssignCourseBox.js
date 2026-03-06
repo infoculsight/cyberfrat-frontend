@@ -15,7 +15,7 @@ export default function AssignCourseBox(props) {
         title: props.course_title,
       });
     }
-  };
+  };  
 
   return (
     <div>

@@ -10,6 +10,7 @@ import {
   Row,
   Spin,
   Upload,
+  Switch
 } from "antd";
 import {
   LoadingOutlined,
@@ -35,16 +36,19 @@ export default function EditChapterDetails(props) {
   // Video modal states
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
+    const [is_mandatory, set_is_mandatory] = useState(false);
+  
 
 
 
   useEffect(() => {
     const response_data = props.chapter_details;
-    set_title(response_data?.title);
+    set_title(response_data?.title);  
     set_introduction(response_data?.introduction);
     set_course_id(response_data?.course_id);
     setSelectedVideo(response_data?.video)
-   
+    set_is_mandatory(response_data?.meta?.show_chapter_discussion_to_learner || false);
+
 
     if (response_data?.scorm) {
       const fileName = response_data.scorm.split("/").pop();
@@ -63,11 +67,12 @@ export default function EditChapterDetails(props) {
   const onFinish = async () => {
     setLoading(true);
     const FORM_DATA = new FormData();
- 
+
     FORM_DATA.append("id", atob(id));
     FORM_DATA.append("title", title);
     FORM_DATA.append("introduction", introduction);
     FORM_DATA.append("video_id", selectedVideo?.id || "");
+       FORM_DATA.append('show_chapter_discussion_to_learner', is_mandatory ? 1 : 0);
     if (scorm && scorm.originFileObj instanceof File) {
       FORM_DATA.append("scorm", scorm.originFileObj);
     } else {
@@ -103,6 +108,7 @@ export default function EditChapterDetails(props) {
     <div>
       <Row>
         <Col span={24}>
+        
           <Form
             layout="vertical"
             form={form}
@@ -121,15 +127,19 @@ export default function EditChapterDetails(props) {
             </Form.Item>
 
             <Form.Item>
-            <CustomRichTextEditor
-              value={introduction}
-              editorLabel="Introduction"
-              onChange={(val) => set_introduction(val)}
-              placeholder="Write something..."
-            />
-            {errors?.introduction && (
-              <span style={{ color: "red" }}>{errors?.introduction}</span>
-            )}
+              <CustomRichTextEditor
+                value={introduction}
+                editorLabel="Introduction"
+                onChange={(val) => set_introduction(val)}
+                placeholder="Write something..."
+              />
+              {errors?.introduction && (
+                <span style={{ color: "red" }}>{errors?.introduction}</span>
+              )}
+            </Form.Item>
+
+            <Form.Item label="Show Chapter Discussion to learners">
+              <Switch checked={is_mandatory} onChange={set_is_mandatory} />
             </Form.Item>
 
             <Form.Item label="Select Video">
@@ -214,21 +224,21 @@ export default function EditChapterDetails(props) {
           </Form>
         </Col>
       </Row>
-       {/* VIDEO SELECT MODAL */}
-        <Modal
-          open={showVideoModal}
-          title="Select a Video"
-          onCancel={() => setShowVideoModal(false)}
-          footer={null}
-          width={900}
-        >
-          <SelectVideoList
-            onSelect={(video) => {
-              setSelectedVideo(video);
-              setShowVideoModal(false);
-            }}
-          />
-        </Modal>
+      {/* VIDEO SELECT MODAL */}
+      <Modal
+        open={showVideoModal}
+        title="Select a Video"
+        onCancel={() => setShowVideoModal(false)}
+        footer={null}
+        width={900}
+      >
+        <SelectVideoList
+          onSelect={(video) => {
+            setSelectedVideo(video);
+            setShowVideoModal(false);
+          }}
+        />
+      </Modal>
     </div>
   );
 }
