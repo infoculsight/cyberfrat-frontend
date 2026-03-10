@@ -86,22 +86,50 @@ const VideoPage = ({
     set_video_api_refresh(!video_api_refresh);
   };
 
+  // const handleSeeking = () => {
+  //   const video = videoRef.current;
+  //   if (!video) return;
+
+  //   if (isInitialSeek.current) {
+  //     isInitialSeek.current = false;
+  //     return;
+  //   }
+
+  //   if (!apiDisabledRef.current) {
+  //     apiDisabledRef.current = true;
+  //     skipDetectedAtRef.current = Date.now();
+  //     set_api_disabled(true);
+  //     console.warn("⚠️ Skip detected — API tracking disabled");
+  //   }
+  // };
+
+
+ 
   const handleSeeking = () => {
-    const video = videoRef.current;
-    if (!video) return;
+  const video = videoRef.current;
+  if (!video) return;
+ 
+  const current = video.currentTime;
+  const allowedRange = 5; // seconds tolerance
+ 
+  // allow seek near last watched time (resume case)
+  if (Math.abs(current - lastWatchedTime.current) <= allowedRange) {
+    return;
+  }
+ 
+  // allow backward seek
+  if (current <= lastWatchedTime.current) {
+    return;
+  }
+ 
+  if (!apiDisabledRef.current) {
+    apiDisabledRef.current = true;
+    skipDetectedAtRef.current = Date.now();
+    set_api_disabled(true);
+    console.warn("⚠️ Skip detected — API tracking disabled");
+  }
+};
 
-    if (isInitialSeek.current) {
-      isInitialSeek.current = false;
-      return;
-    }
-
-    if (!apiDisabledRef.current) {
-      apiDisabledRef.current = true;
-      skipDetectedAtRef.current = Date.now();
-      set_api_disabled(true);
-      console.warn("⚠️ Skip detected — API tracking disabled");
-    }
-  };
 
   const handleTimeUpdate = () => {
     const video = videoRef.current;

@@ -6,6 +6,7 @@ import {
 } from "../../../../../apis/apis";
 import LiveTestQuestionOptions from "./LiveTestQuestionOptions";
 import LiveTestQuestionOptionsRview from "./LiveTestQuestionOptionsRview";
+import { useNavigate } from "react-router-dom";
 
 const { useBreakpoint } = Grid;
 
@@ -13,6 +14,7 @@ const LiveTestQuestionView = (props) => {
   const { live_test_id, time_spend, set_submit_true, set_display_question } =
     props;
   const screens = useBreakpoint(); // 🔥 Responsive hook added
+  const Navigate = useNavigate();
 
   const live_test_id_new = atob(live_test_id);
   const [items, setItems] = useState([]);
@@ -93,7 +95,7 @@ const LiveTestQuestionView = (props) => {
           }}
         >
           Test submitted <br />
-          <Button type="primary" size="small" onClick={() => window.close()}>
+          <Button type="primary" size="small" onClick={() => Navigate("/list-live-test")}>
             Close
           </Button>
         </h3>
@@ -284,7 +286,7 @@ const LiveTestQuestionView = (props) => {
                     </Button>
                   ) : (
                     <Popconfirm
-                      title="Submit Quiz Test"
+                      title="Submit Live Test"
                       okText="Cancel"
                       showCancel={false}
                       description={

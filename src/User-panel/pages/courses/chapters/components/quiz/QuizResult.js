@@ -37,7 +37,6 @@ function QuizResult({ chapter_id }) {
           justifyContent: "center",
           alignItems: "center",
           minHeight: "100vh",
-          color: "#fff",
         }}
       >
         Loading your result...
@@ -95,7 +94,7 @@ function QuizResult({ chapter_id }) {
           />
         )}
 
-        <h2 style={{ color: "#fff", fontSize: "1.2rem" }}>
+        <h2 style={{ fontSize: "1.2rem" }}>
           {result.passing_status
             ? "Congratulations! You passed the quiz!"
             : "Take on that quiz again and crush it like a boss!"}
@@ -131,7 +130,7 @@ function QuizResult({ chapter_id }) {
               ></span>
               <span>Correct Answers</span>
             </div>
-            <div style={{ color: "#fff", fontSize: 16 }}>
+            <div style={{ fontSize: 16 }}>
               {result.correct_answers < 10
                 ? `0${result.correct_answers}`
                 : result.correct_answers}
@@ -158,7 +157,7 @@ function QuizResult({ chapter_id }) {
               ></span>
               <span>Wrong Answers</span>
             </div>
-            <div style={{ color: "#fff", fontSize: 16 }}>
+            <div style={{ fontSize: 16 }}>
               {result.wrong_answers < 10
                 ? `0${result.wrong_answers}`
                 : result.wrong_answers}
@@ -185,7 +184,7 @@ function QuizResult({ chapter_id }) {
               ></span>
               <span>Time Spent</span>
             </div>
-            <div style={{ color: "#fff", fontSize: 16 }}>
+            <div style={{  fontSize: 16 }}>
               {formatTime(result.time_spent)}
             </div>
           </Col>
@@ -210,7 +209,7 @@ function QuizResult({ chapter_id }) {
               ></span>
               <span>Percentage</span>
             </div>
-            <div style={{ color: "#fff", fontSize: 16 }}>
+            <div style={{ fontSize: 16 }}>
               {result.percentage}%
             </div>
           </Col>

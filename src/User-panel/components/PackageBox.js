@@ -37,6 +37,16 @@ function formatDateTime(isoDate) {
 }
 
 
+ function renderValidity(validity) {
+    if (!validity) return null;
+
+    if (typeof validity === "string" && validity.toLowerCase() === "lifetime") {
+      return "LifeTime";
+    }
+
+    return formatDateTime(props.validity);
+  }
+
 
   return (
     <div>
@@ -174,7 +184,7 @@ function formatDateTime(isoDate) {
                   }}
                 >
                  Valid Till = 
-                </span>{" "}{formatDateTime(props.validity)}
+                </span>{" "}{renderValidity(props.validity)}
               </div>
           }
         />

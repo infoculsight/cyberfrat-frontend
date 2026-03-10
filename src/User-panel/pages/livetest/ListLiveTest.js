@@ -211,6 +211,21 @@ function ListLiveTest() {
   }, [selectedLiveTestId]);
 
 
+
+    function formatDateTime(isoDate) {
+    const date = new Date(isoDate);
+    return date.toLocaleString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true
+    });
+  }
+
+
   return (
     <div className="lms-body">
       <Card>
@@ -321,7 +336,6 @@ function ListLiveTest() {
         )}
 
         <Modal
-          title="Live Test Details"
           open={isModalOpen}
           onCancel={() => {
             setIsModalOpen(false);
@@ -336,8 +350,21 @@ function ListLiveTest() {
             </div>
           ) : (
             <>
-              <p style={{ textAlign: "center", margin: "30px" }}> The time limit for the test is {time_limit} minutes, and you must score at least 60% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required. This test will be available from {formatToIST(available_from)} to {formatToIST(available_till)}.
-                Please ensure you attempt and complete the test within this availability period.</p>
+            <h3 style={{color:"#e9c70ada"}}>Live Test Details</h3>
+           <div style={{marginTop:"20px"}}>
+            <h4>Test Information</h4>
+            <ul>
+            <li>Time Limit: {time_limit} minutes</li>
+            <li>Passing Percentage: {" "}60% </li>
+           </ul>
+           <h4>Availability Window</h4>
+           <ul>
+            <li>Start Date : {formatDateTime(available_from)}</li>
+            <li>End Date : {formatDateTime(available_till)}</li>
+           </ul>
+           </div>
+              {/* <p style={{ textAlign: "center", margin: "30px" }}> The time limit for the test is {time_limit} minutes, and you must score at least 60% to pass. Once you pass, the test will be automatically submitted, and no further attempts will be required. This test will be available from {formatToIST(available_from)} to {formatToIST(available_till)}.
+                Please ensure you attempt and complete the test within this availability period.</p> */}
 
               {!expired && !submitted && (
                 <div style={{ textAlign: "center", marginTop: "20px" }}>

@@ -189,7 +189,7 @@ function LiveTestResult(props) {
                           span={24}
                           style={{ marginTop: 4, color: "green" }}
                         >
-                          <b>Right Answer:</b> {item.correct_answer}
+                          <b>Right Answer:</b> {item.correct_answer.join(" , ")}
                         </Col>
 
 

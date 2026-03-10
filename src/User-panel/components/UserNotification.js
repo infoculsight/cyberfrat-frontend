@@ -95,6 +95,7 @@ function UserNotification() {
         case 'test_expire':
         case 'result_declaration':
         case 'test_submit':
+        case 'livetest_assign':
           path = 'list-live-test'
           break;
         case 'course_completion':
@@ -203,7 +204,7 @@ function UserNotification() {
                   description={
                     <>
                       {item?.meta?.text}
-                      {['course_assign', 'course_update', 'course_expire', 'quiz_uploaded', 'certificate_issued', 'add_course_in_package', 'test_expire', 'result_declaration', 'test_submit', 'course_completion', 'package_assign'].includes(item.notification_type) && (
+                      {['livetest_assign','course_assign', 'course_update', 'course_expire', 'quiz_uploaded', 'certificate_issued', 'add_course_in_package', 'test_expire', 'result_declaration', 'test_submit', 'course_completion', 'package_assign'].includes(item.notification_type) && (
                         <Space>
                           <Button
                             size='small'
