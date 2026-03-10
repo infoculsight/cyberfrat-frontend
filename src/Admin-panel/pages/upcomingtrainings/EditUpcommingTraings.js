@@ -15,7 +15,7 @@ import { LeftOutlined, Loading3QuartersOutlined, PlusOutlined, UploadOutlined } 
 import CustomRichTextEditor from '../../components/CustomTextEditor';
 import { EDIT_TRAININGS, VIEW_TRAININGS } from '../../apis/apis';
 import { useNavigate, useParams } from 'react-router-dom';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import CulsightPageLoader from '../../components/CulsightPageLoader';
 
 function EditUpcomingTrainings() {
@@ -42,6 +42,8 @@ function EditUpcomingTrainings() {
   const [image, set_image] = useState("");
   const [image_api, set_image_api] = useState("");
   const [imageError, setimageError] = useState("");
+  const [booking_url,set_booking_url] = useState("")
+  
   
 
     const getBase64 = (img, callback) => {
@@ -73,13 +75,14 @@ useEffect(() => {
         // Populate form fields from API response
         set_title(data.title || '');
         set_short_description(data.short_description || '');
+        set_booking_url(data?.meta?.booking_url || '');
         set_description(data.description || '');
         set_category(data.category || '');
         set_training_type(data.training_type || '');
-        set_start_date(data.start_date ? moment(data.start_date) : null);
-        set_end_date(data.end_date ? moment(data.end_date) : null);
-        set_enrollment_start(data.enrollment_start ? moment(data.enrollment_start) : null);
-        set_enrollment_end(data.enrollment_end ? moment(data.enrollment_end) : null);
+        set_start_date(data.start_date ? dayjs(data.start_date) : null);
+        set_end_date(data.end_date ? dayjs(data.end_date) : null);
+        set_enrollment_start(data.enrollment_start ? dayjs(data.enrollment_start) : null);
+        set_enrollment_end(data.enrollment_end ? dayjs(data.enrollment_end) : null);
         set_duration_minutes(data.duration_minutes || '');
         set_trainer(data.trainer || '');
         set_is_mandatory(data.is_mandatory || false);
@@ -110,6 +113,7 @@ const onFinish = async () => {
     FORM_DATA.append("id", atob(id));
     FORM_DATA.append('title', title);
     FORM_DATA.append('short_description', short_description);
+    FORM_DATA.append('booking_url', booking_url);
     FORM_DATA.append('description', description);
     FORM_DATA.append('category', category);
     FORM_DATA.append('training_type', training_type);
@@ -187,6 +191,17 @@ const onFinish = async () => {
               <span style={{ color: "red" }}>{errors.short_description}</span>
             )}
           </Form.Item>
+
+          
+                     <Form.Item label="Booking Url">
+                      <Input
+                        value={booking_url}
+                        onChange={(e) => set_booking_url(e.target.value)}
+                      />
+                      {errors?.booking_url && (
+                        <span style={{ color: "red" }}>{errors.booking_url}</span>
+                      )}
+                    </Form.Item>
 
           <CustomRichTextEditor
             value={description}

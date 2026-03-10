@@ -1508,3 +1508,58 @@ export const LOGS_LIST = async (body) => {
     }  
 };
 
+
+
+export const ADS_LIST = async (body) => { 
+    try {
+        const response = await Axios.post('ads-list/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const EDIT_ADS = async (body) => { 
+    try {
+        const response = await Axios.post('edit-ads/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const VIEW_ADS = async (body) => { 
+    try {
+        const response = await Axios.post('view-ads/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const ADD_ADS = async (body) => { 
+    try {
+        const response = await Axios.post('add-ads/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const Delete_ADS = async (body) => { 
+    try {
+        const response = await Axios.post('delete-ads/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};
+
+export const ADS_STATUS = async (body) => { 
+    try {
+        const response = await Axios.post('ads-status/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }  
+};

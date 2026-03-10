@@ -39,6 +39,7 @@ function AddUpcomingTrainings() {
   const [imageError, setimageError] = useState("");
   const [image, set_image] = useState("");
   const [image_api, set_image_api] = useState("");
+  const [booking_url,set_booking_url] = useState("")
 
 
 
@@ -83,6 +84,7 @@ function AddUpcomingTrainings() {
 
     FORM_DATA.append('title', title);
     FORM_DATA.append('short_description', short_description);
+    FORM_DATA.append('booking_url', booking_url);
     FORM_DATA.append('description', description);
     FORM_DATA.append('category', category);
     FORM_DATA.append('training_type', training_type);
@@ -158,6 +160,17 @@ function AddUpcomingTrainings() {
               <span style={{ color: "red" }}>{errors.short_description}</span>
             )}
           </Form.Item>
+
+           <Form.Item label="Booking Url">
+            <Input
+              value={booking_url}
+              onChange={(e) => set_booking_url(e.target.value)}
+            />
+            {errors?.booking_url && (
+              <span style={{ color: "red" }}>{errors.booking_url}</span>
+            )}
+          </Form.Item>
+
 
           <CustomRichTextEditor
             value={description}

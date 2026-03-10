@@ -180,7 +180,7 @@ function Announcment() {
             </>
           ) : (
             <>
-              <Tag color="error">Unpablish</Tag>
+              <Tag color="error">Unpublish</Tag>
             </>
           )}
         </span>

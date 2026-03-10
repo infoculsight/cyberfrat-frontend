@@ -183,17 +183,22 @@ const LiveTestQuestion = (props) => {
         ) : (
           <>
             <div style={{ minHeight: "60px", display: "block", position: "relative" }}>
-              <Divider orientation="left">
-                {addQuestionModal ? (
-                  <>
+
+              {addQuestionModal ? (
+                <>
+                  <h3>
                     <LeftOutlined onClick={() => navigate("/live-test")} /> Add Question
-                  </>
-                ) : (
-                  <>
-                    <LeftOutlined onClick={() => navigate("/live-test")} /> Question List
-                  </>
-                )}
-              </Divider>
+                  </h3>
+
+                </>
+              ) : (
+                <><h3>
+                  <LeftOutlined onClick={() => navigate("/live-test")} /> Question List
+                </h3>
+
+                </>
+              )}
+
               <div style={{ position: "absolute", right: "0px", top: "0px" }}>
                 <Button
                   variant="solid"

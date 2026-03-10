@@ -140,7 +140,7 @@ function EditNotification() {
                   { value: 'quiz_uploaded', label: "Quiz Uploaded" },
                   { value: 'livetest_assign', label: "Live Test Assign" },
                   { value: 'profile_update', label: "Profile Update" },
-                  { value: 'course_reminder', label: "Course_reminder" },
+                  { value: 'course_reminder', label: "Course Reminder" },
                 ]}
               />{errors?.notification_type && (
                 <span style={{ color: "red" }}>{errors.notification_type}</span>
