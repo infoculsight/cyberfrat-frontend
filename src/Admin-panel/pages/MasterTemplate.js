@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
+  AppstoreOutlined,
   BellFilled,
   DashboardOutlined,
   DownloadOutlined,
@@ -85,6 +86,9 @@ const MasterTemplate = () => {
       '/app-setting': { selected: '19', open: '19' },
       '/lms-setting': { selected: '20', open: '20' },
       '/logs-view': { selected: '21', open: '21' },
+      '/advertisement': { selected: '22', open: '22' },
+      '/add-advertisement': { selected: '22', open: '22' },
+      '/edit-advertisement': { selected: '22', open: '22' },
 
     };
 
@@ -121,6 +125,7 @@ const MasterTemplate = () => {
       '19': '/app-setting',
       '20': '/lms-setting',
       '21': '/logs-view',
+      '22': '/advertisement',
     };
 
     const route = keyToPath[key];
@@ -203,6 +208,7 @@ const MasterTemplate = () => {
                     { key: '15', icon: <NotificationOutlined />, label: 'News' },
                     { key: '18', icon: <FormOutlined />, label: 'Discussion Form' },
                     { key: '19', icon: <SettingFilled />, label: 'App Setting' },
+                    { key: '22', icon: <AppstoreOutlined />, label: 'Advertisement' },
                   ]
                 },
                 { key: '50', icon: <UploadOutlined />, label: 'Logout' },

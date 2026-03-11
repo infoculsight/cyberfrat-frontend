@@ -248,8 +248,8 @@ function LogsView() {
                   current={current_page}
                   total={total_courses}
                   pageSize={10}
-                 
-                   onChange={pagination_on_change}
+                  showSizeChanger={false}
+                  onChange={pagination_on_change}
                 />
               </div>
             ) : (

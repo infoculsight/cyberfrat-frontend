@@ -187,36 +187,36 @@ function AddLiveTest() {
                                     </Form.Item>
 
                                     <Form.Item label="Time Limit">
-                                       <TimePicker
-                                                        style={{ width: "100%" }}
-                                                        format="HH:mm"
-                                                        value={time_limit ? dayjs().startOf("day").add(time_limit, "minute") : null}
-                                                        onChange={(time) => {
-                                                          if (time) {
-                                                            set_time_limit(time.diff(dayjs().startOf("day"), "minute"));
-                                                          } else {
-                                                            set_time_limit("");
-                                                          }
+                                        <TimePicker
+                                            style={{ width: "100%" }}
+                                            format="HH:mm"
+                                            value={time_limit ? dayjs().startOf("day").add(time_limit, "minute") : null}
+                                            onChange={(time) => {
+                                                if (time) {
+                                                    set_time_limit(time.diff(dayjs().startOf("day"), "minute"));
+                                                } else {
+                                                    set_time_limit("");
+                                                }
+                                            }}
+                                            panelRender={(panel) => (
+                                                <div>
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            justifyContent: "space-around",
+                                                            fontWeight: 600,
+                                                            padding: "8px 0",
+                                                            borderBottom: "1px solid #f0f0f0",
                                                         }}
-                                                        panelRender={(panel) => (
-                                                          <div>
-                                                            <div
-                                                              style={{
-                                                                display: "flex",
-                                                                justifyContent: "space-around",
-                                                                fontWeight: 600,
-                                                                padding: "8px 0",
-                                                                borderBottom: "1px solid #f0f0f0",
-                                                              }}
-                                                            >
-                                                              <span>HH</span>
-                                                              <span>MM</span>
-                                                          
-                                                            </div>
-                                                            {panel}
-                                                          </div>
-                                                        )}
-                                                      />
+                                                    >
+                                                        <span>HH</span>
+                                                        <span>MM</span>
+
+                                                    </div>
+                                                    {panel}
+                                                </div>
+                                            )}
+                                        />
                                         {errors?.time_limit && (
                                             <span style={{ color: "red" }}>{errors?.time_limit}</span>
                                         )}
@@ -228,6 +228,7 @@ function AddLiveTest() {
                                             showTime
                                             value={available_from}
                                             onChange={(value) => set_available_from(value)}
+                                            
                                         />
                                         {errors?.available_from && (
                                             <span style={{ color: "red" }}>{errors?.available_from}</span>

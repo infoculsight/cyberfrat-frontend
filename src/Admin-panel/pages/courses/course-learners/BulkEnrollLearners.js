@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Upload, Button, message, Select, Input, DatePicker, Typography, App, InputNumber } from 'antd';
+import { Card, Upload, Button, message, Select, DatePicker, Typography, App, InputNumber } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
@@ -134,7 +134,7 @@ function BulEnrollLearners({ course_id, isModalOpen, onSuccess }) {
     return (
         <div className="lms-body">
             <Card>
-                <h3>Bulk Enroll Learners to Live Test</h3>
+                <h3>Bulk Enroll Learners to Course</h3>
                 <span>Upload Excel file and submit to enroll learners.</span>
 
                 <div style={{ maxWidth: 600, margin: '15px auto' }}>

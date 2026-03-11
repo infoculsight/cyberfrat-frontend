@@ -68,6 +68,9 @@ import UserReport from "../Admin-panel/pages/reports/userreport/UserReport";
 import UserDownload from "../Admin-panel/pages/downloads/UserDownload";
 import LmsSetting from "../Admin-panel/pages/lmssetting/LmsSetting";
 import LogsView from "../Admin-panel/pages/logs/LogsView";
+import Advertisement from "../Admin-panel/pages/advertisement/Advertisement"
+import AddAdvertisement from "../Admin-panel/pages/advertisement/AddAdvertisement"
+import EditAdvertisement from "../Admin-panel/pages/advertisement/EditAdvertisement"
 
 
 function AdminRoutes() {
@@ -151,6 +154,9 @@ function AdminRoutes() {
           <Route path="topic" element={<ListTopic />} />
         </Route>
         <Route path="app-setting" element={<AppSetting />}/>
+        <Route path="advertisement" element={<Advertisement />}/>
+        <Route path="add-advertisement" element={<AddAdvertisement />}/>
+        <Route path="edit-advertisement/:id" element={<EditAdvertisement />}/>
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

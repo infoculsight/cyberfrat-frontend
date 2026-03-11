@@ -27,6 +27,7 @@ export default function AddAppSetting() {
   const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
   const [banner, set_banner] = useState("");
+  const [button_text, set_button_text] = useState("")
   const [banner_api, set_banner_api] = useState("");
   const [heading, set_heading] = useState("");
   const [text, set_text] = useState("");
@@ -83,8 +84,9 @@ export default function AddAppSetting() {
     FORM_DATA.append("banner", banner_api);
     FORM_DATA.append("heading", heading);
     FORM_DATA.append("text", text);
+    FORM_DATA.append("button_text", button_text);
     FORM_DATA.append("web_link", web_link);
-  
+
     if (JWT_ACCESS_TOKEN_MINUTES !== null && JWT_ACCESS_TOKEN_MINUTES !== undefined) {
       FORM_DATA.append("jwt_access_token_minutes", JWT_ACCESS_TOKEN_MINUTES);
     }
@@ -98,7 +100,7 @@ export default function AddAppSetting() {
     if (number_of_news !== null && number_of_news !== undefined) {
       FORM_DATA.append("number_of_news", number_of_news);
     }
- 
+
     FORM_DATA.append(
       "show_leaderboard_on_lms",
       show_leaderboard_on_lms.toString()
@@ -110,7 +112,7 @@ export default function AddAppSetting() {
           message: "Successful",
           description: response?.data?.message,
         });
-      
+
         setLoading(false);
         navigate("/app-setting");
       } else {
@@ -133,14 +135,18 @@ export default function AddAppSetting() {
         const response = await APP_SETTING(FORM_DATA);
         if (response?.data?.status) {
           const response_data = response?.data?.data;
-          set_heading(response_data?.heading);;
-          set_show_leaderboard_on_lms(Number(response_data?.show_leaderboard_on_lms));
+          set_heading(response_data?.heading);
+          set_button_text(response_data?.meta?.button_text);
+          form.setFieldsValue({
+            button_text: response_data?.meta?.button_text
+          });
           set_text(response_data?.text);
-          set_web_link(response_data?.web_link);     
+          set_show_leaderboard_on_lms(Number(response_data?.show_leaderboard_on_lms));
+          set_web_link(response_data?.web_link);
           set_number_of_upcoming_event(response_data?.number_of_upcoming_event);
           set_number_of_news(response_data?.number_of_news);
-          set_JWT_ACCESS_TOKEN_MINUTES(response_data?.jwt_access_token_minutes);
-          set_JWT_REFRESH_TOKEN_DAYS(response_data?.jwt_refresh_token_days);
+          set_JWT_ACCESS_TOKEN_MINUTES(response_data?.meta?.jwt_access_token_minutes);
+          set_JWT_REFRESH_TOKEN_DAYS(response_data?.meta?.jwt_refresh_token_days);
 
           if (response_data?.banner) {
             set_banner(response_data.banner);
@@ -276,13 +282,23 @@ export default function AddAppSetting() {
                 )}
               </Form.Item>
 
-              <Form.Item label="Button Text">
+              <Form.Item label="Banner Para">
                 <Input
                   value={text}
                   onChange={(e) => set_text(e.target.value)}
                 />
                 {errors?.text && (
                   <span style={{ color: "red" }}>{errors.text}</span>
+                )}
+              </Form.Item>
+
+              <Form.Item label="Button Text">
+                <Input
+                  value={button_text}
+                  onChange={(e) => set_button_text(e.target.value)}
+                />
+                {errors?.button_text && (
+                  <span style={{ color: "red" }}>{errors.button_text}</span>
                 )}
               </Form.Item>
 
@@ -302,6 +318,7 @@ export default function AddAppSetting() {
                   <span style={{ color: "red" }}>{errors.number_of_upcoming_event}</span>
                 )}
               </Form.Item>
+
               <Form.Item label="Number of News">
                 <InputNumber style={{ width: "100%" }} value={number_of_news} onChange={(value) => set_number_of_news(value)} placeholder="Enter here" />
                 {errors?.number_of_news && (
@@ -309,21 +326,19 @@ export default function AddAppSetting() {
                 )}
               </Form.Item>
 
-               <Form.Item label="Access Token Expiry Time (in minutes)">
+              <Form.Item label="Access Token Expiry Time (in minutes)">
                 <InputNumber style={{ width: "100%" }} value={JWT_ACCESS_TOKEN_MINUTES} onChange={(value) => set_JWT_ACCESS_TOKEN_MINUTES(value)} placeholder="Enter here" />
                 {errors?.JWT_ACCESS_TOKEN_MINUTES && (
                   <span style={{ color: "red" }}>{errors.JWT_ACCESS_TOKEN_MINUTES}</span>
                 )}
               </Form.Item>
 
-               <Form.Item label="Refresh Token Expiry Time (in days)">
+              <Form.Item label="Refresh Token Expiry Time (in days)">
                 <InputNumber style={{ width: "100%" }} value={JWT_REFRESH_TOKEN_DAYS} onChange={(value) => set_JWT_REFRESH_TOKEN_DAYS(value)} placeholder="Enter here" />
                 {errors?.JWT_REFRESH_TOKEN_DAYS && (
                   <span style={{ color: "red" }}>{errors.JWT_REFRESH_TOKEN_DAYS}</span>
                 )}
               </Form.Item>
-
-
 
               <Form.Item label="Show Leaderboard On LMS">
                 <Radio.Group

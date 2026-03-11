@@ -298,7 +298,7 @@ function PackageCourses() {
         )}
 
         <Modal
-          title="Assign Course to Learners"
+          title="Assign course to package"
           open={isModalVisible}
           onCancel={handleModalCancel}
           footer={null}
