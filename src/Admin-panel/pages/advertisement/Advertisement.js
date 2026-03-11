@@ -77,28 +77,38 @@ function Advertisement() {
 
 
 
-  const change_status = async (id) => {
-    setLoader(true);
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("id", id);
-    try {
-      const response = await ADS_STATUS(FORM_DATA);
-      if (response?.data?.status) {
-        notification.success({
-          message: "Successful",
-          description: response?.data?.message,
-        });
-        set_onchange_call(onchange_call ? false : true)
+  const change_status = async (id, priority) => {
+  setLoader(true);
 
-      } else {
-        //setLoader(false);
-      }
-    } catch (error) {
-      message.error(
-        "Server Error: " + (error?.response?.data?.message || "Unknown error")
-      );
+  const FORM_DATA = new FormData();
+  FORM_DATA.append("id", id);
+  FORM_DATA.append("priority", priority);
+
+  try {
+    const response = await ADS_STATUS(FORM_DATA);
+
+    if (response?.data?.status) {
+      notification.success({
+        message: "Successful",
+        description: response?.data?.message,
+      });
+
+      set_onchange_call(onchange_call ? false : true);
+    } else {
+      notification.error({
+        message: "Failed to change Status",
+        description: response?.data?.errors?.priority,
+      });
     }
-  };
+  } catch (errors) {
+    notification.error({
+      message: "Error",
+      description: errors?.priority || "Something went wrong",
+    });
+  } finally {
+    setLoader(false);
+  }
+};
 
   const columns = [
     {
@@ -106,7 +116,7 @@ function Advertisement() {
       dataIndex: "created_at",
       render: (text, record) => (
         <span>
-          {record.created_at}
+          {formatToIST(record.created_at)}
         </span>
       ),
     },
@@ -118,6 +128,23 @@ function Advertisement() {
           {record.ads_type}
         </span>
       ),
+    },
+    {
+      title: "Priority",
+      dataIndex: "priority",
+      render: (text, record) => {
+        const labels = {
+          low: "Low",
+          medium: "Medium",
+          high: "High"
+        };
+
+        return (
+          <span>
+            {labels[record.priority]}
+          </span>
+        );
+      },
     },
     {
       title: "Start Date",
@@ -169,7 +196,7 @@ function Advertisement() {
 
           <Popconfirm
             title="Do you really want to change the status ?"
-            onConfirm={() => change_status(record?.id)}
+            onConfirm={() => change_status(record?.id, record?.priority)}
             okText="Yes"
             cancelText="No"
           >

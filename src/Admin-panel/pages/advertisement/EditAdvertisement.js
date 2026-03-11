@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Card, Form, Radio, Upload, Input, Button, Modal, message, Select, DatePicker, App } from "antd";
 import { LeftOutlined, Loading3QuartersOutlined, PlusOutlined } from "@ant-design/icons";
 import SelectVideoList from "../media/video/SelectVideoList";
-import CustomRichTextEditor from "../../components/CustomTextEditor";
 import { EDIT_ADS, VIEW_ADS } from "../../apis/apis";
 import { useNavigate, useParams } from "react-router-dom";
+import HtmlEditorWithPreview from "../../../helper/HtmlEditorWithPreview";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import dayjs from "dayjs";
 
@@ -17,6 +17,10 @@ function EditAdvertisement() {
   const [loading, setLoading] = useState(true);
   const [ads_type, set_ads_type] = useState("video");
   const [image, set_image] = useState("");
+  const [link, set_link] = useState("");
+
+  const [video_url, set_video_url] = useState("")
+
   const [description, set_description] = useState("");
   const [start_date, set_start_date] = useState(null);
   const [end_date, set_end_date] = useState(null);
@@ -95,7 +99,13 @@ function EditAdvertisement() {
 
         if (response_data?.ads_meta?.image) {
           set_image(response_data?.ads_meta?.image);
+          set_link(response_data?.ads_meta?.link)
         }
+
+        if (response_data?.ads_meta?.video) {
+          set_video_url(response_data?.ads_meta?.video);
+        }
+
 
         if (response_data?.ads_type === "content") {
           set_description(response_data?.ads_meta?.description);
@@ -107,11 +117,11 @@ function EditAdvertisement() {
           });
         }
 
-        if (response_data?.ads_type === "video") {
-          setSelectedVideo({
-            id: response_data?.ads_meta?.video
-          });
-        }
+        // if (response_data?.ads_type === "video") {
+        //   setSelectedVideo({
+        //     video: response_data?.ads_meta?.video
+        //   });
+        // }
       }
 
       setLoading(false);
@@ -143,7 +153,7 @@ function EditAdvertisement() {
 
       // VIDEO
       if (ads_type === "video") {
-        FORM_DATA.append("video", selectedVideo?.id);
+        FORM_DATA.append("video", video_url);
       }
 
       // IMAGE
@@ -151,6 +161,7 @@ function EditAdvertisement() {
         if (image_api) {
           FORM_DATA.append("image", image_api);
         }
+        FORM_DATA.append("link", link);
       }
 
       // CONTENT
@@ -217,104 +228,108 @@ function EditAdvertisement() {
 
               {/* Video Upload */}
               {ads_type === "video" && (
-                <Form.Item label="Select Video">
-                  <Button type="dashed" onClick={() => setShowVideoModal(true)}>
-                    {selectedVideo ? `Selected Video ID: ${selectedVideo.id}` : "Click to Select Video"}
-                  </Button>
+                <Form.Item label="Video Url">
+                  <Input placeholder="Enter video url..." value={video_url} onChange={(e) => set_video_url(e.target.value)} />
                   {errors?.video_id && (
                     <span style={{ color: "red" }}>{errors?.video_id}</span>
                   )}
-
-
                 </Form.Item>
 
               )}
 
               {/* Audio Upload */}
               {ads_type === "image" && (
-                <Form.Item label="Upload Advertisement Photo here">
-                  <Upload
-                    style={{ width: "250px", minHeight: "200px" }}
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    beforeUpload={(file) => {
-                      console.log(file)
-                      const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
-                      // const isLt2M = file.size <= 2 * 1024 * 1024;
-                      const isLt512KB = file.size <= 512 * 1024;
+                <>
+                  <Form.Item label="Upload Advertisement Photo here">
+                    <Upload
+                      style={{ width: "250px", minHeight: "200px" }}
+                      listType="picture-card"
+                      className="avatar-uploader"
+                      showUploadList={false}
+                      beforeUpload={(file) => {
+                        console.log(file)
+                        const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
+                        // const isLt2M = file.size <= 2 * 1024 * 1024;
+                        const isLt512KB = file.size <= 512 * 1024;
 
-                      if (!isJpgOrPng) {
-                        set_image_api('');
-                        set_image('')
-                        setimageError("Only JPG/PNG files are allowed.");
-                        return false;
-                      }
-
-                      if (!isLt512KB) {
-                        set_image_api('');
-                        set_image('')
-                        setimageError("image must be smaller than or equal to 512KB.");
-                        return false;
-                      }
-                      const img = new Image();
-                      img.src = URL.createObjectURL(file);
-
-                      img.onload = () => {
-                        const { width, height } = img;
-                        // Example: Minimum 300x300 pixels
-                        if (width === 490 && height === 320) {
-                          setimageError(""); // Clear errors if valid
-
-                          // Set preview and file for API
-                          getBase64(file, (url) => set_image(url));
-                          set_image_api(file);
-
-                        } else {
+                        if (!isJpgOrPng) {
                           set_image_api('');
                           set_image('')
-                          setimageError("Image must be at least 490x320 pixels.");
+                          setimageError("Only JPG/PNG files are allowed.");
+                          return false;
                         }
 
-                      };
-                      return false;
+                        if (!isLt512KB) {
+                          set_image_api('');
+                          set_image('')
+                          setimageError("image must be smaller than or equal to 512KB.");
+                          return false;
+                        }
+                        const img = new Image();
+                        img.src = URL.createObjectURL(file);
 
-                    }}
-                    onChange={handleChange}
-                  >
-                    {image ? (
-                      <img
-                        src={image}
-                        alt="avatar"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    ) : (
-                      uploadButton
+                        img.onload = () => {
+                          const { width, height } = img;
+                          // Example: Minimum 300x300 pixels
+                          if (width === 490 && height === 320) {
+                            setimageError(""); // Clear errors if valid
+
+                            // Set preview and file for API
+                            getBase64(file, (url) => set_image(url));
+                            set_image_api(file);
+
+                          } else {
+                            set_image_api('');
+                            set_image('')
+                            setimageError("Image must be at least 490x320 pixels.");
+                          }
+
+                        };
+                        return false;
+
+                      }}
+                      onChange={handleChange}
+                    >
+                      {image ? (
+                        <img
+                          src={image}
+                          alt="avatar"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      ) : (
+                        uploadButton
+                      )}
+                    </Upload>
+
+                    {/* Error message under the uploader */}
+                    {imageError && (
+                      <span
+                        style={{ color: "red", display: "block", marginTop: 8 }}
+                      >
+                        {imageError}
+                      </span>
                     )}
-                  </Upload>
+                    {/* Server-side validation error */}
+                    {errors?.image && (
+                      <span
+                        style={{ color: "red", display: "block", marginTop: 8 }}
+                      >
+                        {errors?.image}
+                      </span>
+                    )}
+                    <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - image must be smaller than or equal to 512KB and must be at least 490x320 pixels.</p>
+                  </Form.Item>
 
-                  {/* Error message under the uploader */}
-                  {imageError && (
-                    <span
-                      style={{ color: "red", display: "block", marginTop: 8 }}
-                    >
-                      {imageError}
-                    </span>
-                  )}
-                  {/* Server-side validation error */}
-                  {errors?.image && (
-                    <span
-                      style={{ color: "red", display: "block", marginTop: 8 }}
-                    >
-                      {errors?.image}
-                    </span>
-                  )}
-                  <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - image must be smaller than or equal to 512KB and must be at least 490x320 pixels.</p>
-                </Form.Item>
+                  <Form.Item label="Link Url">
+                    <Input placeholder="Enter url..." value={link} onChange={(e) => set_link(e.target.value)} />
+                    {errors?.link && (
+                      <span style={{ color: "red" }}>{errors?.link}</span>
+                    )}
+                  </Form.Item></>
               )}
 
               {/* Content Fields */}
@@ -325,12 +340,19 @@ function EditAdvertisement() {
                   </Form.Item>
 
                   <Form.Item>
-                    <CustomRichTextEditor
+                    {/* <CustomRichTextEditor
                       value={description}
                       editorLabel="Description"
                       onChange={(val) => set_description(val)}
                       placeholder="Write something..."
                     />{" "}
+                     */}
+
+                    <HtmlEditorWithPreview
+                      setHtmlCode={set_description}
+                      description="Message"
+                      htmlCode={description}
+                    />
                     {errors?.description && (
                       <span style={{ color: "red" }}>{errors.description}</span>
                     )}
@@ -348,7 +370,7 @@ function EditAdvertisement() {
                   options={[
                     { value: "low", label: "Low" },
                     { value: "medium", label: "Medium" },
-                    { value: "hight", label: "Hight" },
+                    { value: "high", label: "High" },
                   ]}
                 />
                 {errors?.difficulty && (

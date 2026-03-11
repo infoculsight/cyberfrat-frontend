@@ -6,6 +6,7 @@ import CustomRichTextEditor from "../../components/CustomTextEditor";
 import { ADD_ADS } from "../../apis/apis";
 import { useNavigate } from "react-router-dom";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
+import HtmlEditorWithPreview from "../../../helper/HtmlEditorWithPreview";
 
 function AddAdvertisement() {
   const [form] = Form.useForm();
@@ -14,7 +15,9 @@ function AddAdvertisement() {
   const [loading, setLoading] = useState(false);
   const [ads_type, set_ads_type] = useState("video");
   const [image, set_image] = useState("");
-  const [title, set_title] = useState("")
+  const [link, set_link] = useState("");
+  const [title, set_title] = useState("");
+  const [video, set_video] = useState("")
   const [description, set_description] = useState("");
   const [start_date, set_start_date] = useState(null);
   const [end_date, set_end_date] = useState(null);
@@ -77,13 +80,15 @@ function AddAdvertisement() {
       );
       // VIDEO
       if (ads_type === "video") {
-        FORM_DATA.append("video", selectedVideo?.id);
+        FORM_DATA.append("video", video);
       }
       // IMAGE
       if (ads_type === "image") {
         if (image_api) {
           FORM_DATA.append("image", image_api);
+          
         }
+        FORM_DATA.append("link", link);
       }
       // CONTENT
       if (ads_type === "content") {
@@ -112,6 +117,20 @@ function AddAdvertisement() {
     set_ads_type(e.target.value);
   };
 
+
+  const isValidUrl = (url) => {
+  const pattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*).)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$",
+    "i"
+  );
+  return !!pattern.test(url);
+};
+
   return (
     <div className="lms-body">
       <Card>
@@ -135,21 +154,19 @@ function AddAdvertisement() {
 
             {/* Video Upload */}
             {ads_type === "video" && (
-              <Form.Item label="Select Video">
-                <Button type="dashed" onClick={() => setShowVideoModal(true)}>
-                  {selectedVideo ? `Selected: ${selectedVideo.title}` : "Click to Select Video"}
-                </Button>
-                {errors?.video_id && (
-                  <span style={{ color: "red" }}>{errors?.video_id}</span>
+              <Form.Item label="Video Url">
+                <Input placeholder="Enter video url..." value={video} onChange={(e) => set_video(e.target.value)} />
+                {errors?.video && (
+                  <span style={{ color: "red" }}>{errors?.video}</span>
                 )}
-
-
               </Form.Item>
 
             )}
 
             {/* Audio Upload */}
             {ads_type === "image" && (
+
+            <>
               <Form.Item label="Upload Advertisement Photo here">
                 <Upload
                   name="avatar"
@@ -234,6 +251,14 @@ function AddAdvertisement() {
                 )}
                 <p style={{ color: "#65e7c4", marginTop: "10px" }}>Note - image must be smaller than or equal to 512KB and must be at least 490x320 pixels.</p>
               </Form.Item>
+
+                 <Form.Item label="Link Url">
+                <Input placeholder="Enter url..." value={link} onChange={(e) => set_link(e.target.value)} />
+                {errors?.link && (
+                  <span style={{ color: "red" }}>{errors?.link}</span>
+                )}
+              </Form.Item></>
+              
             )}
 
             {/* Content Fields */}
@@ -245,13 +270,20 @@ function AddAdvertisement() {
                 </Form.Item>
 
                 <Form.Item>
-                  <CustomRichTextEditor
+
+                  {/* <CustomRichTextEditor
                     value={description}
                     editorLabel="Description"
                     onChange={(val) => set_description(val)}
                     placeholder="Write something..."
                   />{" "}
-                  {errors?.description && (
+                 */}
+
+                  <HtmlEditorWithPreview
+                    setHtmlCode={set_description}
+                    description="Message"
+                    htmlCode={description}
+                  />  {errors?.description && (
                     <span style={{ color: "red" }}>{errors.description}</span>
                   )}
                 </Form.Item>
@@ -268,7 +300,7 @@ function AddAdvertisement() {
                 options={[
                   { value: "low", label: "Low" },
                   { value: "medium", label: "Medium" },
-                  { value: "hight", label: "Hight" },
+                  { value: "high", label: "High" },
                 ]}
               />
               {errors?.difficulty && (
