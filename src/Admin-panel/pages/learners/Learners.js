@@ -1,8 +1,8 @@
-import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm, Tooltip, Form } from "antd";
+import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm, Tooltip, Form, Switch } from "antd";
 import { EyeFilled, LoadingOutlined, UploadOutlined, BookOutlined, LockOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { BULD_ADD_LEARNERS, BULK_ADD_LEARNER_TEMPLATE, CHANGE_LEARNER_PASSWORD, LEARNER_STATUS } from "../../apis/apis";
+import { BULD_ADD_LEARNERS, BULK_ADD_LEARNER_TEMPLATE, CHANGE_LEARNER_PASSWORD, DISCUSSION_ACCESS, LEARNER_STATUS } from "../../apis/apis";
 import { LEARNER_LIST } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
@@ -232,7 +232,7 @@ function Learners() {
     </Select>
   );
 
- 
+
   const columns = [
     {
       title: "Name",
@@ -344,13 +344,28 @@ function Learners() {
 
               ) : (
                 <Button color="red" variant="solid" size="small">
-                <CloseCircleOutlined />
+                  <CloseCircleOutlined />
                 </Button>
               )}
             </Tooltip>
           </Popconfirm>
 
-
+          <Popconfirm
+            title="Do you want to show discussion to learner?"
+            onConfirm={() => DISCUSSION_ACCESS_TO_LEARNER(record?.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Tooltip title="Access for discussion">
+              <Switch
+                size="large"
+                checked={record.is_discussion}
+                style={{ backgroundColor: record.is_discussion ? "#52c41a" : "#ff4d4f" }}
+                checkedChildren="ON"
+                unCheckedChildren="OFF"
+              />
+            </Tooltip>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -443,6 +458,30 @@ function Learners() {
         message: "Download Failed",
         description: "Something went wrong",
       });
+    }
+  };
+
+
+  const DISCUSSION_ACCESS_TO_LEARNER = async (id) => {
+    setLoader(true);
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("user_id", id);
+    try {
+      const response = await DISCUSSION_ACCESS(FORM_DATA);
+      if (response?.data?.status) {
+        notification.success({
+          message: "Successful",
+          description: response?.data?.message,
+        });
+        set_onchange_call(onchange_call ? false : true)
+
+      } else {
+        //setLoader(false);
+      }
+    } catch (error) {
+      message.error(
+        "Server Error: " + (error?.response?.data?.message || "Unknown error")
+      );
     }
   };
 
