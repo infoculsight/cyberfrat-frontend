@@ -156,3 +156,12 @@ export const VIEW_LEARNER_PACKAGE_REPORT = async (body) => {
         console.error(error);
     }
 };
+
+export const DISCUSSION_ACCESS = async (body) => {
+    try {
+        const response = await Axios.post('discussion-access-view/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
