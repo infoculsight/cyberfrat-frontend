@@ -97,6 +97,19 @@ function Dashboard() {
   };
 
 
+  const getCurrentMonthDate = () => {
+  const today = new Date();
+
+  const options = {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  };
+
+  return today.toLocaleDateString("en-US", options);
+};
+
+
   return (
     <div className="lms-body">
       <Card>
@@ -163,7 +176,7 @@ function Dashboard() {
             {/* Bar Chart */}
             <Col xs={24} lg={12}>
               <Card>
-                <h2 style={{ marginTop: "-20px" }}>Leaderboard-Top 10 Learners</h2>
+                <h2 style={{ marginTop: "-20px" }}>Leaderboard-Top 10 Learners  ({getCurrentMonthDate()})</h2>
                 <Table
                   columns={columns}
                   pagination={false}

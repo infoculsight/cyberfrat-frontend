@@ -165,3 +165,49 @@ export const DISCUSSION_ACCESS = async (body) => {
         console.error(error);
     }
 };
+
+
+export const LIST_APP_DISCUSSION = async (body) => {
+    try {
+        const response = await Axios.post('list-app-dicussion/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const LIST_DISSCUSSION_REPLY = async (body) => {
+    try {
+        const response = await Axios.post('list-discussion-reply/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const DISSCUSSION_STATUS = async (body) => {
+    try {
+        const response = await Axios.post('discussion-status/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const LIST_COMMENTS = async (body) => {
+    try {
+        const response = await Axios.post('list-comments/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const COMMENTS_STATUS = async (body) => {
+    try {
+        const response = await Axios.post('comments-status/', body);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};

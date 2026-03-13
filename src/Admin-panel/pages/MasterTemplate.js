@@ -89,7 +89,9 @@ const MasterTemplate = () => {
       '/advertisement': { selected: '22', open: '22' },
       '/add-advertisement': { selected: '22', open: '22' },
       '/edit-advertisement': { selected: '22', open: '22' },
-
+      '/comment-discussion': { selected: '23', open: '23' },
+      '/discussion-replies': { selected: '23', open: '23' },
+      '/lms-comments': { selected: '24', open: '24' },
     };
 
     const path = location.pathname;
@@ -126,6 +128,8 @@ const MasterTemplate = () => {
       '20': '/lms-setting',
       '21': '/logs-view',
       '22': '/advertisement',
+      '23': '/comment-discussion',
+      '24': '/lms-comments',
     };
 
     const route = keyToPath[key];
@@ -198,6 +202,7 @@ const MasterTemplate = () => {
                 { key: '10', icon: <DownloadOutlined />, label: 'Download' },
                 { key: '20', icon: <SettingFilled />, label: 'LMS Setting' },
                 { key: '21', icon: <PicRightOutlined />, label: 'Logs Viewer' },
+                { key: '24', icon: <PicRightOutlined />, label: 'Lms Comments' },
                 {
                   key: 'group',
                   label: 'App Management',
@@ -207,6 +212,7 @@ const MasterTemplate = () => {
                     { key: '17', icon: <FolderOpenFilled />, label: 'Upcoming Trainings' },
                     { key: '15', icon: <NotificationOutlined />, label: 'News' },
                     { key: '18', icon: <FormOutlined />, label: 'Discussion Form' },
+                    { key: '23', icon: <PicRightOutlined />, label: 'App Disccusion' },
                     { key: '19', icon: <SettingFilled />, label: 'App Setting' },
                     { key: '22', icon: <AppstoreOutlined />, label: 'Advertisement' },
                   ]
