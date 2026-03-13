@@ -71,6 +71,9 @@ import LogsView from "../Admin-panel/pages/logs/LogsView";
 import Advertisement from "../Admin-panel/pages/advertisement/Advertisement"
 import AddAdvertisement from "../Admin-panel/pages/advertisement/AddAdvertisement"
 import EditAdvertisement from "../Admin-panel/pages/advertisement/EditAdvertisement"
+import CommentDiscussion from "../Admin-panel/pages/commentdiscussion/CommentDiscussion";
+import DiscussionReplies from "../Admin-panel/pages/commentdiscussion/DiscussionReplies";
+import LmsComment from "../Admin-panel/pages/comments/LmsComment";
 
 
 function AdminRoutes() {
@@ -157,6 +160,9 @@ function AdminRoutes() {
         <Route path="advertisement" element={<Advertisement />}/>
         <Route path="add-advertisement" element={<AddAdvertisement />}/>
         <Route path="edit-advertisement/:id" element={<EditAdvertisement />}/>
+        <Route path="comment-discussion" element={<CommentDiscussion />}/>
+        <Route path="discussion-replies/:id" element={<DiscussionReplies />}/>
+        <Route path="lms-comments" element={<LmsComment />}/>
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

@@ -370,7 +370,7 @@ function Learners() {
       ),
     },
   ];
-
+ 
   const pagination_on_change = async (data, size) => {
     navigate(`/learners/${data}`);
     set_pagination_loader(true);
