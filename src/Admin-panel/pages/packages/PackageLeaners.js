@@ -15,10 +15,10 @@ import {
   App,
 } from "antd";
 import { Option } from "antd/es/mentions";
-import { LeftOutlined, LoadingOutlined,  } from "@ant-design/icons";
+import { LeftOutlined, LoadingOutlined, } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { LIST_PACKAGE_LEARNERS, LEARNER_PACKAGE_STATUS, BULK_ASSIGN_PACKAGE, BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE } from "../../apis/apis";
+import { LIST_PACKAGE_LEARNERS, LEARNER_PACKAGE_STATUS, BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import AssignPackageLearners from "./AssignPackageLearners";
@@ -43,29 +43,28 @@ function PackageLeaners() {
   const [assignKey, setAssignKey] = useState(0);
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
-  const [file, set_file] = useState([]);
   const [is_model_open, set_is_model_open] = useState(false);
   const [page_size, set_page_size] = useState(10);
   const [bulkKey, setBulkKey] = useState(0);
 
 
   const showModal = () => {
-   
+
     setIsModalVisible(true);
   };
 
   const showbulkModal = () => {
-     setAssignKey((prev) => prev + 1);
+    setAssignKey((prev) => prev + 1);
     set_is_model_open(true);
   };
 
 
   const handleCancel = () => {
     set_is_model_open(false);
-     setBulkKey(prev => prev + 1);
+    setBulkKey(prev => prev + 1);
   };
 
- 
+
   const handleModalCancel = async () => {
     setIsModalVisible(false);
     setLoader(true);
@@ -197,6 +196,9 @@ function PackageLeaners() {
           >
             Change Status
           </Button>
+          <Button type="link" onClick={() => navigate(`/package-learner-report/${package_id}/${btoa(record.id)}`)}>
+            View Report
+          </Button>
         </Space>
       ),
     },
@@ -304,34 +306,34 @@ function PackageLeaners() {
   //   }
   // };
 
- const DOWNLOAD_TEMPLATE = async () => {
-      try {
-        const response = await BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE();
-   
-        const blob = new Blob([response.data], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-   
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-   
-        link.href = url;
-        link.download = "bulk_add_package_learners_template.csv"; // ✅ XLSX
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-   
-        notification.success({
-          message: "Template Downloaded",
-          description: "Excel template downloaded successfully",
-        });
-      } catch (error) {
-        notification.error({
-          message: "Download Failed",
-          description: "Something went wrong",
-        });
-      }
-    };
+  const DOWNLOAD_TEMPLATE = async () => {
+    try {
+      const response = await BULK_ASSIGN_PACKAGE_COURSE_TEMPLATE();
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "bulk_add_package_learners_template.csv"; // ✅ XLSX
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      notification.success({
+        message: "Template Downloaded",
+        description: "Excel template downloaded successfully",
+      });
+    } catch (error) {
+      notification.error({
+        message: "Download Failed",
+        description: "Something went wrong",
+      });
+    }
+  };
 
 
   return (
@@ -507,7 +509,7 @@ function PackageLeaners() {
       </Modal>
 
 
-     
+
       <Modal
         title="Bulk Enroll Learners"
         open={is_model_open}

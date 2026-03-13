@@ -189,7 +189,7 @@ function LiveTestList() {
                     {" "}
                      <Pagination
                                   current={current_page}
-                                  total={total_pages}
+                                  total={total_pages * page_size}
                                   pageSize={page_size}
                                   showSizeChanger
                                   pageSizeOptions={['10', '20', '50', '100']}

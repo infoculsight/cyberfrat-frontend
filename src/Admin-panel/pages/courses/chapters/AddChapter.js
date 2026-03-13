@@ -10,6 +10,7 @@ import {
   Modal,
   Row,
   Spin,
+  Switch,
   Upload,
 } from "antd";
 import {
@@ -35,6 +36,7 @@ export default function AddChapter(props) {
   const [errors, set_errors] = useState("");
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [is_mandatory, set_is_mandatory] = useState(false);
 
 
   const onFinish = async () => {
@@ -45,6 +47,7 @@ export default function AddChapter(props) {
     FORM_DATA.append("scorm", scorm);
     FORM_DATA.append("course_id", atob(course_id));
     FORM_DATA.append("video_id", selectedVideo?.id || "");
+    FORM_DATA.append('show_chapter_discussion_to_learner', is_mandatory ? 1 : 0);
 
     try {
       const response = await ADD_CHAPTER(FORM_DATA);
@@ -118,6 +121,10 @@ export default function AddChapter(props) {
                 {errors?.introduction && (
                   <span style={{ color: "red" }}>{errors?.introduction}</span>
                 )}
+                </Form.Item>
+
+                   <Form.Item label="Show Chapter Discussion to learners">
+                 <Switch checked={is_mandatory} onChange={set_is_mandatory} />
                 </Form.Item>
 
                 <Form.Item label="Select Video">

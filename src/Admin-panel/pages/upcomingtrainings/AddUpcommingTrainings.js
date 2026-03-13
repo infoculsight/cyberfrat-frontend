@@ -39,6 +39,8 @@ function AddUpcomingTrainings() {
   const [imageError, setimageError] = useState("");
   const [image, set_image] = useState("");
   const [image_api, set_image_api] = useState("");
+  const [booking_url,set_booking_url] = useState("")
+  const [booking_button_text,set_booking_button_text] = useState("")
 
 
 
@@ -83,6 +85,8 @@ function AddUpcomingTrainings() {
 
     FORM_DATA.append('title', title);
     FORM_DATA.append('short_description', short_description);
+    FORM_DATA.append('booking_url', booking_url);
+    FORM_DATA.append('booking_button_text', booking_button_text);
     FORM_DATA.append('description', description);
     FORM_DATA.append('category', category);
     FORM_DATA.append('training_type', training_type);
@@ -159,6 +163,27 @@ function AddUpcomingTrainings() {
             )}
           </Form.Item>
 
+           <Form.Item label="Booking Url">
+            <Input
+              value={booking_url}
+              onChange={(e) => set_booking_url(e.target.value)}
+            />
+            {errors?.booking_url && (
+              <span style={{ color: "red" }}>{errors.booking_url}</span>
+            )}
+          </Form.Item>
+
+            <Form.Item label="Booking Button Text">
+            <Input
+              value={booking_button_text}
+              onChange={(e) => set_booking_button_text(e.target.value)}
+            />
+            {errors?.booking_button_text && (
+              <span style={{ color: "red" }}>{errors.booking_button_text}</span>
+            )}
+          </Form.Item>
+
+
           <CustomRichTextEditor
             value={description}
             editorLabel="Description"
@@ -193,7 +218,7 @@ function AddUpcomingTrainings() {
               style={{ width: '100%' }}
               onChange={(date) => {
                 set_start_date(date);
-                set_end_date(null); // reset end date
+                set_end_date(null); 
               }}
               value={start_date}
             />
@@ -243,7 +268,7 @@ function AddUpcomingTrainings() {
             )}
           </Form.Item>
 
-          <Form.Item label="Duration (Minutes)">
+          <Form.Item label="Duration">
             <Input
               type="number"
               value={duration_minutes}

@@ -17,6 +17,7 @@ function Downloads() {
     'package-download': '2',
     'livetest-download': '4',
     'quiz-download': '5',
+    'user-download': '6',
   };
 
   const keyTabMap = {
@@ -24,6 +25,7 @@ function Downloads() {
     '2': 'package-download',
     '4': 'livetest-download',
     '5': 'quiz-download',
+    '6':'user-download'
 
   };
 
@@ -38,7 +40,7 @@ function Downloads() {
     navigate(`/download/${keyTabMap[key]}`);
   };
 
-  const visibleTabs = ['1', '2', '4', '5'];
+  const visibleTabs = ['1', '2', '4', '5','6'];
 
   return (
     <div className="lms-body">
@@ -49,6 +51,7 @@ function Downloads() {
           {visibleTabs.includes('2') && <TabPane tab="Package Reports" key="2" />}
           {/* {visibleTabs.includes('4') && <TabPane tab="Live Test Report" key="4" />} */}
           {visibleTabs.includes('5') && <TabPane tab="Quiz Report" key="5" />}
+          {visibleTabs.includes('6') && <TabPane tab="User Report" key="6" />}
         </Tabs>
         <Outlet />
       </Card>

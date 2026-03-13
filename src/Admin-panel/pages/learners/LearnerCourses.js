@@ -7,10 +7,10 @@ import {
   Table,
   Pagination,
   Spin,
-  Button 
+  Button
 } from "antd";
 import { LeftOutlined, LoadingOutlined } from "@ant-design/icons";
-import { useLocation, useNavigate,useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import debounce from "lodash.debounce";
 import moment from "moment";
 import { LIST_LEARNER_ALL_COURSES } from "../../apis/apis";
@@ -61,7 +61,7 @@ function LearnerCourses() {
   // 🔍 Search
   const fetchResults = useCallback(
     debounce(async (value) => {
-        
+
       try {
         setSearchQuery(value);
         setPaginationLoader(true);
@@ -132,33 +132,33 @@ function LearnerCourses() {
       render: (text, record) => <span>{record.course_status}</span>,
     },
     {
-  title: "Thumbnail",
-  dataIndex: "thumbnail",
-  render: (text, record) => (
-    <img
-      src={record.thumbnail}
-      alt="Course Thumbnail"
-      style={{
-        width: "60px",
-        height: "60px",
-        borderRadius: "8px",
-        objectFit: "cover",
-      }}
-    />
-  ),
-},
+      title: "Thumbnail",
+      dataIndex: "thumbnail",
+      render: (text, record) => (
+        <img
+          src={record.thumbnail}
+          alt="Course Thumbnail"
+          style={{
+            width: "60px",
+            height: "60px",
+            borderRadius: "8px",
+            objectFit: "cover",
+          }}
+        />
+      ),
+    },
 
-{
+    {
       title: "Action",
       dataIndex: "Report",
       key: "Report",
       render: (_, record) => (
-         <Button type="link" onClick={() =>{ Navigate(`/learner-report/${btoa(record.course_id)}/${btoa(learner_id)}`)}}>
-      View Report
-    </Button>
+        <Button type="link" onClick={() => { Navigate(`/learner-report/${btoa(record.course_id)}/${btoa(learner_id)}`) }}>
+          View Report
+        </Button>
       ),
     },
- 
+
   ];
 
   return (

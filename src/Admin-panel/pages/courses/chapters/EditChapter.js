@@ -33,7 +33,8 @@ export default function EditChapter() {
       navigate(-1);
     }
   };
-  // ✅ Get current tab from URL
+  
+  // Get current tab from URL
   const getTabKeyFromPath = () => {
     const path = location.pathname;
     if (path.includes("/quiz-setting")) return "2";
@@ -43,7 +44,7 @@ export default function EditChapter() {
 
   const activeTabKey = getTabKeyFromPath();
 
-  // ✅ Handle tab change (update route)
+  // Handle tab change (update route)
   const onTabChange = (key) => {
     if (key === "1") navigate(`/edit-chapter/${id}`);
     if (key === "2") navigate(`/edit-chapter/${id}/quiz-setting`);
@@ -77,7 +78,7 @@ export default function EditChapter() {
                 <h2>
                   <span
                     style={{ cursor: "pointer" }}
-                    onClick={handleBack}
+                    onClick={handleBack}     
                   >
                     <LeftOutlined />
                   </span>{" "}

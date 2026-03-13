@@ -1,4 +1,4 @@
-import { App, Button, Card, Col, InputNumber, message, Popconfirm, Progress, Row, Table } from 'antd'
+import { App, Button, Card, Col, Input, InputNumber, message, Modal, Progress, Row, Table } from 'antd'
 import { LeftOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
@@ -18,6 +18,13 @@ function LearnerReport() {
   const [table_data, set_table_data] = useState(false)
   const location = useLocation();
   const [chapterProgress, setChapterProgress] = useState({});
+  const [admin_message, set_admin_message] = useState("");
+  const [errors, set_errors] = useState("");
+
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedChapter, setSelectedChapter] = useState(null);
+  const [selectedRowId, setSelectedRowId] = useState(null);
 
 
   const handleBack = () => {
@@ -55,7 +62,16 @@ function LearnerReport() {
 
       const API_CALL = await VIEW_LEARNER_REPORT(FORM_DATA);
       if (API_CALL?.data?.status) {
+        const chapters = API_CALL.data.data.chapters;
+
         set_table_data(API_CALL.data.data.chapters);
+
+        const progressObj = {};
+        chapters.forEach(ch => {
+          progressObj[ch.id] = ch.time_spend || 0;
+        });
+        setChapterProgress(progressObj);
+
         set_course_name(API_CALL.data.data.course_name)
         set_learner_row(API_CALL.data.data.learner_row)
         set_start_date(API_CALL.data.data.start_date)
@@ -89,6 +105,14 @@ function LearnerReport() {
       render: (text, record) => <span>{record.chapter_status}</span>,
     },
     {
+      title: 'Total Duration',
+      render: (text, record) => (
+        <span>
+          {formatDuration(record.total_seconds)}
+        </span>
+      ),
+    },
+    {
       title: 'Time Spent',
       render: (text, record) => (
         <span>
@@ -99,73 +123,138 @@ function LearnerReport() {
     {
       title: "Action",
       key: "action",
-      // render: (_, record) => {
-      //   const chapter_id = record.id;
-      //   const percent = chapterProgress[chapter_id] ?? 0;
+      render: (_, record) => {
 
-      //   return (
-      //     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        const chapter_id = record.id;
+        const row_id = record.row_id;
 
-      //       <Progress
-      //         percent={percent}
-      //         size="small"
-      //         status="active"
-      //         style={{ width: "120px" }}
-      //       />
+        const watched_seconds = chapterProgress[chapter_id] ?? 0;
+        const total_seconds = record.total_seconds ?? 0;
 
-      //       <InputNumber
-      //         min={0}
-      //         max={100}
-      //         value={percent}
-      //         onChange={(value) => handleProgressChange(chapter_id, value)}
-      //         style={{ width: "60px" }}
-      //       />
+        const percent =
+          total_seconds > 0
+            ? Math.round((watched_seconds / total_seconds) * 100)
+            : 0;
 
-      //       <Popconfirm
-      //         title="Do you really want to change chapter progress !"
-      //         onConfirm={() => updateProgressAPI(chapter_id)}
-      //         okText="Yes"
-      //         cancelText="No"
-      //       >
-      //         <Button
-      //           variant='solid'
-      //           color='green'
-      //           size='small'
-      //         >
-      //           Update
-      //         </Button>
+        return (
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
 
-      //       </Popconfirm>
+            {
+              row_id > 0 ? <>  <Progress
+                percent={percent}
+                size="small"
+                status="active"
+                style={{ width: "120px" }}
+              />
 
-      //     </div>
-      //   );
-      // },
-    },
+                <InputNumber
+                  min={0}
+                  max={total_seconds}
+                  value={watched_seconds}
+                  parser={(value) => Number(value)}
+                  onChange={(value) => handleProgressChange(chapter_id, value)}
+                  style={{ width: "90px" }}
+                />
+              </> : <>
+                <Progress
+                  percent={percent}
+                  size="small"
+                  status="active"
+                  style={{ width: "120px" }}
+                  disabled
+                />
+
+                <InputNumber
+                  min={0}
+                  max={total_seconds}
+                  value={watched_seconds}
+                  parser={(value) => Number(value)}
+                  onChange={(value) => handleProgressChange(chapter_id, value)}
+                  style={{ width: "90px" }}
+                  disabled
+                />
+              </>
+            }
+
+
+
+            {row_id > 0 ? <>
+              <Button
+                variant="solid"
+                color="green"
+                size="small"
+                disabled={row_id <= 0}
+                onClick={() => {
+                  setSelectedChapter(chapter_id);
+                  setSelectedRowId(row_id);
+                  setIsModalOpen(true);
+                }}
+              >
+                Update
+              </Button>
+
+            </> : <>
+              <Button
+                variant="solid"
+                color="green"
+                size="small"
+                disabled
+                title='The user has not started the chapter yet.'>
+                Update
+              </Button>
+            </>}
+
+
+          </div>
+        );
+      },
+    }
   ];
 
 
-  const updateProgressAPI = async (chapter_id) => {
+
+  const updateProgressAPI = async (chapter_id, row_id) => {
+    setLoader(true);
     const form = new FormData();
-    form.append("learner_id", atob(learner_id));
-    form.append("chapter_id", chapter_id);
-    form.append("progress_percent", chapterProgress[chapter_id]);
+    // form.append("learner_id", atob(learner_id));
+    // form.append("chapter_id", chapter_id);
+    form.append("id", row_id);
+    form.append("message", admin_message);
+    form.append("watched_seconds", chapterProgress[chapter_id]);
     const response = await UPDATE_CHAPTER_PROGRESS(form);
     if (response?.data?.status) {
       notification.success({
-          message: "Successful",
-          description: response?.data?.message,
-        });
+        message: "Successful",
+        description: response?.data?.message,
+      });
+      setLoader(false);
+      setIsModalOpen(false);
+      set_admin_message("");
+      set_errors("");
+
     } else {
+      setLoader(false);
+      set_errors(response?.data?.errors);
       message.error("Failed to update");
     }
   };
 
   const handleProgressChange = (chapter_id, value) => {
+    const chapter = table_data.find(ch => ch.id === chapter_id);
+
+    const totalSeconds = Number(chapter?.total_seconds) || 0;
+    const numericValue = Number(value);
+
+    const safeValue = !isNaN(numericValue)
+      ? Math.min(numericValue, totalSeconds)
+      : 0;
+
     setChapterProgress(prev => ({
       ...prev,
-      [chapter_id]: value
+      [chapter_id]: safeValue
     }));
   };
+
 
   return (
     <div className='lms-body'>
@@ -212,6 +301,34 @@ function LearnerReport() {
 
 
       </Card>
+
+      <Modal
+        title="Update Chapter Progress"
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false);
+          set_admin_message("");
+        }}
+        onOk={() => {
+          updateProgressAPI(selectedChapter, selectedRowId);
+        }}
+        okText="Submit"
+      >
+        <Input.TextArea
+          rows={4}
+          placeholder="Enter admin message..."
+          value={admin_message}
+          onChange={(e) => set_admin_message(e.target.value)}
+        />{errors?.message ? (
+          <>
+            <span style={{ color: "red" }}>
+              {errors?.message}
+            </span>
+          </>
+        ) : (
+          <></>
+        )}
+      </Modal>
     </div>
   )
 }

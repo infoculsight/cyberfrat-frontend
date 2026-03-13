@@ -5,7 +5,7 @@ import {
   Col,
   Form,
   Input,
-  InputNumber,
+
   message,
   Row,
   Select,
@@ -26,7 +26,7 @@ export default function Packages() {
   const [name, set_name] = useState("");
   const [description, set_description] = useState("");
   const [how_to_use, set_how_to_use] = useState("");
-  const [validity, set_validity] = useState("");
+  // const [validity, set_validity] = useState("");
   const [tag, set_tag] = useState([]);
   const [tag_line, set_tag_line] = useState("");
   const [thumbnail, set_thumbnail] = useState(null);
@@ -62,7 +62,7 @@ export default function Packages() {
         set_tag(Array.isArray(response_data?.tags) ? response_data.tags : response_data?.tags?.split(',') || []);
         set_description(response_data?.description);
         set_how_to_use(response_data?.how_to_use);
-        set_validity(response_data?.validity);
+        // set_validity(response_data?.validity);
         set_tag_line(response_data?.tag_line);
         if (response_data?.thumbnail) {
           set_thumbnail(response_data.thumbnail);
@@ -84,7 +84,7 @@ export default function Packages() {
     FORM_DATA.append("name", name);
     FORM_DATA.append("description", description);
     FORM_DATA.append("how_to_use", how_to_use);
-    FORM_DATA.append("validity", validity);
+    // FORM_DATA.append("validity", validity);
     FORM_DATA.append("tags", Array.isArray(tag) ? tag.join(",") : tag);
     FORM_DATA.append("tag_line", tag_line);
 
@@ -138,12 +138,12 @@ export default function Packages() {
                 )}
               </Form.Item>
 
-              <Form.Item label="Validity (In days)">
+              {/* <Form.Item label="Validity (In days)">
                 <InputNumber style={{width:"100%"}} value={validity} onChange={(value) => set_validity(value)} />
                 {errors?.validity && (
                   <span style={{ color: "red" }}>{errors.validity}</span>
                 )}
-              </Form.Item>
+              </Form.Item> */}
 
               <Form.Item>
               <CustomRichTextEditor

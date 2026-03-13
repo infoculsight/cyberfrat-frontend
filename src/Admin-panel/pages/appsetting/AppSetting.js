@@ -27,15 +27,19 @@ export default function AddAppSetting() {
   const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
   const [banner, set_banner] = useState("");
+  const [button_text, set_button_text] = useState("")
   const [banner_api, set_banner_api] = useState("");
-  const [banner_heading, set_banner_heading] = useState("");
-  const [button_text, set_button_text] = useState("");
+  const [heading, set_heading] = useState("");
+  const [text, set_text] = useState("");
   const [web_link, set_web_link] = useState("");
   const [show_leaderboard_on_lms, set_show_leaderboard_on_lms] = useState(0);
-  const [number_of_upcoming_event, set_number_of_upcoming_event] = useState("");
-  const [number_of_news, set_number_of_news] = useState("");
+  const [number_of_upcoming_event, set_number_of_upcoming_event] = useState(null);
+  const [number_of_news, set_number_of_news] = useState(null);
   const [errors, set_errors] = useState("");
   const [bannerError, setbannerError] = useState("");
+  const [JWT_ACCESS_TOKEN_MINUTES, set_JWT_ACCESS_TOKEN_MINUTES] = useState("");
+  const [JWT_REFRESH_TOKEN_DAYS, set_JWT_REFRESH_TOKEN_DAYS] = useState("");
+
 
   const getBase64 = (img, callback) => {
     const reader = new FileReader();
@@ -78,11 +82,25 @@ export default function AddAppSetting() {
     setLoading(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("banner", banner_api);
-    FORM_DATA.append("banner_heading", banner_heading);
+    FORM_DATA.append("heading", heading);
+    FORM_DATA.append("text", text);
     FORM_DATA.append("button_text", button_text);
     FORM_DATA.append("web_link", web_link);
-    FORM_DATA.append("number_of_upcoming_event", number_of_upcoming_event);
-    FORM_DATA.append("number_of_news", number_of_news);
+
+    if (JWT_ACCESS_TOKEN_MINUTES !== null && JWT_ACCESS_TOKEN_MINUTES !== undefined) {
+      FORM_DATA.append("jwt_access_token_minutes", JWT_ACCESS_TOKEN_MINUTES);
+    }
+    if (JWT_REFRESH_TOKEN_DAYS !== null && JWT_REFRESH_TOKEN_DAYS !== undefined) {
+      FORM_DATA.append("jwt_refresh_token_days", JWT_REFRESH_TOKEN_DAYS);
+    }
+    if (number_of_upcoming_event !== null && number_of_upcoming_event !== undefined) {
+      FORM_DATA.append("number_of_upcoming_event", number_of_upcoming_event);
+    }
+
+    if (number_of_news !== null && number_of_news !== undefined) {
+      FORM_DATA.append("number_of_news", number_of_news);
+    }
+
     FORM_DATA.append(
       "show_leaderboard_on_lms",
       show_leaderboard_on_lms.toString()
@@ -94,6 +112,7 @@ export default function AddAppSetting() {
           message: "Successful",
           description: response?.data?.message,
         });
+
         setLoading(false);
         navigate("/app-setting");
       } else {
@@ -108,6 +127,7 @@ export default function AddAppSetting() {
   };
 
   useEffect(() => {
+
     const view_api = async () => {
       setLoading(true);
       const FORM_DATA = new FormData();
@@ -115,12 +135,18 @@ export default function AddAppSetting() {
         const response = await APP_SETTING(FORM_DATA);
         if (response?.data?.status) {
           const response_data = response?.data?.data;
-          set_banner_heading(response_data?.banner_heading);;
+          set_heading(response_data?.heading);
+          set_button_text(response_data?.meta?.button_text);
+          form.setFieldsValue({
+            button_text: response_data?.meta?.button_text
+          });
+          set_text(response_data?.text);
           set_show_leaderboard_on_lms(Number(response_data?.show_leaderboard_on_lms));
-          set_button_text(response_data?.button_text);
           set_web_link(response_data?.web_link);
           set_number_of_upcoming_event(response_data?.number_of_upcoming_event);
           set_number_of_news(response_data?.number_of_news);
+          set_JWT_ACCESS_TOKEN_MINUTES(response_data?.meta?.jwt_access_token_minutes);
+          set_JWT_REFRESH_TOKEN_DAYS(response_data?.meta?.jwt_refresh_token_days);
 
           if (response_data?.banner) {
             set_banner(response_data.banner);
@@ -248,11 +274,21 @@ export default function AddAppSetting() {
 
               <Form.Item label="Banner Heading">
                 <Input
-                  value={banner_heading}
-                  onChange={(e) => set_banner_heading(e.target.value)}
+                  value={heading}
+                  onChange={(e) => set_heading(e.target.value)}
                 />
-                {errors?.banner_heading && (
-                  <span style={{ color: "red" }}>{errors.banner_heading}</span>
+                {errors?.heading && (
+                  <span style={{ color: "red" }}>{errors.heading}</span>
+                )}
+              </Form.Item>
+
+              <Form.Item label="Banner Para">
+                <Input
+                  value={text}
+                  onChange={(e) => set_text(e.target.value)}
+                />
+                {errors?.text && (
+                  <span style={{ color: "red" }}>{errors.text}</span>
                 )}
               </Form.Item>
 
@@ -282,13 +318,27 @@ export default function AddAppSetting() {
                   <span style={{ color: "red" }}>{errors.number_of_upcoming_event}</span>
                 )}
               </Form.Item>
+
               <Form.Item label="Number of News">
                 <InputNumber style={{ width: "100%" }} value={number_of_news} onChange={(value) => set_number_of_news(value)} placeholder="Enter here" />
-                {errors?.validity && (
+                {errors?.number_of_news && (
                   <span style={{ color: "red" }}>{errors.number_of_news}</span>
                 )}
               </Form.Item>
 
+              <Form.Item label="Access Token Expiry Time (in minutes)">
+                <InputNumber style={{ width: "100%" }} value={JWT_ACCESS_TOKEN_MINUTES} onChange={(value) => set_JWT_ACCESS_TOKEN_MINUTES(value)} placeholder="Enter here" />
+                {errors?.JWT_ACCESS_TOKEN_MINUTES && (
+                  <span style={{ color: "red" }}>{errors.JWT_ACCESS_TOKEN_MINUTES}</span>
+                )}
+              </Form.Item>
+
+              <Form.Item label="Refresh Token Expiry Time (in days)">
+                <InputNumber style={{ width: "100%" }} value={JWT_REFRESH_TOKEN_DAYS} onChange={(value) => set_JWT_REFRESH_TOKEN_DAYS(value)} placeholder="Enter here" />
+                {errors?.JWT_REFRESH_TOKEN_DAYS && (
+                  <span style={{ color: "red" }}>{errors.JWT_REFRESH_TOKEN_DAYS}</span>
+                )}
+              </Form.Item>
 
               <Form.Item label="Show Leaderboard On LMS">
                 <Radio.Group
@@ -337,7 +387,7 @@ export default function AddAppSetting() {
           </>
         )}
       </Card>
-       
+
     </div>
   );
 }

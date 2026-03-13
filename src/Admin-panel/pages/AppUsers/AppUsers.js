@@ -1,15 +1,14 @@
-import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm, Tooltip, Form, Switch } from "antd";
-import { EyeFilled, LoadingOutlined, UploadOutlined, BookOutlined, LockOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { App, Button, Card, Col, Input, message, Modal, Upload, Pagination, Row, Select, Space, Spin, Table, Tag, Popconfirm } from "antd";
+import { LoadingOutlined, UploadOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { BULD_ADD_LEARNERS, BULK_ADD_LEARNER_TEMPLATE, CHANGE_LEARNER_PASSWORD, DISCUSSION_ACCESS, LEARNER_STATUS } from "../../apis/apis";
-import { LEARNER_LIST } from "../../apis/apis";
+import { BULD_ADD_LEARNERS, APP_USER_STATUS, LIST_APP_USERS, APP_USER_ENROLL_IN_LMS } from "../../apis/apis";
 import debounce from "lodash.debounce";
 import CulsightPageLoader from "../../components/CulsightPageLoader";
 import { formatToIST } from "../../../helper/CommonHelper";
 
 
-function Learners() {
+function AppUsers() {
   const { notification } = App.useApp();
   const { page } = useParams();
 
@@ -32,77 +31,7 @@ function Learners() {
   const [is_model_open, set_is_model_open] = useState(false);
   const [page_size, set_page_size] = useState(10);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [passwordLoading, setPasswordLoading] = useState(false);
-  const [new_password, set_new_password] = useState("");
-  const [confirm_password, set_confirm_password] = useState("");
-  const [selectedLearner, setSelectedLearner] = useState(null);
 
-
-  const [error, set_error] = useState({
-    new_password: "",
-    confirm_password: ""
-  });
-
-  const handlePasswordSubmit = async () => {
-    set_error({ new_password: "", confirm_password: "" });
-    setPasswordLoading(true);
-
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("email", selectedLearner.email);
-    FORM_DATA.append("new_password", new_password);
-    FORM_DATA.append("confirm_password", confirm_password);
-
-    try {
-      const response = await CHANGE_LEARNER_PASSWORD(FORM_DATA);
-
-      if (response?.data?.status) {
-        notification.success({
-          message: " Successfull",
-          description: response?.data?.message
-        });
-
-        setIsModalOpen(false);
-        set_new_password("");
-        set_confirm_password("");
-        set_error({ new_password: "", confirm_password: "" });
-
-      } else {
-        const backendErrors = response?.data?.errors || {};
-        const backendMessage = response?.data?.message || "Something went wrong";
-
-        set_error({
-          new_password: backendErrors?.new_password || "",
-          confirm_password: backendErrors?.confirm_password || "",
-        });
-
-        notification.error({
-          message: "Error",
-          description: backendMessage,
-        });
-      }
-    } catch (err) {
-      const backendErrors = err?.response?.data?.errors || {};
-      const backendMessage = err?.response?.data?.message || "Server error";
-
-      set_error({
-        new_password: backendErrors?.new_password || "",
-        confirm_password: backendErrors?.confirm_password || "",
-      });
-
-      notification.error({
-        message: "Error",
-        description: backendMessage,
-      });
-    } finally {
-      setPasswordLoading(false);
-    }
-  };
-
-
-  const showModal = () => {
-    set_is_model_open(true);
-  };
 
   const handleCancel = () => {
     set_is_model_open(false);
@@ -127,12 +56,12 @@ function Learners() {
     debounce(async () => {
       try {
         set_pagination_loader(true);
-        navigate(`/learners/1`);
+        navigate(`/app-users/1`);
         const FORM_DATA = new FormData();
         FORM_DATA.append(search_key, search_value);
         FORM_DATA.append("per_page", page_size);
         FORM_DATA.append("page", 1);
-        const API_CALL = await LEARNER_LIST(FORM_DATA);
+        const API_CALL = await LIST_APP_USERS(FORM_DATA);
         if (API_CALL?.data?.status) {
           set_table_data(API_CALL?.data?.data);
           set_current_page(API_CALL?.data?.current_page);
@@ -152,7 +81,7 @@ function Learners() {
   const LIST_API = async () => {
     const FORM_DATA = new FormData();
     FORM_DATA.append("per_page", page_size);
-    const API_CALL = await LEARNER_LIST(FORM_DATA);
+    const API_CALL = await LIST_APP_USERS(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.data);
       set_current_page(API_CALL?.data?.current_page);
@@ -190,7 +119,30 @@ function Learners() {
     const FORM_DATA = new FormData();
     FORM_DATA.append("id", id);
     try {
-      const response = await LEARNER_STATUS(FORM_DATA);
+      const response = await APP_USER_STATUS(FORM_DATA);
+      if (response?.data?.status) {
+        notification.success({
+          message: "Successful",
+          description: response?.data?.message,
+        });
+        set_onchange_call(onchange_call ? false : true)
+
+      } else {
+        //setLoader(false);
+      }
+    } catch (error) {
+      message.error(
+        "Server Error: " + (error?.response?.data?.message || "Unknown error")
+      );
+    }
+  };
+
+  const change_status_USER = async (id) => {
+    setLoader(true);
+    const FORM_DATA = new FormData();
+    FORM_DATA.append("id", id);
+    try {
+      const response = await APP_USER_ENROLL_IN_LMS(FORM_DATA);
       if (response?.data?.status) {
         notification.success({
           message: "Successful",
@@ -233,152 +185,16 @@ function Learners() {
   );
 
 
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      render: (text, record) => (
-        <span>
-          {record.first_name} {record.last_name}
-        </span>
-      ),
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      render: (text, record) => <span>{record.email}</span>,
-    },
-    {
-      title: "Phone",
-      dataIndex: "contact_no",
-      render: (text, record) => <span>{record.contact_no}</span>,
-    },
-    {
-      title: "Last Login",
-      dataIndex: "last_login",
-      render: (text, record) => (
-        <div>
-          {record.last_login ? <>
-            <div style={{ fontSize: "12px", }}>{formatToIST(record.last_login)}</div>
-
-          </> : <><div style={{ color: "#5bede7" }}>Not login yet</div></>}
-
-        </div>
-      ),
-    },
-    {
-      title: "Joined On",
-      key: "joining_on",
-      render: (text, record) => (
-        <div>
-          <div style={{ fontSize: "12px" }}>{formatToIST(record.joining_on)}</div>
-
-        </div>
-      ),
-    },
-    {
-      title: "Status",
-      key: "status",
-      render: (text, record) => (
-        <span>
-          {record.status ? (
-            <>
-              <Tag color="success">Active</Tag>
-            </>
-          ) : (
-            <>
-              <Tag color="error">Inactive</Tag>
-            </>
-          )}
-        </span>
-      ),
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-
-          <Tooltip title="Edit Learner">
-            <Button type="primary" size="small" onClick={() => navigate("/edit-learner/" + btoa(record.id))}><EyeFilled /></Button>
-          </Tooltip>
-
-          <Tooltip title=" Learner Courses">
-            <Button type="primary" size="small" onClick={() => navigate(`/learner-courses/ ${record.id}`)}><BookOutlined /></Button></Tooltip>
-
-          <Tooltip title=" Learner Packages">
-            <Button type="primary" size="small" onClick={() => navigate(`/learner-packages/${record.id}`)}><BookOutlined /></Button></Tooltip>
-
-          {/* <Tooltip title=" Learner Quiz Tests">
-            <Button type="primary" size="small" onClick={() => navigate(`/learner-quiz-tests/${record.id}`)}><BookOutlined /></Button></Tooltip> */}
 
 
-          <Tooltip title="Change Password">
-            <Button
-              variant="solid"
-              color="green"
-              size="small"
-              onClick={() => {
-                setSelectedLearner(record);
-                setIsModalOpen(true);
-              }}
-            >
-              <LockOutlined />
-            </Button>
-          </Tooltip>
-
-
-          <Popconfirm
-            title="Do you really want to change the status ?"
-            onConfirm={() => change_status(record?.id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Tooltip title="Change Status">
-              {record.status ? (
-                <Button
-                  variant="solid" color="green" size="small">
-
-                  <CheckCircleOutlined />
-                </Button>
-
-              ) : (
-                <Button color="red" variant="solid" size="small">
-                  <CloseCircleOutlined />
-                </Button>
-              )}
-            </Tooltip>
-          </Popconfirm>
-
-          <Popconfirm
-            title="Do you want to show discussion to learner?"
-            onConfirm={() => DISCUSSION_ACCESS_TO_LEARNER(record?.id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Tooltip title="Access for discussion">
-              <Switch
-                size="large"
-                checked={record.is_discussion}
-                style={{ backgroundColor: record.is_discussion ? "#52c41a" : "#ff4d4f" }}
-                checkedChildren="ON"
-                unCheckedChildren="OFF"
-              />
-            </Tooltip>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
- 
   const pagination_on_change = async (data, size) => {
-    navigate(`/learners/${data}`);
+    navigate(`/app-users/${data}`);
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", data);
     FORM_DATA.append("per_page", size);
     FORM_DATA.append(search_query_key, search_query_value);
-    const API_CALL = await LEARNER_LIST(FORM_DATA);
+    const API_CALL = await LIST_APP_USERS(FORM_DATA);
     if (API_CALL?.data?.status) {
       set_table_data(API_CALL?.data?.data);
       set_current_page(API_CALL?.data?.current_page);
@@ -430,71 +246,157 @@ function Learners() {
     }
   };
 
-  const DOWNLOAD_TEMPLATE = async () => {
-    try {
-      const response = await BULK_ADD_LEARNER_TEMPLATE();
 
-      const blob = new Blob([response.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      render: (text, record) => (
+        <span>
+          {record.first_name} {record.last_name}
+        </span>
+      ),
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      render: (text, record) => <span>{record.email}</span>,
+    },
+    {
+      title: "Organization",
+      dataIndex: "organization",
+          render: (text, record) => <span>{record.organization}</span>,
+    },
 
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
+    {
+      title: "Designation",
+      dataIndex: "designation",
+      render: (text, record) => <span>{record.designation}</span>,
+    },
 
-      link.href = url;
-      link.download = "bulk_add_learners_template.csv";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+    {
+      title: "Phone",
+      dataIndex: "contact_no",
+      render: (text, record) => <span>{record.contact_no}</span>,
+    },
 
-      notification.success({
-        message: "Template Downloaded",
-        description: "Excel template downloaded successfully",
-      });
-      console.log(response.data.size); // should be > 0
+    {
+      title: "Last Login",
+      dataIndex: "last_login",
+      render: (text, record) => (
+        <div>
+          {record.last_login ? <>
+            <div style={{ fontSize: "12px", }}>{formatToIST(record.last_login)}</div>
 
-    } catch (error) {
-      notification.error({
-        message: "Download Failed",
-        description: "Something went wrong",
-      });
-    }
-  };
+          </> : <><div style={{ color: "#5bede7" }}>Not login yet</div></>}
+
+        </div>
+      ),
+    },
+
+    {
+      title: "Joined On",
+      key: "joining_on",
+      render: (text, record) => (
+        <div>
+          <div style={{ fontSize: "12px" }}>{formatToIST(record.joining_on)}</div>
+
+        </div>
+      ),
+    },
+
+    {
+      title: "LMS Enrolled",
+      key: "is_enrolled_lms",
+      render: (text, record) => (
+        <span>
+          {record.is_enrolled_lms ? (
+            <>
+              <Tag color="success">Enrolled</Tag>
+            </>
+          ) : (
+            <>
+              <Tag color="error">Not in LMS</Tag>
+            </>
+          )}
+        </span>
+      ),
+    },
+
+    {
+      title: "Status",
+      key: "status",
+      render: (text, record) => (
+        <span>
+          {record.status ? (
+            <>
+              <Tag color="success">Active</Tag>
+            </>
+          ) : (
+            <>
+              <Tag color="error">Inactive</Tag>
+            </>
+          )}
+        </span>
+      ),
+    },
+
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <Popconfirm
+            title="Do you really want to enroll this user in lms ?"
+            onConfirm={() => change_status_USER(record?.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+
+            <Button
+              type="primary"
+              size="small"
+              disabled={!record.email_verify || record.is_enrolled_lms}
+              title={
+                !record.email_verify
+                  ? "Email not verified"
+                  : record.is_enrolled_lms
+                    ? "Already enrolled in LMS"
+                    : ""
+              }
+            >
+              Enroll in LMS
+            </Button>
+
+          </Popconfirm>
+
+          <Popconfirm
+            title="Do you really want to change the status ?"
+            onConfirm={() => change_status(record?.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button variant="solid" color="danger" size="small"> Change Status</Button>
+          </Popconfirm>
 
 
-  const DISCUSSION_ACCESS_TO_LEARNER = async (id) => {
-    setLoader(true);
-    const FORM_DATA = new FormData();
-    FORM_DATA.append("user_id", id);
-    try {
-      const response = await DISCUSSION_ACCESS(FORM_DATA);
-      if (response?.data?.status) {
-        notification.success({
-          message: "Successful",
-          description: response?.data?.message,
-        });
-        set_onchange_call(onchange_call ? false : true)
+        </Space>
+      ),
+    },
 
-      } else {
-        //setLoader(false);
-      }
-    } catch (error) {
-      message.error(
-        "Server Error: " + (error?.response?.data?.message || "Unknown error")
-      );
-    }
-  };
-
+  ];
 
 
   return (
+
     <div className="lms-body">
+
       <Card>
         <Row>
           <Col span={12}>
-            <h2>Learners {page ? `(Page ${page})` : ""}</h2>
+            <h2>App Users{page ? `(Page ${page})` : ""}</h2>
           </Col>
-          <Col span={12}>
+          {/* <Col span={12}>
             <div className="learner-buttons" style={{ float: "right" }}>
               <Button
                 type="primary"
@@ -521,15 +423,9 @@ function Learners() {
               >
                 Import Learner
               </Button>
-              {/* <Button
-                color="danger"
-                variant="solid"
-                style={{ marginRight: "3px" }}
-              >
-                Export Learner
-              </Button> */}
+              
             </div>
-          </Col>
+          </Col> */}
         </Row>
 
         <Row>
@@ -563,6 +459,7 @@ function Learners() {
                   dataSource={table_data}
                   style={{ marginTop: "15px" }}
                   rowKey="id"
+                  scroll={{ x: "max-content" }}
                 />
               </>
             )}
@@ -597,7 +494,7 @@ function Learners() {
             ) : (
               <>
                 <div style={{ textAlign: "center", color: "red" }}>
-                  <h2>No Learner Found</h2>
+                  <h2>No App User Found</h2>
                 </div>
               </>
             )}
@@ -644,45 +541,10 @@ function Learners() {
           </div>
         </Modal>
 
-        <Modal
-          title="Change Password"
-          open={isModalOpen}
-          onCancel={() => {
-            setIsModalOpen(false);
-            setSelectedLearner(null);
-            set_error({ new_password: "", confirm_password: "" });
-            set_new_password("");
-            set_confirm_password("");
-          }}
-          footer={null}
-        >
-          <Form layout="vertical" onFinish={handlePasswordSubmit}>
-
-            <Form.Item label="New Password">
-              <Input.Password value={new_password} onChange={(e) => set_new_password(e.target.value)} />
-              {error.new_password && (
-                <p style={{ color: "red" }}>{error.new_password}</p>
-              )}
-            </Form.Item>
-
-            <Form.Item label="Confirm Password">
-              <Input.Password value={confirm_password} onChange={(e) => set_confirm_password(e.target.value)} />
-              {error.confirm_password && (
-                <p style={{ color: "red" }}>{error.confirm_password}</p>
-              )}
-            </Form.Item>
-
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={passwordLoading} style={{ width: "100%" }}>
-                Update Password
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
 
       </Card>
     </div>
   );
 }
 
-export default Learners;
+export default AppUsers;

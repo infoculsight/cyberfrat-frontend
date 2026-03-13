@@ -50,33 +50,7 @@ function PackageCourses(props) {
   const handleCheckboxChange = async (e, record) => {
     const isChecked = e.target.checked;
     if (isChecked) {
-      // const FORM_DATA = new FormData();
-      // FORM_DATA.append("package_id", atob(props.package_id));
-      // FORM_DATA.append("course_id", record.id);
-
-      // try {
-      //   const API_CALL = await ASSIGN_PACKAGE_COURSES(FORM_DATA);
-      //   if (API_CALL?.data?.status) {
-      //     notification.success({
-      //       message: "Course Assigned",
-      //       description: `${record.title} has been assigned package successfully.`,
-      //       placement: "topRight",
-      //     });
-      //   } else {
-      //     notification.error({
-      //       message: "Assignment Failed",
-      //       description: `Could not assign ${record.title}`,
-      //       placement: "topRight",
-      //     });
-      //   }
-      // } catch (error) {
-      //   notification.error({
-      //     message: "API Error",
-      //     description: "Something went wrong while assigning the Course.",
-      //     placement: "topRight",
-      //   });
-      //   console.error("API error while assigning Course:", error);
-      // }
+  
       setSelectedCourse(record);
       setIsModalVisible(true);
     }
@@ -120,7 +94,6 @@ function PackageCourses(props) {
     set_pagination_loader(true);
     const FORM_DATA = new FormData();
     FORM_DATA.append("page", data);
-    FORM_DATA.append("token", localStorage.getItem("token"));
     FORM_DATA.append("title", search_query_title);
     FORM_DATA.append("tag", search_query_tag);
     FORM_DATA.append("package_id", atob(props.package_id));

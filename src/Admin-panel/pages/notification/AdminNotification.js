@@ -126,6 +126,7 @@ function AdminNotification() {
         {record.notification_type === 'quiz_uploaded' && 'Quiz Uploaded'}
         {record.notification_type === 'livetest_assign' && 'Live Test Assign'}
         {record.notification_type === 'profile_update' && 'Profile Update'}
+        {record.notification_type === 'course_reminder' && 'course Reminder'}
       </span>,
     },
     {

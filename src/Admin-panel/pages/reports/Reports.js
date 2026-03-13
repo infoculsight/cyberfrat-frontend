@@ -16,7 +16,8 @@ function Reports() {
     'package-report': '2',
     'livetest-report': '4',
     'quiz-report': '5',
-    'quiz-report-view': '6', // keep mapping for navigation
+    'quiz-report-view': '6', 
+    'user-report': '7',
   };
 
   const keyTabMap = {
@@ -25,6 +26,7 @@ function Reports() {
     '4': 'livetest-report',
     '5': 'quiz-report',
     '6': 'quiz-report-view',
+    '7': 'user-report',
   };
 
   // Redirect default
@@ -39,7 +41,7 @@ function Reports() {
   };
 
   // hide tab 6 from header
-  const visibleTabs = ['1', '2', '4', '5'];
+  const visibleTabs = ['1', '2', '4', '5','7'];
 
   return (
     <div className="lms-body">
@@ -49,6 +51,7 @@ function Reports() {
           {visibleTabs.includes('2') && <TabPane tab="Package Reports" key="2" />}
           {visibleTabs.includes('4') && <TabPane tab="Live Test Report" key="4" />}
           {visibleTabs.includes('5') && <TabPane tab="Quiz Report" key="5" />}
+          {visibleTabs.includes('7') && <TabPane tab="User Report" key="7" />}
         </Tabs>
         <Outlet />
       </Card>
