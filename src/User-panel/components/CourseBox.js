@@ -26,9 +26,9 @@ export default function CourseBox(props) {
       day: "numeric",
       month: "short",
       year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      second: "2-digit",
+      // hour: "numeric",
+      // minute: "2-digit",
+      // second: "2-digit",
       hour12: true
     });
   }
