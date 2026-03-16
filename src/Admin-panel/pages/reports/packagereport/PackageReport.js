@@ -100,15 +100,15 @@ const PackageReport = () => {
         </span>
       ),
     },
-    {
-      title: "Till Date",
-      dataIndex: "till_date",
-      render: (text, record) => (
-        <span>
-          {moment(record.till_date).format("YYYY-MM-DD")}
-        </span>
-      ),
-    },
+    // {
+    //   title: "Till Date",
+    //   dataIndex: "till_date",
+    //   render: (text, record) => (
+    //     <span>
+    //       {moment(record.till_date).format("YYYY-MM-DD")}
+    //     </span>
+    //   ),
+    // },
     {
       title: "Package Name",
       dataIndex: "package_name",
